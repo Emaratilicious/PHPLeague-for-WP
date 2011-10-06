@@ -1,16 +1,20 @@
 <?php
-// Instances
-$db  = new PHPLeague_Database();
-$ctl = new PHPLeague_Admin_Controller();
-$fct = new MWD_Plugin_Tools();
-$message = '';
 
-// Menu information
+/*
+ * This file is part of the PHPLeague package.
+ *
+ * (c) Maxime Dizerens <mdizerens@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+// Vars
+$data = array();
 $menu = array(
 	__('Export', 'phpleague') => '#',
 	__('Import', 'phpleague') => '#'
 );
-$data = array();
 
 $output = __('Coming Soon...', 'phpleague');
 
@@ -30,4 +34,4 @@ $data[] = array(
 	'class' => 'full'
 );
 
-echo $ctl->admin_container($menu, $data, $message);
+echo $ctl->admin_container($menu, $data);

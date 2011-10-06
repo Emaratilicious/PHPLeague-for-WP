@@ -21,47 +21,52 @@
 /*
 Plugin Name: PHPLeague for WordPress
 Plugin URI: http://www.mika-web.com/phpleague-for-wordpress/
-Description: PHPLeague for WordPress is the best plugin to manage properly your sports leagues. This plugin has also a Premium version with all the features you might need.
-Version: 1.2.5
+Description: PHPLeague for WordPress is the best companion to manage your sports leagues.
+Version: 1.2.8
 Author: Maxime Dizerens
 Author URI: http://www.mika-web.com/
 */
 
 // Constants
-define('WP_PHPLEAGUE_VERSION', '1.2.5');
-define('WP_PHPLEAGUE_DB_VERSION', '1.2.1');
-define('WP_PHPLEAGUE_PATH', plugin_dir_path( __FILE__ ));
+define('WP_PHPLEAGUE_VERSION', '1.2.8');
+define('WP_PHPLEAGUE_DB_VERSION', '1.2.3');
+define('WP_PHPLEAGUE_EDITION', 'Core');
+define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
+define('WP_PHPLEAGUE_LOGOS_PATH', WP_PHPLEAGUE_PATH.'../../uploads/phpleague/');
 
 // PHPLeague Translation
 load_plugin_textdomain('phpleague', FALSE, 'phpleague/i18n');
 
 // Core files
-require_once WP_PHPLEAGUE_PATH.'libs/mwd-plugin-tools.php';
+require_once WP_PHPLEAGUE_PATH.'libs/plugin-tools.php';
 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-database.php';
 
 // Specific actions
-register_activation_hook(__FILE__, array('MWD_Plugin_Igniter', 'activate'));
-register_deactivation_hook(__FILE__, array('MWD_Plugin_Igniter', 'deactivate'));
-register_uninstall_hook(__FILE__, array('MWD_Plugin_Igniter', 'uninstall'));
+register_activation_hook(__FILE__, array('Plugin_Igniter', 'activate'));
+register_uninstall_hook(__FILE__, array('Plugin_Igniter', 'uninstall'));
 
 if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX') || ! DOING_AJAX)) {
 	
-	class PHPLeague_Admin extends MWD_Plugin_Tools {
+	class PHPLeague_Admin extends Plugin_Tools {
 
 		public $longname  = 'PHPLeague for WordPress';
 		public $shortname = 'PHPLeague for WP';
 		public $access	  = 'administrator';
-		public $pages 	  = array('phpleague_about', 'phpleague_overview', 'phpleague_club', 'phpleague_setting');
+		public $pages 	  = array
+		(
+            'phpleague_about',
+		    'phpleague_overview',
+		    'phpleague_club',
+		    'phpleague_setting'
+	   );
 
 		/**
 	     * Constructor
 	     */
 		public function __construct()
 		{
-			parent::__construct();
-			
-			$this->define_tables();
-			
+            parent::__construct();
+            $this->define_tables();
 			add_action('init', array(&$this, 'add_editor_button'));
 			add_action('admin_init', array(&$this, 'plugin_admin_init'));
 			add_action('admin_init', array(&$this, 'plugin_check_upgrade'));
@@ -75,13 +80,13 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 	     */
 		public function print_admin_styles()
 		{
-			if (isset($_GET['page'])) {
+			if (isset($_GET['page']))
+			{
 				if ( ! in_array(trim($_GET['page']), $this->pages))
 				 	return;
 			}
 			
-			$handle  = 'phpleague-admin';
-
+			$handle = 'phpleague-admin';
 			wp_register_style($handle, plugins_url('phpleague/assets/css/phpleague-admin.css'));
 		    wp_enqueue_style($handle);
 		}
@@ -91,7 +96,8 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 	     */
 		public function print_admin_scripts()
 		{
-			if (isset($_GET['page'])) {
+			if (isset($_GET['page']))
+			{
 				if ( ! in_array(trim($_GET['page']), $this->pages))
 				 	return;
 			}
@@ -113,7 +119,8 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 			$instance = new PHPLeague_Admin_Controller();
 			$parent   = 'phpleague_overview';
 			
-			if (function_exists('add_menu_page')) {
+			if (function_exists('add_menu_page'))
+			{
 				add_menu_page(
 					__('Dashboard (PHPLeague)', 'phpleague'),
 					__('PHPLeague', 'phpleague'),
@@ -124,7 +131,8 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 				);
 			}
 			
-			if (function_exists('add_submenu_page')) {
+			if (function_exists('add_submenu_page'))
+			{
 				add_submenu_page(
 					$parent,
 					__('Clubs (PHPLeague)', 'phpleague'),
@@ -133,7 +141,7 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 					'phpleague_club',
 					array($instance, 'admin_page')
 				);
-				
+                
 				add_submenu_page(
 					$parent,
 					__('Settings (PHPLeague)', 'phpleague'),
@@ -169,7 +177,8 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 			if ( ! current_user_can('phpleague')) return;
 
 			// Add only in Rich Editor mode
-			if (get_user_option('rich_editing') == 'true') {
+			if (get_user_option('rich_editing') == 'true')
+			{
 				add_filter('mce_external_plugins', array(&$this, 'add_editor_plugin'));
 				add_filter('mce_buttons', array(&$this, 'register_editor_button'));
 			}
@@ -205,7 +214,7 @@ if ( ! class_exists('PHPLeague_Admin') && is_admin() && ( ! defined('DOING_AJAX'
 
 if ( ! class_exists('PHPLeague_Front') && ! is_admin() && ( ! defined('DOING_AJAX') || ! DOING_AJAX)) {
 	
-	class PHPLeague_Front extends MWD_Plugin_Tools {
+	class PHPLeague_Front extends Plugin_Tools {
 
 		public $longname  = 'PHPLeague for WordPress';
 		public $shortname = 'PHPLeague for WP';
@@ -214,9 +223,7 @@ if ( ! class_exists('PHPLeague_Front') && ! is_admin() && ( ! defined('DOING_AJA
 		public function __construct()
 		{
 			parent::__construct();
-			
 			$this->define_tables();
-			
 			add_action('wp_print_styles', array(&$this, 'print_front_styles'));
 			add_shortcode('phpleague', array(&$this, 'display_phpleague'));
 		}
@@ -226,40 +233,51 @@ if ( ! class_exists('PHPLeague_Front') && ! is_admin() && ( ! defined('DOING_AJA
 	     */
 		public function print_front_styles()
 		{
-			$handle  = 'phpleague-front';
-            $css_src = plugins_url('phpleague/assets/css/phpleague-front.css');
-
-			wp_register_style($handle, $css_src);
+			$handle = 'phpleague-front';
+			wp_register_style($handle, plugins_url('phpleague/assets/css/phpleague-front.css'));
 		    wp_enqueue_style($handle);
 		}
 		
 		// We got all the public functions in here
 		public function display_phpleague($atts)
 		{
-			extract(shortcode_atts(array('id' => 1, 'type' => 'table', 'style' => 'general', 'id_team' => ''), $atts));
+			extract(shortcode_atts(
+                array(
+                    'id'      => 1,
+                    'type'    => 'table',
+                    'style'   => 'general',
+                    'id_team' => '',
+                ),
+                $atts
+            ));
+
 			$id = intval($id);
 			
 			require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front-controller.php';
 			$front = new PHPLeague_Front_Controller();
 			
-			if ($type == 'table') {
-				if ($style == 'home') {
+			if ($type == 'table')
+			{
+				if ($style == 'home')
 					return $front->get_league_table($id, 'home');
-				}
-				elseif ($style == 'away') {
+				elseif ($style == 'away')
 					return $front->get_league_table($id, 'away');
-				}
-				else {
+				else
 					return $front->get_league_table($id);
-				}
-			} elseif ($type == 'fixtures') {
-				if ( ! empty($id_team)) {
+			}
+			elseif ($type == 'fixtures')
+			{
+				if ( ! empty($id_team))
 					return $front->get_league_fixtures($id, $id_team);
-				} else {
-					return $front->get_league_fixtures($id);
-				}
-				
-			} else {
+				else
+					return $front->get_league_fixtures($id);				
+			}
+			elseif ($type == 'club')
+			{
+				return $front->get_club_information($id);					
+			}
+			else
+			{
 				return $front->get_league_table($id);
 			}
 		}

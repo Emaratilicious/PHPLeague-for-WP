@@ -4,35 +4,21 @@ Donate link: http://www.mika-web.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.2.5
+Stable tag: 1.2.8
 
-PHPLeague for WordPress is the best plugin to manage properly your sports leagues. Get the Premium version to enjoy more features.
+PHPLeague for WordPress is the best companion to manage your sports leagues. Take the Premium version to get more features.
 
 == Description ==
 
-PHPLeague for WordPress is the best plugin to manage properly your sports leagues. This plugin is very customizable and easy to use.
-From now on, get your data directly from your own database - powered by WordPress - instead of relying on another website or widget.
-For people who need more customizations and modularity, the Premium version is waiting for you as soon as it will be released :)
-This plugin can work perfectly for other sports than football like handball, basketball, hockey or volleyball.
+PHPLeague for WordPress is the best companion to manage your sports leagues. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football (soccer) like handball, basketball, hockey or volleyball.
 
-**Some "Core" Features**
+**Basic Features**
 
 * The League's table and fixtures can be published via your posts/pages
 * Manage as many leagues as you want, no limitations
-* Most of the fill-in part is done automatically
-* A powerful administration area who simplify your life
+* Manage as many clubs as you want, no limitations
+* A very powerful and nice backend to simplify your life
 * A clean (un)installer developed in order to keep your database secure and safe
-* A nice administration area based on the WooThemes Theme.
-
-**Some "Premium" Features**
-
-* Match live score system with possibility to link with your posts
-* Prediction system for every league with minimal settings - handle native WordPress users
-* Manage the players profile of your favorite team with stats / charts rendered automatically
-* Link your players' profile with tags and get all their related news
-* Player of the Week/Month of your favorite team through widgets
-* Possibility to vote for the Man of the Match
-* And much more...
 
 **Languages**
 
@@ -68,8 +54,12 @@ At the moment, it does not. And it is not part of features for the next releases
 
 = Do I need to have Javascript activated? =
 
-I decided not to use AJAX but Javascript is necessary in order to manage almost everything in the administration area (thanks to the interface...).
+I decided not to use AJAX technology but Javascript is necessary in order to manage almost everything in the administration area (thanks to the interface...).
 In the front part, no Javascript at all. Always keeping in mind that plenty of browsers handle javascript badly or not at all.
+
+= Where do I need to add my logos? =
+
+You need to create a `phpleague` folder in `uploads` then create 2 other folders named `logo_big` and `logo_min`.
 
 == Screenshots ==
 
@@ -81,13 +71,32 @@ In the front part, no Javascript at all. Always keeping in mind that plenty of b
 
 = 1.3 (Coming Soon) =
 * NEW: Import/Export function
-* NEW: Possibility to select your club's logo from the uploads folder
-* NEW: Display the mini logo in the table if it exists
-* NEW: Add a new tab "Clubs" in the PHPLeague button
-* NEW: New shortcode to display the club's information in a post/page
-* CHANGED: Show a notice if we suspect an error with the number of matches
-* CHANGED: Possibility to add more than one message per page
-* CHANGED: Update and finalize the documentation on the about page
+* FIX: Update and finalize the documentation on the about page
+
+= 1.2.8 =
+* NEW: 2 new fields in the settings (team_link/default_time)
+* NEW: Added the PHPLeague's Edition in the database
+* NEW: Possibility to show club information in front-end
+* CHANGED: Possibility to set the default time
+* CHANGED: ALTER a couple of tables
+* CHANGED: Useless queries removed
+* CHANGED: Few i18n strings modifications
+* CHANGED: Multiple notifications are now possible
+* CHANGED: UI improvements (css & js)
+* FIX: Better UTF-8 characters management
+* FIX: Better directories management (create/delete)
+
+= 1.2.7 =
+* NEW: Create the logos folders automatically if don't exist
+* CHANGED: Few code fixes
+* CHANGED: Reduce queries in the Editor
+* CHANGED: Update database version
+* CHANGED: Delete SQL constraints
+
+= 1.2.6 =
+* NEW: Possibility adding logos to every club
+* NEW: Display a mini logo - if exists - in the table
+* CHANGED: Teams ordered by country to be more user-friendly
 
 = 1.2.5 =
 * FIX: The formula to calculate the number of fixtures has been updated

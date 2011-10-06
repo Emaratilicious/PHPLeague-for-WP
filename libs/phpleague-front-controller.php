@@ -1,22 +1,13 @@
 <?php
 
-/*  
-    Copyright 2011  Maxime Dizerens  (email : mdizerens@gmail.com)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*
+ * This file is part of the PHPLeague package.
+ *
+ * (c) Maxime Dizerens <mdizerens@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 if ( ! class_exists('PHPLeague_Front_Controller')) {
 	
@@ -42,10 +33,9 @@ if ( ! class_exists('PHPLeague_Front_Controller')) {
 
 			$db = new PHPLeague_Database();
 
-			// $id not in the database
-			if ($db->is_league_exists($id) === FALSE) {
+			// ID not in the database
+			if ($db->is_league_exists($id) === FALSE)
 				return;
-			}
 
 			$setting    = $db->get_league_settings($id);
 			$nb_teams  	= intval($setting->nb_teams);
@@ -75,24 +65,23 @@ if ( ! class_exists('PHPLeague_Front_Controller')) {
 
 			$place = 1;
 
-			foreach ($db->get_league_table_data($style, $id, $nb_teams) as $row) {
-
-				if ($place <= $nb_teams) {				
-					if ($favorite == $row->id_team) {
+			foreach ($db->get_league_table_data($style, $id, $nb_teams) as $row)
+			{
+				if ($place <= $nb_teams)
+				{				
+					if ($favorite == $row->id_team)
 						$output .= '<tr class="id-favorite">';
-					} else {
+					else
 						$output .= '<tr>';
-					}
 
-					if ($place <= $promotion) {
+					if ($place <= $promotion)
 						$span = '<span class="promotion"></span>';
-					} elseif ($place <= $qualifying) {
+					elseif ($place <= $qualifying)
 						$span = '<span class="qualifying"></span>';
-					} elseif ($place > $relegation) {
+					elseif ($place > $relegation)
 						$span = '<span class="relegation"></span>';
-					} else {
+					else
 						$span = '<span></span>';
-					}
 
 					if ($style == 'home') {
 						$points 	  = intval($row->home_points);
@@ -122,9 +111,15 @@ if ( ! class_exists('PHPLeague_Front_Controller')) {
 						$goal_against = intval($row->goal_against);
 						$diff 		  = intval($row->diff);
 					}
-
+					
 					$output .= '<td class="centered">'.$place.'</td>';
-					$output .= '<td>'.esc_html($row->club_name).'</td>';
+					
+                    // If logo file exists, we show it
+					if (is_file(WP_PHPLEAGUE_LOGOS_PATH.'logo_mini/'.$row->logo_mini))
+						$output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;'.esc_html($row->club_name).'</td>';
+					else
+						$output .= '<td>'.esc_html($row->club_name).'</td>';
+					
 					$output .= '<td class="centered">'.$points.'</td>';
 					$output .= '<td class="centered">'.$played.'</td>';
 					$output .= '<td class="centered">'.$victory.'</td>';
@@ -150,46 +145,73 @@ if ( ! class_exists('PHPLeague_Front_Controller')) {
 
 			$db = new PHPLeague_Database();
 
-			// $id not in the database
-			if ($db->is_league_exists($id_league) === FALSE) {
+			// ID not in the database
+			if ($db->is_league_exists($id_league) === FALSE)
 				return;
-			}
 
-			// if TRUE team does not exist in the league
+			// If team does not exist in the league
 			$team_exist = $db->is_team_already_in_league($id_league, $id_team);
 
 			$setting  = $db->get_league_settings($id_league);
-			$id_team  = ((isset($id_team) && $team_exist === FALSE) ? intval($id_team) : intval($setting->id_favorite));
+			$id_team  = (isset($id_team) && $team_exist === FALSE) ? intval($id_team) : intval($setting->id_favorite);
 			
-			// it means that no favorite team has been provided
-			if ($id_team == 0) {
+			// No favorite team has been given
+			if ($id_team == 0)
 				return;
-			}
 
 			$output  = '<table id="phpleague"><tbody>';
 			$output .=
-				'<tr>
-					<th>'.__('Date', 'phpleague').'</th>
-					<th class="centered">'.__('Fixture', 'phpleague').'</th>
-					<th>'.__('Match', 'phpleague').'</th>
-					<th class="centered">'.__('Score', 'phpleague').'</th>
-				</tr>';
+			'<tr>
+                <th>'.__('Date', 'phpleague').'</th>
+                <th class="centered">'.__('Fixture', 'phpleague').'</th>
+                <th>'.__('Match', 'phpleague').'</th>
+                <th class="centered">'.__('Score', 'phpleague').'</th>
+            </tr>';
 
-			foreach ($db->get_league_fixtures_by_team($id_team, $id_league) as $row) {
+			foreach ($db->get_league_fixtures_by_team($id_team, $id_league) as $row)
+			{
 				$output .= '<tr>';
 				$output .= '<td>'.strftime("%a %e, %H:%S", strtotime($row->played)).'</td>';
 				$output .= '<td class="centered">'.intval($row->number).'</td>';
 				$output .= '<td>'.esc_html($row->home_name).' - '.esc_html($row->away_name).'</td>';
 
-				if (date('Y-m-d') >= $row->played) {
+				if (date('Y-m-d') >= $row->played)
 					$output .= '<td class="centered">'.intval($row->goal_home).' - '.intval($row->goal_away).'</td>';
-				} else {
+				else
 					$output .= '<td class="centered"> - </td>';
-				}	
 
 				$output .= '</tr>';
 			}
 
+			$output .= '</tbody></table>';
+			return $output;
+		}
+		
+		// display the club information in the front area
+		public function get_club_information($id = NULL)
+		{
+			global $wpdb;
+
+			$db = new PHPLeague_Database();
+
+			// ID not in the database
+			if ($db->is_club_unique($id, 'id') === TRUE)
+				return;
+				
+			$info = $db->get_club_information($id);
+			
+			$output  = '<table id="phpleague"><caption>'.esc_html($info->name).__(' Factfile', 'phpleague').'</caption><tbody>';
+			$output .=
+			'<tr>
+				<th rows="2">'.__('Details', 'phpleague').'</th>
+            </tr>';
+
+			$output .= '<tr><td><strong>'.__('Name: ', 'phpleague').'</strong></td><td>'.esc_html($info->name).'</td></tr>';
+			$output .= '<tr><td><strong>'.__('Coach: ', 'phpleague').'</strong></td><td>'.esc_html($info->coach).'</td></tr>';
+			$output .= '<tr><td><strong>'.__('Venue: ', 'phpleague').'</strong></td><td>'.esc_html($info->venue).'</td></tr>';
+			$output .= '<tr><td><strong>'.__('Website: ', 'phpleague').'</strong></td><td><a href="'.esc_html($info->website).'">'.esc_html($info->website).'</a></td></tr>';
+			$output .= '<tr><td><strong>'.__('Creation: ', 'phpleague').'</strong></td><td>'.intval($info->creation).'</td></tr>';
+			
 			$output .= '</tbody></table>';
 			return $output;
 		}

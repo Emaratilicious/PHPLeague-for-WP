@@ -1,7 +1,16 @@
 <?php
-$ctl = new PHPLeague_Admin_Controller();
 
-// Menu information
+/*
+ * This file is part of the PHPLeague package.
+ *
+ * (c) Maxime Dizerens <mdizerens@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+// Vars
+$data = array();
 $menu = array(
 	__('Dashboard', 'phpleague')  => '#',
 	__('Clubs', 'phpleague')	  => '#',
@@ -10,10 +19,7 @@ $menu = array(
 	__('Plugin', 'phpleague')	  => '#'
 );
 
-// data container
-$data = array();
-
-// dashboard
+// Dashboard
 $data[] = array(
 	'menu'  => __('Dashboard', 'phpleague'),
 	'title' => __('Overview', 'phpleague'),
@@ -21,7 +27,6 @@ $data[] = array(
 	'class' => 'full'
 );
 
-// dashboard
 $data[] = array(
 	'menu'  => __('Dashboard', 'phpleague'),
 	'title' => __('Create a League', 'phpleague'),
@@ -89,7 +94,7 @@ $data[] = array(
 $data[] = array(
 	'menu'  => __('Clubs', 'phpleague'),
 	'title' => __('Edit a Club', 'phpleague'),
-	'text'  => __('Once your club is created, you can edit him by clicking on his name. You will be redirected to the club edition mode. Currently, you have only six different options in the edition mode (more are available in the Premium plugin).', 'phpleague'),
+	'text'  => __('Once your club is created, you can edit him by clicking on his name. You will be redirected to the club edition mode. Currently, you have only six different options in the edition mode. To add your logos, you need to create a "phpleague" folder with 2 sub-folders ("logo_mini" and "logo_big") in the uploads directory.', 'phpleague'),
 	'class' => 'full'
 );
 
@@ -107,7 +112,7 @@ $data[] = array(
 	'class' => 'full'
 );
 
-// settings
+// Settings
 $data[] = array(
 	'menu'  => __('Settings', 'phpleague'),
 	'title' => __('Overview', 'phpleague'),
@@ -174,7 +179,7 @@ $table = '
 
 $table .= __('All those short codes need to be activated with the following string: [phpleague]. The "id_team" parameter is only used by the fixtures so as the "style" option for the table.', 'phpleague');
 
-// shortcodes
+// Shortcodes
 $data[] = array(
 	'menu'  => __('Shortcodes', 'phpleague'),
 	'title' => __('Shortcodes Listing', 'phpleague'),
@@ -182,7 +187,7 @@ $data[] = array(
 	'class' => 'full'
 );
 
-// plugin info
+// Plugin Information
 $data[] = array(
 	'menu'  => __('Plugin', 'phpleague'),
 	'title' => __('Overview', 'phpleague'),

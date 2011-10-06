@@ -1,6 +1,20 @@
 <?php
-$get_option = ( ! empty($_GET['option']) ? trim($_GET['option']) : '');
 
+/*
+ * This file is part of the PHPLeague package.
+ *
+ * (c) Maxime Dizerens <mdizerens@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+// Vars
+$get_option = ( ! empty($_GET['option'])    ? trim($_GET['option'])      : '');
+$id_league  = ( ! empty($_GET['id_league']) ? intval($_GET['id_league']) : 0);
+$message    = array();
+
+// Sub-requests
 switch ($get_option) {
 	case 'team' :
 		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_team.php';
@@ -21,166 +35,109 @@ switch ($get_option) {
 		break;
 }
 
-// -- Instances & vars
-$db  	 = new PHPLeague_Database();
-$ctl 	 = new PHPLeague_Admin_Controller();
-$fct 	 = new MWD_Plugin_Tools();
-$message = '';
-
-if ($get_option === 'generator' && ! empty($_GET['id_league'])) {
-
-	$id 	   = intval($_GET['id_league']);
-	$setting   = $db->get_league_settings($id);
-	$nb_teams  = intval($setting->nb_teams);
-	$pt_v	   = intval($setting->pt_victory);
-	$pt_d 	   = intval($setting->pt_draw);
-	$pt_l  	   = intval($setting->pt_defeat);
-	$start     = 0;
-	$cache     = 1;
-	$max       = $db->get_max_fixtures_played($id);
+// Can we generate the table?
+if ($get_option === 'generator' && $id_league)
+{
+	$setting  = $db->get_league_settings($id_league);
+	$nb_teams = intval($setting->nb_teams);
+	$pt_v	  = intval($setting->pt_victory);
+	$pt_d 	  = intval($setting->pt_draw);
+	$pt_l  	  = intval($setting->pt_defeat);
+	$start    = 0;
+	$max      = $db->get_max_fixtures_played($id_league);
 	
-	// fill in the league table
-	$db->fill_league_table($id, $start, $max, $cache, $nb_teams, $pt_v, $pt_d, $pt_l);
-	
-	$output =
-	'<table class="widefat">
-		<thead>
-			<tr>
-				<th>'.__('Pos', 'phpleague').'</th>
-				<th>'.__('Team', 'phpleague').'</th>
-				<th>'.__('Pts', 'phpleague').'</th>
-				<th>'.__('P', 'phpleague').'</th>
-				<th>'.__('W', 'phpleague').'</th>
-				<th>'.__('D', 'phpleague').'</th>
-				<th>'.__('L', 'phpleague').'</th>
-				<th>'.__('F', 'phpleague').'</th>
-				<th>'.__('A', 'phpleague').'</th>
-				<th>'.__('+/-', 'phpleague').'</th>
-			</tr>
-		</thead>
-		<tbody>';
-
-	$place = 1;
-
-	foreach ($db->get_league_table_data('general', $id, 20) as $row) {
-		$output .= '<tr>';
-		$output .= '<td>'.$place.'</td>';
-		$output .= '<td>'.esc_html($row->club_name).'</td>';
-		$output .= '<td>'.intval($row->points).'</td>';
-		$output .= '<td>'.intval($row->played).'</td>';
-		$output .= '<td>'.intval($row->victory).'</td>';
-		$output .= '<td>'.intval($row->draw).'</td>';
-		$output .= '<td>'.intval($row->defeat).'</td>';
-		$output .= '<td>'.intval($row->goal_for).'</td>';
-		$output .= '<td>'.intval($row->goal_against).'</td>';
-		$output .= '<td>'.intval($row->diff).'</td>';
-		$output .= '</tr>';
-	
-		$place++;
-	}
-
-	$output .= '</tbody></table>';
-	
-	$message   = __('Table updated successfully.<br />'.$output, 'phpleague');
-
-} elseif (isset($_POST['add_league']) && check_admin_referer('phpleague_nonce_admin')) {
-
+	// Fill in the table
+	$db->fill_league_table($id_league, $start, $max, $nb_teams, $pt_v, $pt_d, $pt_l);
+	$message[] = __('Table updated successfully.', 'phpleague');
+}
+elseif (isset($_POST['add_league']) && check_admin_referer('phpleague'))
+{
 	$year = ( ! empty($_POST['year'])) ? intval($_POST['year']) : 0;
 	$name = ( ! empty($_POST['name'])) ? trim($_POST['name'])   : NULL;
 
-	if ( ! preg_match("/^([0-9]{4})$/", $year))	{
-		$message = __('The year must be 4 digits.', 'phpleague');
+	if ( ! preg_match('/^([0-9]{4})$/', $year)) {
+	   $message[] = __('The year must be 4 digits.', 'phpleague');
 	} elseif (in_array($name, array(NULL, FALSE, ''))) {
-		$message = __('The name cannot be empty.', 'phpleague');
-	} elseif ( ! preg_match('/^[A-Za-z0-9_\-. ]{3,}$/', $name)) {
-		$message = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
+		$message[] = __('The name cannot be empty.', 'phpleague');
+	} elseif ($fct->valid_text($name, 3) === FALSE) {
+		$message[] = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
 	} elseif ($db->is_league_unique($name, $year) === FALSE) {
-		$message = __('The league is already in your database.', 'phpleague');
+		$message[] = __('The league is already in your database.', 'phpleague');
 	} else {
 		$db->add_league($name, $year);
-		$message = __('League added successfully.', 'phpleague');
+		$message[] = __('League added successfully. You are strongly recommended going to edit your settings.', 'phpleague');
 	}
 }
 
-// -- Vars
-$items_p_page  = 7;
-$page_number   = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
-$offset 	   = ($page_number - 1 ) * $items_p_page;
-$page_base_url = 'admin.php?page=phpleague_overview';
-$total_items   = $db->count_leagues();
-$pagination	   = $fct->pagination($total_items, $items_p_page, $page_number);
-$menu 	   	   = array(__('Overview', 'phpleague') => '#', __('New League', 'phpleague') => '#');
-$data 	   	   = array();
+// Vars
+$per_page   = 7;
+$p_number   = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
+$offset 	= ($p_number - 1 ) * $per_page;
+$total      = $db->count_leagues();
+$pagination	= $fct->pagination($total, $per_page, $p_number);
+$page_url   = 'admin.php?page=phpleague_overview';
+$output     = '';
+$data       = array();
+$menu 	   	= array(__('Overview', 'phpleague') => '#', __('New League', 'phpleague') => '#');
 
-if ($total_items == 0) {
-	$message = __('We did not find any league in the database.', 'phpleague');	
-}
+if ($total == 0)
+	$message[] = __('No league found in the database! Click on "New League" to add one.', 'phpleague');	
 
-$output = '
+if ($pagination)
+    $output = '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>'; 
+
+$output .= '
 <table class="widefat">
 	<thead>
 		<tr>
 			<th>'.__('League', 'phpleague').'</th>
-			<th colspan="6">'.__('Options', 'phpleague').'</th>
+			<th colspan="5">'.__('Options', 'phpleague').'</th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr>
 			<th>'.__('League', 'phpleague').'</th>
-			<th colspan="6">'.__('Options', 'phpleague').'</th>
+			<th colspan="5">'.__('Options', 'phpleague').'</th>
 		</tr>
 	</tfoot>
 	<tbody>';
 	
-	foreach ($db->get_every_league($offset, $items_p_page) as $league) {
-		$id 	 = intval($league->id);
-		$year 	 = intval($league->year);
+	foreach ($db->get_every_league($offset, $per_page) as $league)
+	{
+		$id   = intval($league->id);
+		$year = intval($league->year);
 		$output .= '
-			<tr '.$fct->alternate('', 'class="alternate"').'>
-				<td>
-					<i>
-					'.esc_html($league->name) .' '. $year.'/'.substr($year + 1, 2).'
-					</i>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=team&id_league='.$id).'">
-					'.__('Teams', 'phpleague').'
-					</a>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=fixture&id_league='.$id).'">
-					'.__('Fixtures', 'phpleague').'
-					</a>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=match&id_league='.$id).'">
-					'.__('Matches', 'phpleague').'
-					</a>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=result&id_league='.$id).'">
-					'.__('Results', 'phpleague').'
-					</a>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=setting&id_league='.$id).'">
-					'.__('Settings', 'phpleague').'
-					</a>
-				</td>
-				<td>
-					<a href="'.admin_url($page_base_url.'&option=generator&id_league='.$id).'">
-					'.__('Generator', 'phpleague').'
-					</a>
-				</td>
-			</tr>
-		';
+		<tr '.$fct->alternate('', 'class="alternate"').'>
+            <td>'.esc_html($league->name) .' '. $year.'/'.substr($year + 1, 2).'</td>
+            <td>
+                <a href="'.admin_url($page_url.'&option=team&id_league='.$id).'">
+                '.__('Teams', 'phpleague').'
+                </a>
+            </td>
+            <td>
+                <a href="'.admin_url($page_url.'&option=fixture&id_league='.$id).'">
+                '.__('Fixtures', 'phpleague').'
+                </a>
+            </td>
+            <td>
+                <a href="'.admin_url($page_url.'&option=match&id_league='.$id).'">
+                '.__('Matches', 'phpleague').'
+                </a>
+            </td>
+            <td>
+                <a href="'.admin_url($page_url.'&option=result&id_league='.$id).'">
+                '.__('Results', 'phpleague').'
+                </a>
+            </td>
+            <td>
+                <a href="'.admin_url($page_url.'&option=setting&id_league='.$id).'">
+                '.__('Settings', 'phpleague').'
+                </a>
+            </td>
+        </tr>';
 	}
 	
 $output .= '</tbody></table>';
-
-if ($pagination) {
-	$output .= '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>';	
-}
 
 $data[] = array(
 	'menu'  => __('Overview', 'phpleague'),
@@ -189,7 +146,7 @@ $data[] = array(
 	'class' => 'full'
 );
 
-$output  = $fct->form_open(admin_url($page_base_url));
+$output  = $fct->form_open(admin_url($page_url));
 $output .= $fct->input('name', '');
 $output .= __(' Only alphanumeric characters and spaces authorized.', 'phpleague');
 
