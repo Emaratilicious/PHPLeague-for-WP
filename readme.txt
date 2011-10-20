@@ -4,7 +4,7 @@ Donate link: http://www.mika-web.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.2.8
+Stable tag: 1.3
 
 PHPLeague for WordPress is the best companion to manage your sports leagues. Take the Premium version to get more features.
 
@@ -30,12 +30,11 @@ PHPLeague is really easy to install so just follow the guide:
 
 1. Upload the `phpleague` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Create your season & competition then generate a league
+3. Create your season and competition then generate a league
 4. Create your clubs and affect them to your league
 5. Choose the fixtures' dates then the matches (everything's generated automatically)
 6. Insert your results then generate the table & calendar
 7. Place `[phpleague id="YOUR-ID" type="general"]` in your post/page
-8. Find all the information you need on the About page in the admin area.
 
 == Frequently Asked Questions ==
 
@@ -69,9 +68,19 @@ You need to create a `phpleague` folder in `uploads` then create 2 other folders
 
 == Changelog ==
 
-= 1.3 (Coming Soon) =
-* NEW: Import/Export function
-* FIX: Update and finalize the documentation on the about page
+= 1.3 =
+* NEW: Possibility to display all the fixtures
+* NEW: Possibility to display all the fixtures for a specific team
+* NEW: Links available to the club if enabled in the league's settings
+* CHANGED: Removed the "create" method from the sidebar
+* CHANGED: Add an option to hide a section by default
+* CHANGED: jQuery code refactoring
+* CHANGED: Don't display club information if coach and venue are missing
+* CHANGED: Global source-code refactoring
+* FIX: Don't show (0-0) if the match hasn't been played yet
+
+= 1.2.9 =
+* FIX: Correct an issue with the club creation (thanks to Nicoletta)
 
 = 1.2.8 =
 * NEW: 2 new fields in the settings (team_link/default_time)

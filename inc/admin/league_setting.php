@@ -92,9 +92,9 @@ $output .=
 '<table class="form-table">
     <tr>
         <td class="required">'.__('Name:', 'phpleague').'</td>
-        <td>'.$fct->input('name', esc_html($setting->name), array('size' => 15)).'</td>
+        <td>'.$fct->input('name', esc_html($setting->name), array('size' => 15, 'readonly' => 'readonly')).'</td>
         <td class="required">'.__('Year:', 'phpleague').'</td>
-        <td>'.$fct->input('year', intval($setting->year), array('size' => 4)).'</td>
+        <td>'.$fct->input('year', intval($setting->year), array('size' => 4, 'readonly' => 'readonly')).'</td>
     </tr>
     <tr>
         <td>'.__('Point(s) for Victory:', 'phpleague').'</td>
@@ -155,6 +155,7 @@ $data[] = array(
 	'menu'  => __('Settings', 'phpleague'),
 	'title' => __('Bonus/Malus for ', 'phpleague').$league_name,
 	'text'  => $output,
+	'hide'  => TRUE,
 	'class' => 'full'
 );
 

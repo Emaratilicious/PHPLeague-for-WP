@@ -19,7 +19,7 @@ if ( ! class_exists('PHPLeague_Database')) {
      * @author     Maxime Dizerens
      * @copyright  (c) 2011 Mikaweb Design, Ltd
      */
-	class PHPLeague_Database extends Plugin_Tools {
+	class PHPLeague_Database extends PHPLeague_Tools {
 
         /**
 	     * Constructor
@@ -42,38 +42,34 @@ if ( ! class_exists('PHPLeague_Database')) {
 	    }
 	
 		/**
-	     * Get every club
-		 * 
-		 * @param  integer $offset
-		 * @param  integer $limit
-		 * @param  string  $order
-		 * @param  boolean $join_country
-	     * @return object
-	     */
-	    public function get_every_club($offset = 0, $limit = 10, $order = 'DESC', $join_country = FALSE)
-	    {
-			global $wpdb;
-			
-			if ($join_country === FALSE)
-			{
-				return $wpdb->get_results($wpdb->prepare("SELECT id, name, id_country
-					FROM $wpdb->club
-					ORDER BY name $order
-					LIMIT %d, %d",
-					$offset, $limit)
-				);
-			}
-			else
-			{
-				return $wpdb->get_results($wpdb->prepare("SELECT c.id, c.name, d.name as country
-					FROM $wpdb->club c
-					LEFT JOIN $wpdb->country d ON c.id_country = d.id
-					ORDER BY c.name $order
-					LIMIT %d, %d",
-					$offset, $limit)
-				);
-			}
-	    }
+         * Get every club
+         * 
+         * @param  integer $offset
+         * @param  integer $limit
+         * @param  string  $order
+         * @param  boolean $join_country
+         * @return object
+         */
+        public function get_every_club($offset = 0, $limit = 10, $order = 'DESC', $join_country = FALSE)
+        {
+            global $wpdb;
+            if ($join_country === FALSE) {
+                return $wpdb->get_results($wpdb->prepare("SELECT id, name, id_country
+                    FROM $wpdb->club
+                    ORDER BY name $order
+                    LIMIT %d, %d",
+                    $offset, $limit)
+                );
+            } else {
+                return $wpdb->get_results($wpdb->prepare("SELECT c.id, c.name, d.name as country, coach, venue
+                    FROM $wpdb->club c
+                    LEFT JOIN $wpdb->country d ON c.id_country = d.id
+                    ORDER BY c.name $order
+                    LIMIT %d, %d",
+                    $offset, $limit)
+                );
+            }
+        }
 	
 		/**
 	     * Verify if a club is unique
@@ -1191,10 +1187,9 @@ if ( ! class_exists('PHPLeague_Database')) {
 		 * @param  integer	$id_league
 	     * @return object
 	     */
-		public function get_league_fixtures_by_team($id_team, $id_league)
+		public function get_fixtures_by_team($id_team, $id_league)
 		{
 			global $wpdb;
-			
 			return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
 			g.played, g.id as game_id, g.id_team_home, g.id_team_away
 				FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
@@ -1208,6 +1203,31 @@ if ( ! class_exists('PHPLeague_Database')) {
 				AND g.id_fixture = d.id
 				ORDER BY d.number ASC",
 				$id_team, $id_team, $id_league));
+		}
+		
+		/**
+	     * Get all fixtures by league
+		 *
+		 * This method gives us the possibility to get all the fixtures
+		 * for a selected league.
+		 *
+		 * @param  integer	$id_league
+	     * @return object
+	     */
+		public function get_fixtures_by_league($id_league)
+		{
+			global $wpdb;
+			return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
+			g.played, g.id as game_id, g.id_team_home, g.id_team_away
+				FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
+				WHERE g.id_team_home = home.id
+				AND g.id_team_away = away.id
+				AND d.id_league = %d
+				AND home.id_club = clhome.id
+				AND away.id_club = claway.id
+				AND g.id_fixture = d.id
+				ORDER BY d.number ASC",
+				$id_league));
 		}
 		
 		/**

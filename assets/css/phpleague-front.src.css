@@ -48,3 +48,7 @@ background:url(../img/favorite.png) repeat-x right top;
 color:#fff;
 font-weight:700;
 }
+
+#phpleague tr.id-favorite a {
+    color:#fff;
+}

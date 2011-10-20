@@ -22,9 +22,16 @@ function insertPHPLeague() {
 	// Fixtures mode
 	if (fixtures.className.indexOf('current') != -1) {
 		var leagueId = document.getElementById('league_id').value;
+		var idTeam   = document.getElementById('id_team').value;
+		var team     = '';
+		
+		if (idTeam != 0 && idTeam != '')
+			team = "id_team=" + idTeam;
+		else
+			team = "";
 		
 		if (leagueId != 0)
-			tagtext = "[phpleague id=" + leagueId + " type=fixtures]";
+			tagtext = "[phpleague id=" + leagueId + " " + team + " type=fixtures]";
 		else
 			tinyMCEPopup.close();
 	}

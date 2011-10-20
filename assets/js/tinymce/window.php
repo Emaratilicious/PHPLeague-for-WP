@@ -23,8 +23,8 @@ if ( ! current_user_can('phpleague')) die();
 
 global $wpdb;
 
-$leagues  = $wpdb->get_results("SELECT `id`, `name`, `year` FROM {$wpdb->league} ORDER BY `year` DESC");
-$clubs    = $wpdb->get_results("SELECT `id`, `name` FROM {$wpdb->club} ORDER BY `name` ASC");
+$leagues  = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name`, `year` FROM {$wpdb->league} ORDER BY `year` DESC, `name` ASC"));
+$clubs    = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name` FROM {$wpdb->club} ORDER BY `name` ASC"));
 $site_url = get_option('siteurl');
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -98,6 +98,8 @@ $site_url = get_option('siteurl');
 	                    ?>
 				        </select>
 					</td>
+					<td><label for="id_team"><?php _e('ID Team', 'phpleague'); ?></label></td>
+					<td><input type="text" size="4" value="" name="id_team" id="id_team" /></td>
 				</tr>
 			</table>
 		</div>

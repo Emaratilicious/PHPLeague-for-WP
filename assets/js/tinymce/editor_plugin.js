@@ -36,7 +36,7 @@
 					author 	  : 'Maxime Dizerens',
 					authorurl : 'http://wordpress.org/extend/plugins/phpleague/',
 					infourl   : 'http://wordpress.org/extend/plugins/phpleague/',
-					version   : '1.2'
+					version   : '1.3'
 			};
 		}
 	});
