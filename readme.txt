@@ -4,15 +4,15 @@ Donate link: http://www.mika-web.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 
-PHPLeague for WordPress is the best companion to manage your sports leagues. Take the Premium version to get more features.
+PHPLeague for WordPress is the best companion to manage your championships.
 
 == Description ==
 
-PHPLeague for WordPress is the best companion to manage your sports leagues. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football (soccer) like handball, basketball, hockey or volleyball.
+PHPLeague for WordPress is the best companion to manage your championships. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football (soccer) like handball, basketball, hockey or volleyball.
 
-**Basic Features**
+**Features**
 
 * The League's table and fixtures can be published via your posts/pages
 * Manage as many leagues as you want, no limitations
@@ -58,7 +58,7 @@ In the front part, no Javascript at all. Always keeping in mind that plenty of b
 
 = Where do I need to add my logos? =
 
-You need to create a `phpleague` folder in `uploads` then create 2 other folders named `logo_big` and `logo_min`.
+Few folders are automatically created during the installation. They're located in your `uploads` directory. 
 
 == Screenshots ==
 
@@ -67,6 +67,11 @@ You need to create a `phpleague` folder in `uploads` then create 2 other folders
 3. Clubs Listing
 
 == Changelog ==
+
+= 1.3.1 =
+* CHANGED: Delete edition name in the database
+* CHANGED: No more Premium Edition!
+* CHANGED: FRENCH language has been updated!
 
 = 1.3 =
 * NEW: Possibility to display all the fixtures

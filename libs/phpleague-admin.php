@@ -42,15 +42,15 @@ if ( ! class_exists('PHPLeague_Admin')) {
                 <div id="adminpanel-header">
                     <div class="logo"><a href="'.admin_url('admin.php?page=phpleague_overview').'"><img alt="PHPLeague logo" src="'.plugins_url('phpleague/assets/img/logo.png').'" /></a></div>
                     <div class="theme-info">
-                        <span class="plugin">'.__('PHPLeague for WP - Core Edition', 'phpleague').'</span>
+                        <span class="plugin">'.__('PHPLeague for WordPress', 'phpleague').'</span>
                         <span class="release">'.__('Release: ', 'phpleague').WP_PHPLEAGUE_VERSION.'</span>
                     </div>
                 </div>
                 <div id="support-links">
                     <ul>
                         <li class="changelog"><a href="http://wordpress.org/extend/plugins/phpleague/changelog/">'.__('Changelog', 'phpleague').'</a></li>
-                        <li class="docs"><a href="http://www.mika-web.com/phpleague-for-wp-documentation/">'.__('Documentation', 'phpleague').'</a></li>
-                        <li class="help"><a href="http://www.mika-web.com/">'.__('Help', 'phpleague').'</a></li>
+                        <li class="docs"><a href="http://www.phpleague.com/en/documentation.html">'.__('Documentation', 'phpleague').'</a></li>
+                        <li class="help"><a href="http://www.phpleague.com/">'.__('Help', 'phpleague').'</a></li>
                     </ul>
                 </div>
                 <div id="adminpanel-main">';
@@ -160,8 +160,8 @@ if ( ! class_exists('PHPLeague_Admin')) {
                 case 'phpleague_club' :
                     require_once WP_PHPLEAGUE_PATH.'inc/admin/club.php';
                     break;
-                case 'phpleague_setting' :
-                    require_once WP_PHPLEAGUE_PATH.'inc/admin/setting.php';
+                case 'phpleague_player' :
+                    require_once WP_PHPLEAGUE_PATH.'inc/admin/player.php';
                     break;
                 case 'phpleague_about' :
                     require_once WP_PHPLEAGUE_PATH.'inc/admin/about.php';

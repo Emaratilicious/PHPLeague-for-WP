@@ -14,16 +14,16 @@ $get_id_fixture = ( ! empty($_GET['id_fixture']) ? intval($_GET['id_fixture']) :
 
 // Security
 if ($db->is_league_exists($id_league) === FALSE)
-	wp_die(__('We did not find the league in the database.', 'phpleague'));
+    wp_die(__('We did not find the league in the database.', 'phpleague'));
 
 // Vars
 $league_name = $db->return_league_name($id_league);
-$setting	 = $db->get_league_settings($id_league);
-$nb_teams	 = intval($setting->nb_teams);
-$nb_legs 	 = intval($setting->nb_leg);
+$setting     = $db->get_league_settings($id_league);
+$nb_teams    = intval($setting->nb_teams);
+$nb_legs     = intval($setting->nb_leg);
 $page_url    = 'admin.php?page=phpleague_overview&option=match&id_league='.$id_league.'&id_fixture='.$get_id_fixture;
-$output		 = '';
-$data 		 = array();
+$output      = '';
+$data        = array();
 $menu        = array(
     __('Teams', 'phpleague')    => admin_url('admin.php?page=phpleague_overview&option=team&id_league='.$id_league),
     __('Fixtures', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=fixture&id_league='.$id_league),
@@ -33,109 +33,97 @@ $menu        = array(
 );
 
 // Check what kind of fixture we have (odd/even)
-if (($nb_teams % 2) != 0)
-{
-	$nb_fixtures = $nb_teams * $nb_legs;
-	$nb_matches  = ($nb_teams - 1) / 2;
-}
-else
-{
-	$nb_fixtures = ($nb_teams * $nb_legs) - $nb_legs;
-	$nb_matches  = ($nb_teams / 2);
+if (($nb_teams % 2) != 0) {
+    $nb_fixtures = $nb_teams * $nb_legs;
+    $nb_matches  = ($nb_teams - 1) / 2;
+} else {
+    $nb_fixtures = ($nb_teams * $nb_legs) - $nb_legs;
+    $nb_matches  = ($nb_teams / 2);
 }
 
 // Do we have to handle some data?
-if (isset($_POST['matches']) && check_admin_referer('phpleague'))
-{
-	$id_fixture = ( ! empty($_POST['id_fixture'])) ? intval($_POST['id_fixture']) : 0;
-	$id_home    = ( ! empty($_POST['id_home']) && is_array($_POST['id_home'])) ? $_POST['id_home'] : NULL;
-	$id_away    = ( ! empty($_POST['id_away']) && is_array($_POST['id_away'])) ? $_POST['id_away'] : NULL;
-	
-	if ($id_fixture === 0) {
-		$message[] = __('An error occurred with the fixture ID.', 'phpleague');
-	} elseif ($id_home === NULL || $id_away === NULL) {
-		$message[] = __('An error occurred with one of the input.', 'phpleague');
-	} else {
-		// Remove old data whatever
-		$db->remove_matches_from_fixture($id_fixture);
-		$array = array();
-		
-		// Insert new data
-		for ($counter = 0; $counter < $nb_matches; $counter++)
-		{
-			// We cannot have the same team twice
-			if ($id_home[$counter] == $id_away[$counter])
-			{
-				$message[] = __('You cannot have the same team at home and away.', 'phpleague');
-				break;
-			}
-			elseif (in_array($id_home[$counter], $array) || in_array($id_away[$counter], $array))
-			{
-				$message[] = __('You cannot have the same team twice by fixture.', 'phpleague');
-				break;
-			}
+if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
+    $id_fixture = ( ! empty($_POST['id_fixture'])) ? intval($_POST['id_fixture']) : 0;
+    $id_home    = ( ! empty($_POST['id_home']) && is_array($_POST['id_home'])) ? $_POST['id_home'] : NULL;
+    $id_away    = ( ! empty($_POST['id_away']) && is_array($_POST['id_away'])) ? $_POST['id_away'] : NULL;
+    
+    if ($id_fixture === 0) {
+        $message[] = __('An error occurred with the fixture ID.', 'phpleague');
+    } elseif ($id_home === NULL || $id_away === NULL) {
+        $message[] = __('An error occurred with one of the input.', 'phpleague');
+    } else {
+        // Remove old data whatever
+        $db->remove_matches_from_fixture($id_fixture);
+        $array = array();
+        
+        // Insert new data
+        for ($counter = 0; $counter < $nb_matches; $counter++) {
+            // We cannot have the same team twice
+            if ($id_home[$counter] == $id_away[$counter]) {
+                $message[] = __('You cannot have the same team at home and away.', 'phpleague');
+                break;
+            } elseif (in_array($id_home[$counter], $array) || in_array($id_away[$counter], $array)) {
+                $message[] = __('You cannot have the same team twice by fixture.', 'phpleague');
+                break;
+            }
 
-			$db->add_matches_to_fixture($id_fixture, $id_home[$counter], $id_away[$counter]);
+            $db->add_matches_to_fixture($id_fixture, $id_home[$counter], $id_away[$counter]);
 
-			// Add the teams in the array to check them later
-			$array[] = $id_home[$counter];
-			$array[] = $id_away[$counter];
-		}
+            // Add the teams in the array to check them later
+            $array[] = $id_home[$counter];
+            $array[] = $id_away[$counter];
+        }
         
         $message[] = __('Match(es) updated successfully.', 'phpleague');
-	}
+    }
 }
 
 $pagination = $fct->pagination($nb_fixtures, 1, $get_id_fixture, 'id_fixture');
-
 $output .= $fct->form_open(admin_url($page_url));
-$output .= '<div class="tablenav"><div class="alignleft actions">'.$fct->input('matches', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button-secondary action')).'</div>';
+$output .= '<div class="tablenav"><div class="alignleft actions">'.$fct->input('matches', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
 
 if ($pagination)
-	$output .= '<div class="tablenav-pages">'.$pagination.'</div>';	
+    $output .= '<div class="tablenav-pages">'.$pagination.'</div>'; 
 
 // Check if the fixture exists in matches table
 $id_fixture = $db->get_fixture_id($get_id_fixture, $id_league, FALSE);
-
 $i = $team_home = $team_away = 0;
-
 $output .= '</div><table class="widefat"><thead><tr><th colspan="2">'.$league_name.__(' - Fixture: ', 'phpleague').$get_id_fixture.'</th></tr><tr><th style="text-align:center;">'.__('Home', 'phpleague').'</th><th style="text-align:center;">'.__('Away', 'phpleague').'</th></tr></thead>';
 
 foreach ($db->get_distinct_league_team($id_league) as $array) {
-	$clubs_list[$array->club_id] = esc_html($array->name);	
+    $clubs_list[$array->club_id] = esc_html($array->name);  
 }
 
-// Home and away matches
-for ($counter = $nb_matches; $counter > 0; $counter = $counter - 1)
-{
-	foreach ($db->get_matches_by_fixture($id_fixture, $counter - 1) as $row)
-	{
-		$team_home = intval($row->id_team_home);
-		$team_away = intval($row->id_team_away);
-	}
+// Matches
+for ($counter = $nb_matches; $counter > 0; $counter = $counter - 1) {
+    // Get team ids
+    foreach ($db->get_matches_by_fixture($id_fixture, $counter - 1) as $row) {
+        $team_home = intval($row->id_team_home);
+        $team_away = intval($row->id_team_away);
+    }
 
-	// Home matches
-	$output .= '<tr '.$fct->alternate('', 'class="alternate"').'><td>';
-	$output .= $fct->select('id_home[]', $clubs_list, $team_home, array('style' => 'width: 100%;'));
-	$output .= '</td>';
+    // Home matches
+    $output .= '<tr '.$fct->alternate('', 'class="alternate"').'><td>';
+    $output .= $fct->select('id_home[]', $clubs_list, $team_home, array('style' => 'width: 100%;'));
+    $output .= '</td>';
 
-	// Away matches
-	$output .= '<td>';
-	$output .= $fct->select('id_away[]', $clubs_list, $team_away, array('style' => 'width: 100%;'));
-	$output .= '</td></tr>';
+    // Away matches
+    $output .= '<td>';
+    $output .= $fct->select('id_away[]', $clubs_list, $team_away, array('style' => 'width: 100%;'));
+    $output .= '</td></tr>';
 
-	$i++;
+    $i++;
 }
 
 $output .= '</table>';
 $output .= $fct->input('id_fixture', $id_fixture, array('type' => 'hidden'));
 $output .= $fct->form_close();
-
-$data[] = array(
-	'menu'  => __('Matches', 'phpleague'),
-	'title' => __('Matches of ', 'phpleague').$league_name,
-	'text'  => $output,
-	'class' => 'full'
+$data[]  = array(
+    'menu'  => __('Matches', 'phpleague'),
+    'title' => __('Matches of ', 'phpleague').$league_name,
+    'text'  => $output,
+    'class' => 'full'
 );
 
+// Show everything...
 echo $ctl->admin_container($menu, $data, $message);

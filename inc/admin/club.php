@@ -13,17 +13,17 @@ $id_club  = ( ! empty($_GET['id_club']) ? intval($_GET['id_club']) : NULL);
 
 // Club edition mode...
 if ($db->is_club_unique($id_club, 'id') === FALSE)
-	return require_once WP_PHPLEAGUE_PATH.'inc/admin/club_edit.php';	
+    return require_once WP_PHPLEAGUE_PATH.'inc/admin/club_edit.php';    
 
 // Vars
 $per_page   = 7;
 $page       = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
-$offset 	= ($page - 1 ) * $per_page;
+$offset     = ($page - 1 ) * $per_page;
 $total      = $db->count_clubs();
 $base_url   = 'admin.php?page=phpleague_club';
-$pagination	= $fct->pagination($total, $per_page, $page);
-$menu 		= array(__('Overview', 'phpleague') => '#');
-$data 		= array();
+$pagination = $fct->pagination($total, $per_page, $page);
+$menu       = array(__('Overview', 'phpleague') => '#');
+$data       = array();
 $message    = array();
 
 // Get every club
@@ -106,13 +106,14 @@ $output = '
 $output .= '</tbody></table>';
 
 if ($pagination)
-	$output .= '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>';
+    $output .= '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>';
 
 $data[] = array(
-	'menu'  => __('Overview', 'phpleague'),
-	'title' => __('Clubs Listing', 'phpleague'),
-	'text'  => $output,
-	'class' => 'full'
+    'menu'  => __('Overview', 'phpleague'),
+    'title' => __('Clubs Listing', 'phpleague'),
+    'text'  => $output,
+    'class' => 'full'
 );
 
+// Show everything...
 echo $ctl->admin_container($menu, $data, $message);

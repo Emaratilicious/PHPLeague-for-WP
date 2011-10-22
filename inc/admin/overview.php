@@ -16,23 +16,23 @@ $message    = array();
 
 // Sub-requests
 switch ($get_option) {
-	case 'team' :
-		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_team.php';
-		break;
-	case 'fixture' :
-		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_fixture.php';
-		break;
-	case 'match' :
-		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_match.php';
-		break;
-	case 'result' :
-		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_result.php';
-		break;
-	case 'setting' :
-		return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_setting.php';
-		break;
-	default :
-		break;
+    case 'team' :
+        return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_team.php';
+        break;
+    case 'fixture' :
+        return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_fixture.php';
+        break;
+    case 'match' :
+        return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_match.php';
+        break;
+    case 'result' :
+        return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_result.php';
+        break;
+    case 'setting' :
+        return require_once WP_PHPLEAGUE_PATH.'inc/admin/league_setting.php';
+        break;
+    default :
+        break;
 }
 
 // Can we generate the table?
@@ -70,17 +70,17 @@ if ($get_option === 'generator' && $id_league) {
 // Vars
 $per_page   = 7;
 $p_number   = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
-$offset 	= ($p_number - 1 ) * $per_page;
+$offset     = ($p_number - 1 ) * $per_page;
 $total      = $db->count_leagues();
-$pagination	= $fct->pagination($total, $per_page, $p_number);
+$pagination = $fct->pagination($total, $per_page, $p_number);
 $page_url   = 'admin.php?page=phpleague_overview';
 $output     = '';
 $data       = array();
-$menu 	   	= array(__('Overview', 'phpleague') => '#');
+$menu       = array(__('Overview', 'phpleague') => '#');
 
 if ($total == 0)
-	$message[] = __('No league found in the database! Click on "New League" to add one.', 'phpleague');
-	
+    $message[] = __('No league found in the database!', 'phpleague');
+    
 $output  = $fct->form_open(admin_url($page_url));
 $output .= $fct->input('name', __('League Name', 'phpleague'), array('readonly' => 'readonly'));
 $output .= $fct->input('year', __('League Year', 'phpleague'), array('readonly' => 'readonly'));
@@ -160,4 +160,5 @@ $data[]  = array(
     'class' => 'full'
 );
 
+// Show everything...
 echo $ctl->admin_container($menu, $data, $message);
