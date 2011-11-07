@@ -4,7 +4,7 @@ Donate link: http://www.mika-web.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 
 PHPLeague for WordPress is the best companion to manage your championships.
 
@@ -17,6 +17,7 @@ PHPLeague for WordPress is the best companion to manage your championships. This
 * The League's table and fixtures can be published via your posts/pages
 * Manage as many leagues as you want, no limitations
 * Manage as many clubs as you want, no limitations
+* Manage as many players as you want, no limitations
 * A very powerful and nice backend to simplify your life
 * A clean (un)installer developed in order to keep your database secure and safe
 
@@ -32,9 +33,10 @@ PHPLeague is really easy to install so just follow the guide:
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Create your season and competition then generate a league
 4. Create your clubs and affect them to your league
-5. Choose the fixtures' dates then the matches (everything's generated automatically)
+5. Insert the fixtures then the matches
 6. Insert your results then generate the table & calendar
-7. Place `[phpleague id="YOUR-ID" type="general"]` in your post/page
+7. Place `[phpleague id=ID_LEAGUE]` in your post/page
+8. Manage your options and enjoy the plugin!
 
 == Frequently Asked Questions ==
 
@@ -58,7 +60,11 @@ In the front part, no Javascript at all. Always keeping in mind that plenty of b
 
 = Where do I need to add my logos? =
 
-Few folders are automatically created during the installation. They're located in your `uploads` directory. 
+Few folders are automatically created during the installation. They're located in your `uploads` directory.
+
+= Another question? =
+
+For more information, check out the PHPLeague project website: <http://www.phpleague.com/>.
 
 == Screenshots ==
 
@@ -68,10 +74,18 @@ Few folders are automatically created during the installation. They're located i
 
 == Changelog ==
 
-= 1.3.1 =
-* CHANGED: Delete edition name in the database
-* CHANGED: No more Premium Edition!
-* CHANGED: FRENCH language has been updated!
+= 1.4.0 =
+* NEW: Get the latest PHPLeague news directly on your dashboard
+* NEW: Get helped from the new date validator when required
+* NEW: Show how many matches a team has at home or away
+* NEW: Redirect automatically users to the plugin homepage after activation
+* CHANGED: When we remove a team from a league, the matches and table data are removed too
+* CHANGED: Don't show a link in the table when links are disabled in the settings
+* CHANGED: Remove edition name in the database
+* CHANGED: The fixtures has been rebuilt with select lists instead of text inputs
+* CHANGED: Remove input values when it's a field by default
+* CHANGED: FRENCH language has been updated and countries list added!
+* CHANGED: No more Premium Edition! FREE for Life...
 
 = 1.3 =
 * NEW: Possibility to display all the fixtures

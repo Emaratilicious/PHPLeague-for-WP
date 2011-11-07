@@ -52,7 +52,6 @@ if ( ! class_exists('PHPLeague_Front')) {
             $favorite   = intval($setting->id_favorite);
             $relegation = $nb_teams - intval($setting->relegation);
             $team_links = ($setting->team_link == 'yes') ? TRUE : FALSE;
-            $club_url   = '';
             
             if (isset($_GET['team'])) {
                 $front = new PHPLeague_Front();
@@ -85,7 +84,6 @@ if ( ! class_exists('PHPLeague_Front')) {
                 if ($team_links) {
                     $url      = get_permalink();
         			$url      = add_query_arg('team', $row->id_club, $url);
-                    $club_url = $url;
                 }
                 
                 if ($place <= $nb_teams) {               
@@ -135,10 +133,17 @@ if ( ! class_exists('PHPLeague_Front')) {
                     $output .= '<td class="centered">'.$place.'</td>';
                     
                     // If a logo has been found, we display it!
-                    if (is_file(WP_PHPLEAGUE_UPLOADS_PATH.'logo_mini/'.$row->logo_mini))
-                        $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;<a title="'.esc_html($row->club_name).'" href="'.$club_url.'">'.esc_html($row->club_name).'</a></td>';
-                    else
-                        $output .= '<td><a title="'.esc_html($row->club_name).'" href="'.$club_url.'">'.esc_html($row->club_name).'</a></td>';
+                    if (is_file(WP_PHPLEAGUE_UPLOADS_PATH.'logo_mini/'.$row->logo_mini)) {
+                        if (empty($url))
+                            $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;'.esc_html($row->club_name).'</td>';
+                        else
+                            $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;<a title="'.esc_html($row->club_name).'" href="'.$club_url.'">'.esc_html($row->club_name).'</a></td>';
+                    } else {
+                        if (empty($url))
+                            $output .= '<td>'.esc_html($row->club_name).'</td>';
+                        else
+                            $output .= '<td><a title="'.esc_html($row->club_name).'" href="'.$url.'">'.esc_html($row->club_name).'</a></td>';
+                    }
                     
                     $output .= '<td class="centered">'.$points.'</td>';
                     $output .= '<td class="centered">'.$played.'</td>';

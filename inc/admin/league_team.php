@@ -25,7 +25,7 @@ $menu        = array(
     __('Settings', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=setting&id_league='.$id_league)
 );
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
     $id_club = intval($_POST['id_club']);
     
@@ -62,7 +62,7 @@ if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
 }
 
 // Vars
-$per_page   = 10;
+$per_page   = 7;
 $page       = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
 $offset     = ($page - 1 ) * $per_page;
 $setting    = $db->get_league_settings($id_league);
@@ -91,12 +91,14 @@ if ($pagination)
     $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
 
 $output .=
-    '</div><table class="widefat">
+    '</div><table class="widefat text-centered">
         <thead>
             <tr>
                 <th class="check-column"><input type="checkbox"/></th>
                 <th>'.__('ID', 'phpleague').'</th>
                 <th>'.__('Name', 'phpleague').'</th>
+                <th>'.__('Home Matches', 'phpleague').'</th>
+                <th>'.__('Away Matches', 'phpleague').'</th>
             </tr>
         </thead>
         <tfoot>
@@ -104,16 +106,22 @@ $output .=
                 <th class="check-column"><input type="checkbox"/></th>
                 <th>'.__('ID', 'phpleague').'</th>
                 <th>'.__('Name', 'phpleague').'</th>
+                <th>'.__('Home Matches', 'phpleague').'</th>
+                <th>'.__('Away Matches', 'phpleague').'</th>
             </tr>
         </tfoot>
         <tbody>';
         
         foreach ($db->get_every_club_in_league($id_league, TRUE, $offset, $per_page) as $club) {
+            $home_matches = $db->team_nb_matches_in_league($club->id);
+            $away_matches = $db->team_nb_matches_in_league($club->id, 'away');
             $output .=
                 '<tr '.$fct->alternate('', 'class="alternate"').'>
                     <th class="check-column"><input type="checkbox" name="id_club[]" value="'.intval($club->id).'" /></th>
                     <td class="check-column">'.intval($club->id).'</td>
                     <td>'.esc_html($club->name).'</td>
+                    <td>'.$home_matches.'</td>
+                    <td>'.$away_matches.'</td>
                 </tr>';
         }
 

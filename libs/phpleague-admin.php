@@ -49,8 +49,8 @@ if ( ! class_exists('PHPLeague_Admin')) {
                 <div id="support-links">
                     <ul>
                         <li class="changelog"><a href="http://wordpress.org/extend/plugins/phpleague/changelog/">'.__('Changelog', 'phpleague').'</a></li>
-                        <li class="docs"><a href="http://www.phpleague.com/en/documentation.html">'.__('Documentation', 'phpleague').'</a></li>
-                        <li class="help"><a href="http://www.phpleague.com/">'.__('Help', 'phpleague').'</a></li>
+                        <li class="docs"><a href="http://www.phpleague.com/manual/">'.__('Manual', 'phpleague').'</a></li>
+                        <li class="help"><a href="http://www.phpleague.com/">'.__('Homepage', 'phpleague').'</a></li>
                     </ul>
                 </div>
                 <div id="adminpanel-main">';
@@ -147,6 +147,9 @@ if ( ! class_exists('PHPLeague_Admin')) {
          */
         public function admin_page()
         {
+            // JS must be enabled to use properly PHPLeague...
+            _e('<noscript>For full functionality of PHPLeague, it is necessary to enable JavaScript.</noscript>', 'phpleague');
+            
             // Page Header
             echo $this->admin_header();
             
@@ -165,6 +168,9 @@ if ( ! class_exists('PHPLeague_Admin')) {
                     break;
                 case 'phpleague_about' :
                     require_once WP_PHPLEAGUE_PATH.'inc/admin/about.php';
+                    break;
+                case 'phpleague_setting' :
+                    require_once WP_PHPLEAGUE_PATH.'inc/admin/setting.php';
                     break;
                 case 'phpleague_overview' :
                 default :

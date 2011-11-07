@@ -1,7 +1,13 @@
+noscript {
+background:red;
+color:white;
+}
+
 .required {
 font-weight:700!important;
 color: #333;
 }
+
 #adminpanel-logo {
 background:url(../img/logo.png);
 float:left;
@@ -19,6 +25,11 @@ padding:10px;
 
 #adminpanel .widefat .alternate {
 background-color:#fff;
+}
+
+#adminpanel .text-centered,
+#adminpanel .text-centered th {
+text-align:center!important;
 }
 
 #adminpanel a {
@@ -46,8 +57,13 @@ padding:.5em 0;
 text-align:right;
 }
 
-#adminpanel table input {
+#adminpanel table input,
+#adminpanel table select {
 text-align:center;
+}
+
+.widefat .check-column {
+padding:7px 7px 8px!important;
 }
 
 #adminpanel {

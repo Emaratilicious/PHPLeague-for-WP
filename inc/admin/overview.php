@@ -70,6 +70,7 @@ if ($get_option === 'generator' && $id_league) {
 // Vars
 $per_page   = 7;
 $p_number   = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
+$activation = ( ! empty($_GET['activation']) ? intval($_GET['activation']) : 0);
 $offset     = ($p_number - 1 ) * $per_page;
 $total      = $db->count_leagues();
 $pagination = $fct->pagination($total, $per_page, $p_number);
@@ -82,8 +83,8 @@ if ($total == 0)
     $message[] = __('No league found in the database!', 'phpleague');
     
 $output  = $fct->form_open(admin_url($page_url));
-$output .= $fct->input('name', __('League Name', 'phpleague'), array('readonly' => 'readonly'));
-$output .= $fct->input('year', __('League Year', 'phpleague'), array('readonly' => 'readonly'));
+$output .= $fct->input('name', __('Name', 'phpleague'), array('readonly' => 'readonly', 'class' => 'default'));
+$output .= $fct->input('year', __('Year', 'phpleague'), array('readonly' => 'readonly', 'class' => 'default'));
 $output .= $fct->input('add_league', __('Create', 'phpleague'), array('type' => 'submit', 'class' => 'button'));
 $output .= $fct->form_close();
 
@@ -95,12 +96,17 @@ $data[] = array(
     'class' => 'full'
 );
 
-$output = '';
+if ($activation === 1)
+    $message[] = __('PHPLeague has been activated with success! We hope that you will enjoy this plugin...', 'phpleague');
+
+$output  = $fct->form_open(admin_url('admin.php?page=phpleague_overview'));
+$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_player', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
+
 if ($pagination)
-    $output .= '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>'; 
+    $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
 
 $output .= '
-<table class="widefat">
+</div><table class="widefat">
     <thead>
         <tr>
             <th class="check-column"><input type="checkbox"/></th>

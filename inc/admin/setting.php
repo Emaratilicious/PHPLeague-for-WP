@@ -10,26 +10,22 @@
  */
 
 // Vars
-$data = array();
-$menu = array(
-    __('Export', 'phpleague') => '#',
-    __('Import', 'phpleague') => '#'
-);
+$base_url   = 'admin.php?page=phpleague_setting';
+$menu       = array(__('Overview', 'phpleague') => '#');
+$data       = array();
+$message    = array();
 
-$output = __('Coming Soon...', 'phpleague');
+// Do we have to handle some data?
+if (isset($_POST['club']) && check_admin_referer('phpleague')) {
 
-$data[] = array(
-    'menu'  => __('Export', 'phpleague'),
-    'title' => __('Export your Database', 'phpleague'),
-    'text'  => $output,
-    'class' => 'full'
-);
+}
 
-$output = __('Coming Soon...', 'phpleague');
+$output  = $fct->form_open(admin_url($base_url));
+$output .= $fct->form_close();
 
 $data[] = array(
-    'menu'  => __('Import', 'phpleague'),
-    'title' => __('Import a Database', 'phpleague'),
+    'menu'  => __('Overview', 'phpleague'),
+    'title' => __('PHPLeague Settings', 'phpleague'),
     'text'  => $output,
     'class' => 'full'
 );

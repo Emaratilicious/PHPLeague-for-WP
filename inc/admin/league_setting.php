@@ -12,7 +12,7 @@
 if ($db->is_league_exists($id_league) === FALSE)
     wp_die(__('We did not find the league in the database.', 'phpleague'));
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['general']) && check_admin_referer('phpleague')) {
     // Secure vars...
     $time     = (preg_match('/^\d{2}:\d{2}:\d{2}$/', $_POST['time'])) ? trim($_POST['time']) : '17:00:00';
@@ -77,10 +77,8 @@ if (isset($_POST['general']) && check_admin_referer('phpleague')) {
     // Secure data
     $starting   = ( ! empty($_POST['starting']))   ? intval($_POST['starting'])           : 0;
     $substitute = ( ! empty($_POST['substitute'])) ? intval($_POST['substitute'])         : 0;
-    $positions  = ( ! empty($_POST['positions']))  ? maybe_serialize($_POST['positions']) : NULL;
-    $events     = ( ! empty($_POST['events']))     ? maybe_serialize($_POST['events'])    : NULL;
         
-    $db->edit_player_settings($id_league, $starting, $substitute, $positions, $events);
+    $db->edit_player_settings($id_league, $starting, $substitute);
     $message[] = __('Players settings updated successfully!', 'phpleague');
 }
 
@@ -144,7 +142,7 @@ $output .=
         <td>'.__('Club Information Link:', 'phpleague').'</td>
         <td>'.$fct->select('link', $yes_no, $setting->team_link).'</td>
         <td>'.__('Time by Default:', 'phpleague').'</td>
-        <td>'.$fct->input('time', $setting->default_time, array('size' => 6)).'</td>
+        <td>'.$fct->input('time', $setting->default_time, array('size' => 6, 'class' => 'masked-time')).'</td>
     </tr>
     <tr>
         <td>'.__('Favorite Team:', 'phpleague').'</td>
@@ -179,80 +177,8 @@ if ($setting->player_mod === 'yes') {
             <td>'.__('Substitute Players:', 'phpleague').'</td>
             <td>'.$fct->select('substitute', $numbers, $setting->substitute).'</td>
         </tr>
-    </table><br />';
-    
-    $output .=
-    '<table id="positions-table" class="widefat">
-        <thead>
-            <tr>
-                <th>'.__('ID', 'phpleague').'</th>
-                <th>'.__('Name', 'phpleague').'</th>
-                <th>'.__('Order', 'phpleague').'</th>
-                <th><a href="#add_position" id="add_position">'.__('New Position', 'phpleague').'</a></th>
-            </tr>
-        </thead>
-        <tbody>';
+    </table>';
 
-    $positions = $db->get_positions($id_league);
-    foreach (maybe_unserialize($positions) as $position) {
-        // Field empty or null
-        if ($position == 'NULL' || $position == '') {
-            $output .= '<tr id="position-1">';
-            $output .= '<td>'.$fct->input('positions[1][id]', 1, array('size' => '4', 'readonly' => 'readonly')).'</td>';
-            $output .= '<td>'.$fct->input('positions[1][name]', '').'</td>';
-            $output .= '<td>'.$fct->input('positions[1][order]', 0, array('size' => '4')).'</td>';
-            $output .= '<td>'.$fct->input('remove_position', __('Remove', 'phpleague'), array('type' => 'button', 'class' => 'button remove_position')).'</td>';
-            $output .= '</tr>';
-        } else {
-            foreach (maybe_unserialize($position) as $key => $row) {
-                $key++;
-                $output .= '<tr id="position-'.$key.'">';
-                $output .= '<td>'.$fct->input('positions['.$key.'][id]', $row['id'], array('size' => '4', 'readonly' => 'readonly')).'</td>';
-                $output .= '<td>'.$fct->input('positions['.$key.'][name]', $row['name']).'</td>';
-                $output .= '<td>'.$fct->input('positions['.$key.'][order]', $row['order'], array('size' => '4')).'</td>';
-                $output .= '<td>'.$fct->input('remove_position', __('Remove', 'phpleague'), array('type' => 'button', 'class' => 'button remove_position')).'</td>';
-                $output .= '</tr>';
-            }
-        }
-    }
-    
-    $output .= '</tbody></table><br />';
-    $output .=
-    '<table id="events-table" class="widefat">
-        <thead>
-            <tr>
-                <th>'.__('ID', 'phpleague').'</th>
-                <th>'.__('Full Name', 'phpleague').'</th>
-                <th>'.__('Mini Name', 'phpleague').'</th>
-                <th><a href="#add_event" id="add_event">'.__('New Event', 'phpleague').'</a></th>
-            </tr>
-        </thead>
-        <tbody>';
-
-    $events = $db->get_events($id_league);
-    foreach (maybe_unserialize($events) as $event) {
-        // Field empty or null
-        if ($event == 'NULL' || $event == '') {
-            $output .= '<tr id="event-1">';
-            $output .= '<td>'.$fct->input('events[1][id]', 1, array('size' => '4', 'readonly' => 'readonly')).'</td>';
-            $output .= '<td>'.$fct->input('events[1][full_name]', '').'</td>';
-            $output .= '<td>'.$fct->input('events[1][mini_name]', '').'</td>';
-            $output .= '<td>'.$fct->input('remove_event', __('Remove', 'phpleague'), array('type' => 'button', 'class' => 'button remove_event')).'</td>';
-            $output .= '</tr>';
-        } else {
-            foreach (maybe_unserialize($event) as $key => $row) {
-                $key++;
-                $output .= '<tr id="event-'.$key.'">';
-                $output .= '<td>'.$fct->input('events['.$key.'][id]', $row['id'], array('size' => '4', 'readonly' => 'readonly')).'</td>';
-                $output .= '<td>'.$fct->input('events['.$key.'][full_name]', $row['full_name']).'</td>';
-                $output .= '<td>'.$fct->input('events['.$key.'][mini_name]', $row['mini_name']).'</td>';
-                $output .= '<td>'.$fct->input('remove_event', __('Remove', 'phpleague'), array('type' => 'button', 'class' => 'button remove_event')).'</td>';
-                $output .= '</tr>';
-            }
-        }
-    }
-    
-    $output .= '</tbody></table>';
     $output .= '<div class="submit">'.$fct->input('player', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
     $output .= $fct->form_close();
     $data[]  = array(

@@ -327,19 +327,30 @@ if ( ! class_exists('PHPLeague_Database')) {
         /**
          * Remove a club from a league
          *
-         * @param  integer $id_club
+         * @param  integer $id_team
          * @return object
          */
-        public function remove_club_from_league($id_club)
+        public function remove_club_from_league($id_team)
         {           
             global $wpdb;
-            return $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id = %d", $id_club));
+            
+            // Delete the team
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id = %d", $id_team));
+            
+            // Delete the team ranking
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_cache WHERE id_team = %d", $id_team));
+            
+            // Delete the team matches
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->match WHERE (id_team_away = %d OR id_team_home = %d)", $id_team, $id_team));
         }
         
         /**
          * Get every club in a league
          * 
          * @param  integer $id_league
+         * @param  boolean $pagination
+         * @param  integer $offset
+         * @param  integer $limit
          * @return object
          */
         public function get_every_club_in_league($id_league, $pagination = FALSE, $offset = 0, $limit = 10)
@@ -390,6 +401,23 @@ if ( ! class_exists('PHPLeague_Database')) {
             global $wpdb;
             return $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->fixture WHERE id_league = %d", $id_league));
         }
+
+        /**
+         * Count how many matches the team has at home/away
+         * 
+         * @param  integer $id_team
+         * @param  string  $location
+         * @return integer
+         */
+        public function team_nb_matches_in_league($id_team, $location = 'home')
+        {
+            global $wpdb;
+
+            if ($location === 'home')
+                return $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->match WHERE id_team_home = %d", $id_team));
+            else
+                return $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->match WHERE id_team_away = %d", $id_team));   
+        }
         
         /**
          * Add fixtures in a league
@@ -403,7 +431,7 @@ if ( ! class_exists('PHPLeague_Database')) {
             global $wpdb;
             return $wpdb->insert($wpdb->fixture, array('number' => $number, 'id_league' => $id_league), array('%d', '%d'));
         }
-        
+
         /**
          * Get fixtures from a league
          * 
@@ -413,7 +441,10 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_fixtures_league($id_league)
         {
             global $wpdb;
-            return $wpdb->get_results($wpdb->prepare("SELECT number, scheduled, id FROM $wpdb->fixture WHERE id_league = %d ORDER BY number", $id_league));
+            return $wpdb->get_results($wpdb->prepare("SELECT number, scheduled, id
+                FROM $wpdb->fixture
+                WHERE id_league = %d
+                ORDER BY number", $id_league));
         }
         
         /**
@@ -611,35 +642,23 @@ if ( ! class_exists('PHPLeague_Database')) {
          * @param  integer $id_league
          * @param  integer $starting
          * @param  integer $substitute
-         * @param  string  $positions
-         * @param  string  $events
          * @return object
          */
-        public function edit_player_settings($id_league, $starting, $substitute, $positions = NULL, $events = NULL)
+        public function edit_player_settings($id_league, $starting, $substitute)
         {
             global $wpdb;
-            // WP doesn't handle properly NULL
-            if ($positions === NULL)
-                $positions = 'NULL';
-                
-            if ($events === NULL)
-                $events = 'NULL';
             
             return
             $wpdb->update( 
                 $wpdb->league,
                 array(
                     'starting'   => $starting,
-                    'substitute' => $substitute,
-                    'positions'  => $positions,
-                    'events'     => $events
+                    'substitute' => $substitute
                 ), 
                 array('id' => $id_league),
                 array(
                     '%d',
-                    '%d',
-                    '%s',
-                    '%s'
+                    '%d'
                 ), 
                 array('%d')
             );
@@ -1208,7 +1227,7 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_player_history($id_player)
         {
             global $wpdb;
-            return $wpdb->get_results($wpdb->prepare("SELECT pt.id as id_player_team, pt.id_player, pt.id_team, pt.id_position, pt.number, c.name as club, l.name as league, l.year, l.id as league_id
+            return $wpdb->get_results($wpdb->prepare("SELECT pt.id as id_player_team, pt.id_player, pt.id_team, pt.number, c.name as club, l.name as league, l.year, l.id as league_id
                 FROM $wpdb->player_team pt
                 LEFT JOIN $wpdb->team t ON t.id = pt.id_team
                 LEFT JOIN $wpdb->club c ON c.id = t.id_club
@@ -1225,20 +1244,19 @@ if ( ! class_exists('PHPLeague_Database')) {
          * @param  integer $id_player
          * @param  integer $id_team
          * @param  integer $number
-         * @param  integer $id_position
          * @param  string  $action
          * @return object
          */
-        public function update_player_history($id_player, $id_team, $number, $id_position, $action = 'update')
+        public function update_player_history($id_player, $id_team, $number, $action = 'update')
         {
             global $wpdb;
             if ($action === 'update') {
                 return
                 $wpdb->update( 
                     $wpdb->player_team, 
-                    array('number' => $number, 'id_position' => $id_position), 
+                    array('number' => $number), 
                     array('id_player' => $id_player, 'id_team' => $id_team), 
-                    array('%d', '%d'), 
+                    array('%d'), 
                     array('%d', '%d') 
                 );
             } elseif ($action === 'insert') {
@@ -1248,10 +1266,9 @@ if ( ! class_exists('PHPLeague_Database')) {
                     array(
                         'id_player'   => $id_player,
                         'id_team'     => $id_team,
-                        'number'      => $number,
-                        'id_position' => $id_position
+                        'number'      => $number
                     ), 
-                    array('%d', '%d', '%d', '%d')
+                    array('%d', '%d', '%d')
                 );
             } else {
                 return;
@@ -1436,30 +1453,6 @@ if ( ! class_exists('PHPLeague_Database')) {
                 return TRUE;    
             else
                 return FALSE;
-        }
-        
-        /**
-         * Get positions
-         * 
-         * @param  integer $id_league
-         * @return object
-         */
-        public function get_positions($id_league)
-        {
-            global $wpdb;
-            return $wpdb->get_row($wpdb->prepare("SELECT positions FROM $wpdb->league WHERE id = %d", $id_league));
-        }
-        
-        /**
-         * Get events
-         * 
-         * @param  integer $id_league
-         * @return object
-         */
-        public function get_events($id_league)
-        {
-            global $wpdb;
-            return $wpdb->get_row($wpdb->prepare("SELECT events FROM $wpdb->league WHERE id = %d", $id_league));
         }
         
         /**

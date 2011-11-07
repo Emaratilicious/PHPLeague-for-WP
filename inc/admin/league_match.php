@@ -41,7 +41,7 @@ if (($nb_teams % 2) != 0) {
     $nb_matches  = ($nb_teams / 2);
 }
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
     $id_fixture = ( ! empty($_POST['id_fixture'])) ? intval($_POST['id_fixture']) : 0;
     $id_home    = ( ! empty($_POST['id_home']) && is_array($_POST['id_home'])) ? $_POST['id_home'] : NULL;
@@ -69,7 +69,7 @@ if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
 
             $db->add_matches_to_fixture($id_fixture, $id_home[$counter], $id_away[$counter]);
 
-            // Add the teams in the array to check them later
+            // Add the teams in the array to check them later...
             $array[] = $id_home[$counter];
             $array[] = $id_away[$counter];
         }

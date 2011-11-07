@@ -14,7 +14,7 @@ $data = array();
 $menu = array(
     __('Dashboard', 'phpleague')  => '#',
     __('Clubs', 'phpleague')      => '#',
-    __('Settings', 'phpleague')   => '#',
+    __('Players', 'phpleague')    => '#',
     __('Shortcodes', 'phpleague') => '#',
     __('Plugin', 'phpleague')     => '#'
 );
@@ -112,25 +112,11 @@ $data[] = array(
     'class' => 'full'
 );
 
-// Settings
+// players
 $data[] = array(
-    'menu'  => __('Settings', 'phpleague'),
+    'menu'  => __('Players', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
-    'text'  => __('This section of the plugin is entirely dedicated to the settings management. You can for instance import or export your league from here.', 'phpleague'),
-    'class' => 'full'
-);
-
-$data[] = array(
-    'menu'  => __('Settings', 'phpleague'),
-    'title' => __('Export', 'phpleague'),
-    'text'  => __('Not functional yet.', 'phpleague'),
-    'class' => 'full'
-);
-
-$data[] = array(
-    'menu'  => __('Settings', 'phpleague'),
-    'title' => __('Import', 'phpleague'),
-    'text'  => __('Not functional yet.', 'phpleague'),
+    'text'  => __('This section of the plugin is entirely dedicated to the players management. You can add, edit or even delete a player once created.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -177,7 +163,7 @@ $table = '
 </tbody>
 </table>';
 
-$table .= __('All those short codes need to be activated with the following string: [phpleague]. The "id_team" parameter is only used by the fixtures so as the "style" option for the table.', 'phpleague');
+$table .= __('All those short codes need to be activated with the following string: [phpleague].<br />The "id_team" parameter is only used by the fixtures so as the "style" option for the table.', 'phpleague');
 
 // Shortcodes
 $data[] = array(
@@ -191,21 +177,21 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Plugin', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
-    'text'  => __('You are currently using the <b>Core</b> edition of the PHPLeague for WordPress Plugin. This edition is mostly a demonstration of what PHPLeague can do. If you need more features, you should upgrade to the <b>Premium</b> Edition.', 'phpleague'),
+    'text'  => __('You are currently using the <b>ULTIMATE</b> edition of the PHPLeague for WordPress Plugin.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Plugin', 'phpleague'),
     'title' => __('Requirements', 'phpleague'),
-    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure he must handle every environment. As WordPress 3.2+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database. PHPLeague is fully using the power of the SQL Constraints so you have to use InnoDB as storage engine.', 'phpleague'),
+    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.2+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Plugin', 'phpleague'),
     'title' => __('Thanks', 'phpleague'),
-    'text'  => __('I would like to thanks everybody who contribute - indirectly - to develop this Plugin. The names I have in mind are: Alexis Mangin, Woo Themes Developers, jQuery Developers and WordPress Developers.', 'phpleague'),
+    'text'  => __('I would like to thanks everybody who contribute - indirectly - to develop this Plugin. The names I have in mind are: Alexis Mangin, jQuery Developers and WordPress Developers.', 'phpleague'),
     'class' => 'full'
 );
 

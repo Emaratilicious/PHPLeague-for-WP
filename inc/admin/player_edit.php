@@ -20,7 +20,7 @@ $menu      = array(__('Player Information', 'phpleague') => '#', __('Player Reco
 if ($db->is_player_unique($id_player) === TRUE)
     wp_die(__('We did not find the player in the database.', 'phpleague'));
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     // Secure data
     $firstname = (string) trim($_POST['firstname']);

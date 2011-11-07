@@ -101,10 +101,10 @@ if ( ! class_exists('PHPLeague_Tools')) {
         {
             if (mb_strlen($str) < $length)
                 return FALSE;
-            
-            if (empty($valid))
-                $valid = array('-', '_', ' ', '.', 'é', 'à', 'è', 'ä', 'ö', 'ü');
 
+            if (empty($valid))
+                $valid = array('-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à', 'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú', 'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ');
+            
             return (bool) ctype_alnum(str_replace($valid, '', $str));
         }
         

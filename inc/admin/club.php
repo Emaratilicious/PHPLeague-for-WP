@@ -31,7 +31,7 @@ foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
     $countries_list[$array->id] = esc_html($array->name);
 }
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['club']) && check_admin_referer('phpleague')) {
     // Clean up vars
     $name    = (string) trim($_POST['club_name']);
@@ -63,8 +63,14 @@ $data[] = array(
     'class' => 'full'
 );
 
-$output = '
-<table class="widefat">
+$output  = $fct->form_open(admin_url('admin.php?page=phpleague_club'));
+$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_club', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
+
+if ($pagination)
+    $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
+
+$output .= '
+</div><table class="widefat">
     <thead>
         <tr>
             <th class="check-column"><input type="checkbox"/></th>
@@ -104,9 +110,6 @@ $output = '
     }
 
 $output .= '</tbody></table>';
-
-if ($pagination)
-    $output .= '<div class="tablenav"><div class="tablenav-pages">'.$pagination.'</div></div>';
 
 $data[] = array(
     'menu'  => __('Overview', 'phpleague'),

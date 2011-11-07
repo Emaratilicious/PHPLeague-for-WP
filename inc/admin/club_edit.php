@@ -19,7 +19,7 @@ $menu     = array(__('Club Information', 'phpleague') => '#');
 if ($db->is_club_unique($id_club, 'id') === TRUE)
     wp_die(__('We did not find the club in the database.', 'phpleague'));
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
     // Security
     $name     = (string) trim($_POST['name']);
@@ -90,7 +90,7 @@ $table       =
             <td>'.__('Club Website:', 'phpleague').'</td>
             <td>'.$fct->input('website', esc_html($club_info->website)).'</td>
             <td>'.__('Creation Year:', 'phpleague').'</td>
-            <td>'.$fct->input('creation', intval($club_info->creation)).'</td>
+            <td>'.$fct->input('creation', $club_info->creation).'</td>
         </tr>
         <tr>
             <td>'.__('Path Big Logo:', 'phpleague').'</td>

@@ -22,7 +22,7 @@
 Plugin Name: PHPLeague for WordPress
 Plugin URI: http://www.phpleague.com/
 Description: PHPLeague for WordPress is the best companion to manage your championships.
-Version: 1.3.1
+Version: 1.4.0
 Author: Maxime Dizerens
 Author URI: http://www.phpleague.com/
 */
@@ -42,14 +42,15 @@ if ( ! class_exists('PHPLeague')) {
         public $longname  = 'PHPLeague for WordPress';
         public $shortname = 'PHPLeague for WP';
         public $homepage  = 'http://www.phpleague.com/';
-        public $feed      = 'http://www.phpleague.com/';
-        public $edition   = 'FREE Edition';
+        public $feed      = 'http://www.phpleague.com/feed/';
+        public $edition   = 'Ultimate Edition';
         public $access    = '';
         public $pages     = array(
             'phpleague_about',
-            'phpleague_overview',
             'phpleague_club',
+            'phpleague_overview',
             'phpleague_player',
+            'phpleague_setting',
         );
 
         /**
@@ -69,6 +70,7 @@ if ( ! class_exists('PHPLeague')) {
             // Core files
             require_once WP_PHPLEAGUE_PATH.'libs/phpleague-tools.php';
             require_once WP_PHPLEAGUE_PATH.'libs/phpleague-database.php';
+            require_once WP_PHPLEAGUE_PATH.'libs/phpleague-widgets.php';
             
             // Load our tables
             $this->define_tables();
@@ -90,6 +92,7 @@ if ( ! class_exists('PHPLeague')) {
                 add_action('admin_menu', array(&$this, 'admin_menu'));
                 add_action('admin_print_styles', array(&$this, 'print_admin_styles'));
                 add_action('admin_print_scripts', array(&$this, 'print_admin_scripts'));
+                add_action('wp_dashboard_setup', array(&$this, 'register_widgets'));
                 
                 // AJAX library
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-ajax.php';
@@ -113,8 +116,8 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function define_constants()
         {
-            define('WP_PHPLEAGUE_VERSION', '1.3.1');
-            define('WP_PHPLEAGUE_DB_VERSION', '1.2.4');
+            define('WP_PHPLEAGUE_VERSION', '1.4.0');
+            define('WP_PHPLEAGUE_DB_VERSION', '1.3.0');
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
@@ -130,6 +133,13 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function plugin_admin_init()
         {
+            // Just after the activation, users are automatically redirected to PHPLeague...
+            if (get_option('phpleague_do_activation_redirect', FALSE)) {
+                delete_option('phpleague_do_activation_redirect');
+                wp_redirect(get_option('siteurl').'/wp-admin/admin.php?page=phpleague_overview&activation=1');
+                exit();
+            }
+
             // Set capabilities
             $role = get_role($this->access);
             $role->add_cap('manage_phpleague');
@@ -144,6 +154,17 @@ if ( ! class_exists('PHPLeague')) {
                 if ( ! current_user_can('manage_phpleague'))
                     wp_die(__('Permission insufficient to run PHPLeague!', 'phpleague'));
             }
+        }
+        
+        /**
+         * Add all widgets here...
+         *
+         * @param  none
+         * @return void
+         */
+        public function register_widgets()
+        {
+             wp_add_dashboard_widget('phpleague_dashboard', 'PHPLeague Latest News', array('PHPLeague_Widgets', 'dashboard'));
         }
         
         /**
@@ -214,14 +235,19 @@ if ( ! class_exists('PHPLeague')) {
 				$wpdb->query("ALTER TABLE $wpdb->league ADD team_link enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
 				$wpdb->query("ALTER TABLE $wpdb->league ADD default_time time NOT NULL DEFAULT '17:00:00' AFTER team_link;");
 				
-				// New option
+				// Set the edition name in the database...
 				add_option('phpleague_edition', WP_PHPLEAGUE_EDITION);
 			}
 			
 			// Few modifications
-			if ($current_db_version < '1.2.4') {
-				// Delete option
+			if ($current_db_version < '1.3.0') {
+				// Not required anymore...
 				delete_option('phpleague_edition');
+
+                // Add the type of sport used...
+                add_option('phpleague_sport_type', 'soccer');
+
+                // Add new fields and table here...
 			}
 
 			if ($current_version < WP_PHPLEAGUE_VERSION) {
@@ -656,6 +682,8 @@ if ( ! class_exists('PHPLeague')) {
             // Save versions
             add_option('phpleague_version', WP_PHPLEAGUE_VERSION);
             add_option('phpleague_db_version', $db_version);
+            add_option('phpleague_do_activation_redirect', TRUE);
+            add_option('phpleague_sport_type', 'soccer');
         }
 
         /**
@@ -685,6 +713,7 @@ if ( ! class_exists('PHPLeague')) {
             // Delete the version in the options table
             delete_option('phpleague_version');
             delete_option('phpleague_db_version');
+            delete_option('phpleague_sport_type');
             
             // Delete the PHPLeague directory and sub-directories
             PHPLeague_Tools::manage_directory(WP_PHPLEAGUE_UPLOADS_PATH, 'delete');
@@ -723,6 +752,8 @@ if ( ! class_exists('PHPLeague')) {
                     return;
 
                 wp_register_script('phpleague', plugins_url('phpleague/assets/js/admin.js'), array('jquery'));
+                wp_register_script('phpleague-mask', plugins_url('phpleague/assets/js/jquery.maskedinput.js'), array('jquery'));
+                wp_enqueue_script('phpleague-mask');
                 wp_enqueue_script('phpleague');
             }
         }
@@ -765,6 +796,15 @@ if ( ! class_exists('PHPLeague')) {
                     __('Players', 'phpleague'),
                     $this->access,
                     'phpleague_player',
+                    array($instance, 'admin_page')
+                );
+
+                add_submenu_page(
+                    $parent,
+                    __('Settings (PHPLeague)', 'phpleague'),
+                    __('Settings', 'phpleague'),
+                    $this->access,
+                    'phpleague_setting',
                     array($instance, 'admin_page')
                 );
                 

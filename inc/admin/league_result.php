@@ -32,7 +32,7 @@ $menu        = array(
     __('Settings', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=setting&id_league='.$id_league)
 );
 
-// Do we have to handle some data?
+// $_POST data processing...
 if (isset($_POST['results']) && check_admin_referer('phpleague')) {
     $array = ( ! empty($_POST['array'])) ? $_POST['array'] : NULL;
     if (is_array($array)) {
@@ -93,21 +93,21 @@ foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
     $output .= '<td class="check-column">'.$fct->input('array['.$key.'][goal_home]', $row->goal_home, array('size' => 2)).'</td>';
     $output .= '<td class="check-column">'.$fct->input('array['.$key.'][goal_away]', $row->goal_away, array('size' => 2)).'</td>';
     $output .= '<td>'.esc_html($row->name_away).'</td>';
-    $output .= '<td class="check-column">'.$fct->input('array['.$key.'][date]', esc_html($row->played), array('size' => 18)).$fct->input('array['.$key.'][id_match]', intval($row->match_id), array('type' => 'hidden')).'</td>';
+    $output .= '<td class="check-column">'.$fct->input('array['.$key.'][date]', esc_html($row->played), array('size' => 18, 'class' => 'masked-full')).$fct->input('array['.$key.'][id_match]', intval($row->match_id), array('type' => 'hidden')).'</td>';
     $output .= '<td class="check-column">'.$button_players.'</td></tr>';
     
     // If we have the player mode enabled, we show it
     if ($setting->player_mod === 'yes') {
         
         // Get all home players
-        $home_players[0] = '-- Select a player --';
+        $home_players[0] = __('-- Select a player --', 'phpleague');
         foreach ($db->get_players_team($row->home_id) as $player_home) {
             $full_name = esc_html($player_home->firstname).' '.esc_html($player_home->lastname);
             $home_players[$player_home->id] = $full_name;
         }
         
         // Get all away players
-        $away_players[0] = '-- Select a player --';
+        $away_players[0] = __('-- Select a player --', 'phpleague');
         foreach ($db->get_players_team($row->away_id) as $player_away) {
             $full_name = esc_html($player_away->firstname).' '.esc_html($player_away->lastname);
             $away_players[$player_away->id] = $full_name;
@@ -184,7 +184,7 @@ foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
         $output .= '</tr>';
     }
     
-    // We remove previous data to avoid using old one...
+    // We remove previous data to use new one in the next iteration...
     unset($count_players_home, $count_players_away, $nb_pl_home, $nb_pl_away, $select_home, $select_away, $home_players, $away_players);
 }
 $output .= '</table>';

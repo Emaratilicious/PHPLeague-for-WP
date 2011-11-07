@@ -25,6 +25,12 @@ global $wpdb;
 
 $leagues  = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name`, `year` FROM {$wpdb->league} ORDER BY `year` DESC, `name` ASC"));
 $clubs    = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name` FROM {$wpdb->club} ORDER BY `name` ASC"));
+
+//$fixtures = $wpdb->get_results($wpdb->prepare("SELECT c.name, t.id as team_id FROM $wpdb->team t LEFT JOIN $wpdb->club c ON c.id = t.id_club ORDER BY c.name ASC")
+//$fixture  = $wpdb->get_results($wpdb->prepare("SELECT c.name, t.id as team_id FROM $wpdb->team t LEFT JOIN $wpdb->club c ON c.id = t.id_club ORDER BY c.name ASC")
+);
+
+
 $site_url = get_option('siteurl');
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -43,6 +49,7 @@ $site_url = get_option('siteurl');
 		<ul>
 			<li id="tables_tab" class="current"><span><a href="javascript:mcTabs.displayTab('tables_tab', 'tables_panel');" onmouseover="return false;"><?php _e('Tables', 'phpleague'); ?></a></span></li>
 			<li id="fixtures_tab"><span><a href="javascript:mcTabs.displayTab('fixtures_tab', 'fixtures_panel');" onmouseover="return false;"><?php _e('Fixtures', 'phpleague'); ?></a></span></li>
+			<li id="fixture_tab"><span><a href="javascript:mcTabs.displayTab('fixture_tab', 'fixture_panel');" onmouseover="return false;"><?php _e('Fixture', 'phpleague'); ?></a></span></li>
 			<li id="clubs_tab"><span><a href="javascript:mcTabs.displayTab('clubs_tab', 'clubs_panel');" onmouseover="return false;"><?php _e('Clubs', 'phpleague'); ?></a></span></li>
 		</ul>
 	</div>
@@ -100,6 +107,28 @@ $site_url = get_option('siteurl');
 					</td>
 					<td><label for="id_team"><?php _e('ID Team', 'phpleague'); ?></label></td>
 					<td><input type="text" size="4" value="" name="id_team" id="id_team" /></td>
+				</tr>
+			</table>
+		</div>
+		<!-- fixture panel -->
+		<div id="fixture_panel" class="panel"><br />
+			<table style="border: 0;" cellpadding="5">
+				<tr>
+					<td><label for="fixture_id"><?php _e('Fixture', 'phpleague'); ?></label></td>
+					<td>
+						<select id="fixture_id" name="fixture_id" style="width: 200px;">
+						<?php
+	                    if ($leagues)
+	                    {
+	                        foreach($leagues as $league)
+	                        {
+	                            $year  = intval($league->year);
+	                            echo '<option value="'.$league->id.'" >'.esc_html($league->name).'</option>'."\n";
+	                        }
+	                    }
+	                    ?>
+				        </select>
+					</td>
 				</tr>
 			</table>
 		</div>

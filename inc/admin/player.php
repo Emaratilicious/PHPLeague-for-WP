@@ -25,6 +25,7 @@ $menu       = array(__('Overview', 'phpleague') => '#');
 $data       = array();
 $message    = array();
 
+// $_POST data processing...
 if (isset($_POST['player']) && check_admin_referer('phpleague')) {
     // Secure vars...
     $firstname = (string) trim($_POST['firstname']);
@@ -62,8 +63,8 @@ if ($total == 0)
     $message[] = __('We did not find any player in the database.', 'phpleague');
     
 $output  = $fct->form_open(admin_url($base_url));
-$output .= $fct->input('firstname', __('Firstname', 'phpleague'), array('readonly' => 'readonly'));
-$output .= $fct->input('lastname', __('Lastname', 'phpleague'), array('readonly' => 'readonly'));
+$output .= $fct->input('firstname', __('Firstname', 'phpleague'), array('readonly' => 'readonly', 'class' => 'default'));
+$output .= $fct->input('lastname', __('Lastname', 'phpleague'), array('readonly' => 'readonly', 'class' => 'default'));
 $output .= $fct->input('player', __('Create', 'phpleague'), array('type' => 'submit', 'class' => 'button'));
 $output .= $fct->form_close();
 

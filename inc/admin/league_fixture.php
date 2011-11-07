@@ -27,25 +27,32 @@ $menu        = array(
     __('Settings', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=setting&id_league='.$id_league)
 );
 
-if (($nb_teams % 2) != 0)
-    $message[] = __('Be aware that your league has an odd number of teams.', 'phpleague');  
-
+// $_POST data processing...
 if (isset($_POST['fixtures']) && check_admin_referer('phpleague')) {
-    $schedule = ( ! empty($_POST['schedule']) && is_array($_POST['schedule'])) ? $_POST['schedule'] : NULL;
+    $post_years  = ( ! empty($_POST['year']) && is_array($_POST['year']))   ? $_POST['year']  : NULL;
+    $post_months = ( ! empty($_POST['month']) && is_array($_POST['month'])) ? $_POST['month'] : NULL;
+    $post_days   = ( ! empty($_POST['day']) && is_array($_POST['day']))     ? $_POST['day']   : NULL;
     
-    if ($schedule === NULL) {
+    if ($post_years === NULL || $post_months === NULL || $post_days === NULL) {
         $message[] = __('The fixtures format is not good!', 'phpleague');   
     } else {
-        foreach ($schedule as $key => $scheduled) {
-            // We don't want to start from zero
-            $number = $key + 1;
+        // Every input have the same number
+        // so it does not matter which one we use...
+        $count = count($post_years);
+        for ($i = 1; $i <= $count; $i++) {
+            // We get each data separately...
+            $year  = $post_years[$i];
+            $month = $post_months[$i];
+            $day   = $post_days[$i];
+
+            $date  = $year.'-'.$month.'-'.$day;
 
             // Add the new fixtures in the db
-            $db->edit_league_fixtures($number, $scheduled, $id_league);
+            $db->edit_league_fixtures($i, $date, $id_league);
 
             // We update the match datetime using the default value
-            foreach ($db->get_fixture_id($number, $id_league) as $row) {
-                $db->edit_game_datetime($scheduled.' '.$setting->default_time, $row->fixture_id);
+            foreach ($db->get_fixture_id($i, $id_league) as $row) {
+                $db->edit_game_datetime($date.' '.$setting->default_time, $row->fixture_id);
             }
         }
         
@@ -53,12 +60,17 @@ if (isset($_POST['fixtures']) && check_admin_referer('phpleague')) {
     }
 }
 
+// Odd number of teams is probably not desired...
+if (($nb_teams % 2) != 0)
+    $message[] = __('Be aware that your league has an odd number of teams.', 'phpleague');
+
+// We need to have at least 2 teams...
 if ($nb_teams == 0 || $nb_teams == 1) {
     $message[] = __('It seems that '.$league_name.' has no team registered or only one.', 'phpleague');
 } else {   
     $output = $fct->form_open(admin_url('admin.php?page=phpleague_overview&option=fixture&id_league='.$id_league));
     
-    // Count the number of fixture per league
+    // Count how many fixtures in the league
     $nb_fixtures = $db->nb_fixtures_league($id_league);
     
     if (($nb_teams % 2) != 0)
@@ -68,6 +80,7 @@ if ($nb_teams == 0 || $nb_teams == 1) {
 
     // Security check
     if ($nb_fixtures != $fixtures_number) {
+        // We removed "old" data
         $db->remove_fixtures_league($id_league);
 
         $number = 1;
@@ -76,37 +89,50 @@ if ($nb_teams == 0 || $nb_teams == 1) {
             $number++;
         }
     }
-    
-    // Vars useful to get things sorted
-    $column = 1;
-    $first = $second = $third = '';
-    
-    $output .= '<p>'.$fct->input('fixtures', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</p>';
-            
-    foreach ($db->get_fixtures_league($id_league) as $key => $row) {
-        $col  = '<label for="schedule['.$key.']">'.__('Fixture: ', 'phpleague').esc_html($row->number).'</label>';
-        $col .= $fct->input('schedule['.$key.']', esc_html($row->scheduled), array('size' => '10', 'tabindex' => $key + 1, 'id' => 'schedule['.$key.']'));
 
-        switch ($column) {
-            case 1 :
-                $first .= $col;
-                $column = 2;
-                break;
-            case 2 :
-                $second .= $col;
-                $column  = 3;
-                break;
-            case 3 :
-                $third  .= $col;
-                $column  = 1;
-                break;
-        }
+    // Years list
+    for ($i = 1900; $i <= 2050; $i++) {
+        $years[$i] = $i;
     }
-    
-    $first   = $ctl->admin_wrapper(32, $first);
-    $second  = $ctl->admin_wrapper(32, $second);
-    $third   = $ctl->admin_wrapper(32, $third);
-    $output .= $first.$second.$third;
+
+    // Months list
+    for ($i = 1; $i <= 12; $i++) {
+        $months[$i] = $i;
+    }
+
+    // Days list
+    for ($i = 1; $i <= 31; $i++) {
+        $days[$i] = $i;
+    }
+
+    $output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('fixtures', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div></div>';
+
+    $output .=
+    '<table class="widefat text-centered"><thead>
+        <tr>
+            <th>'.__('Fixture', 'phpleague').'</th>
+            <th>'.__('Year', 'phpleague').'</th>
+            <th>'.__('Month', 'phpleague').'</th>
+            <th>'.__('Day', 'phpleague').'</th>
+        </tr>
+    </thead><tbdody>';
+            
+    foreach ($db->get_fixtures_league($id_league) as $row) {
+        // Get years, months and days separately...
+        list($year, $month, $day) = split('-', $row->scheduled);
+        // Used as a key...
+        $number = intval($row->number);
+
+        $output .= '<tr>';
+        $output .= '<td>'.$number.'</td>';
+        $output .= '<td>'.$fct->select('year['.$number.']', $years, intval($year)).'</td>';
+        $output .= '<td>'.$fct->select('month['.$number.']', $months, intval($month)).'</td>';
+        $output .= '<td>'.$fct->select('day['.$number.']', $days, intval($day)).'</td>';
+        $output .= '</tr>';
+
+    }
+
+    $output .= '</tbody></table>';
     $output .= $fct->form_close();
 }
 
