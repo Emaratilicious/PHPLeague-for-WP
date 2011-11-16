@@ -1,6 +1,6 @@
 === PHPLeague for WordPress ===
 Contributors: Maxime Dizerens
-Donate link: http://www.mika-web.com/
+Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
 Requires at least: 3.1
 Tested up to: 3.2.1
@@ -77,25 +77,29 @@ For more information, check out the PHPLeague project website: <http://www.phple
 = 1.4.0 =
 * NEW: Get the latest PHPLeague news directly on your dashboard
 * NEW: Get helped from the new date validator when required
-* NEW: Show how many matches a team has at home or away
+* NEW: Show how many matches a team play at home or away
 * NEW: Redirect automatically users to the plugin homepage after activation
-* CHANGED: When we remove a team from a league, the matches and table data are removed too
-* CHANGED: Don't show a link in the table when links are disabled in the settings
-* CHANGED: Remove edition name in the database
-* CHANGED: The fixtures has been rebuilt with select lists instead of text inputs
-* CHANGED: Remove input values when it's a field by default
-* CHANGED: FRENCH language has been updated and countries list added!
-* CHANGED: No more Premium Edition! FREE for Life...
+* NEW: Add few new tables to manage Player & Prediction modules
+* NEW: Possibility to delete a club and all data associated
+* NEW: Possibility to delete a league and all data associated
+* NEW: Possibility to get the ranking table as widget
+* CHG: When we remove a team from a league, all data associated are deleted
+* CHG: Don't show a link in the table when links are disabled in the settings
+* CHG: Remove edition name in the database
+* CHG: The fixtures interface has been rebuilt with dropdown lists
+* CHG: Remove input values when it's a field by default
+* CHG: FRENCH language has been updated and countries list added!
+* CHG: No more Premium Edition! FREE for Life...
 
 = 1.3 =
 * NEW: Possibility to display all the fixtures
 * NEW: Possibility to display all the fixtures for a specific team
 * NEW: Links available to the club if enabled in the league's settings
-* CHANGED: Removed the "create" method from the sidebar
-* CHANGED: Add an option to hide a section by default
-* CHANGED: jQuery code refactoring
-* CHANGED: Don't display club information if coach and venue are missing
-* CHANGED: Global source-code refactoring
+* CHG: Removed the "create" method from the sidebar
+* CHG: Add an option to hide a section by default
+* CHG: jQuery code refactoring
+* CHG: Don't display club information if coach and venue are missing
+* CHG: Global source-code refactoring
 * FIX: Don't show (0-0) if the match hasn't been played yet
 
 = 1.2.9 =
@@ -105,84 +109,84 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * NEW: 2 new fields in the settings (team_link/default_time)
 * NEW: Added the PHPLeague's Edition in the database
 * NEW: Possibility to show club information in front-end
-* CHANGED: Possibility to set the default time
-* CHANGED: ALTER a couple of tables
-* CHANGED: Useless queries removed
-* CHANGED: Few i18n strings modifications
-* CHANGED: Multiple notifications are now possible
-* CHANGED: UI improvements (css & js)
+* CHG: Possibility to set the default time
+* CHG: ALTER a couple of tables
+* CHG: Useless queries removed
+* CHG: Few i18n strings modifications
+* CHG: Multiple notifications are now possible
+* CHG: UI improvements (css & js)
 * FIX: Better UTF-8 characters management
 * FIX: Better directories management (create/delete)
 
 = 1.2.7 =
 * NEW: Create the logos folders automatically if don't exist
-* CHANGED: Few code fixes
-* CHANGED: Reduce queries in the Editor
-* CHANGED: Update database version
-* CHANGED: Delete SQL constraints
+* CHG: Few code fixes
+* CHG: Reduce queries in the Editor
+* CHG: Update database version
+* CHG: Delete SQL constraints
 
 = 1.2.6 =
 * NEW: Possibility adding logos to every club
 * NEW: Display a mini logo - if exists - in the table
-* CHANGED: Teams ordered by country to be more user-friendly
+* CHG: Teams ordered by country to be more user-friendly
 
 = 1.2.5 =
 * FIX: The formula to calculate the number of fixtures has been updated
 * FIX: We cannot show a fixture if the favorite team is empty in front-end
 * FIX: Redirected to the current fixture when adding a match/result
-* CHANGED: Show a notice if the home and away team are identical
-* CHANGED: Show a notice if a team is twice in a fixture
-* CHANGED: Add a couple of new language strings and update the .pot file
-* CHANGED: An irrelevant query in the results page has been removed
-* CHANGED: The saving button has been moved in the fixtures page
-* CHANGED: The bonus/malus input accepts now negative figure
-* CHANGED: The bonus/malus calculation method is now inverted
-* CHANGED: Rename the bonus/malus to be clearer
-* CHANGED: Delete the attribute `unsigned` in the penalty field
-* CHANGED: Database Version option has been upgraded to 1.2.1
-* CHANGED: Overall UI lifting
+* CHG: Show a notice if the home and away team are identical
+* CHG: Show a notice if a team is twice in a fixture
+* CHG: Add a couple of new language strings and update the .pot file
+* CHG: An irrelevant query in the results page has been removed
+* CHG: The saving button has been moved in the fixtures page
+* CHG: The bonus/malus input accepts now negative figure
+* CHG: The bonus/malus calculation method is now inverted
+* CHG: Rename the bonus/malus to be clearer
+* CHG: Delete the attribute `unsigned` in the penalty field
+* CHG: Database Version option has been upgraded to 1.2.1
+* CHG: Overall UI lifting
 
 = 1.2.4 =
 * FIX: Drop 2 brackets causing issues in matches and results
-* CHANGED: Remove last hardcoded strings in the editor
-* CHANGED: Improve UI in the matches and results pages
+* CHG: Remove last hardcoded strings in the editor
+* CHG: Improve UI in the matches and results pages
 
 = 1.2.3 =
 * NEW: French Translation
 * NEW: PHPLeague.pot is now available
 * FIX: Activation and deactivation methods are now static
-* CHANGED: Remove last hardcoded strings left even those in the menu
+* CHG: Remove last hardcoded strings left even those in the menu
 
 = 1.2.2 =
 * FIX: ALTER a few fields in order to accept `NULL` value by default
 * FIX: No more blank row when inserting matches in a "odd" league
-* CHANGED: Database Version option has been upgraded to 1.2
-* CHANGED: Activate method has been modified with the above
+* CHG: Database Version option has been upgraded to 1.2
+* CHG: Activate method has been modified with the above
 
 = 1.2.1 =
 * FIX: The home/away table are now showing only the accurate data
 * FIX: Possible to add numbers/dashes/points in the league name
 * FIX: Possible to add numbers/dashes/points in the club name
 * FIX: Little more security controls in the league's settings section
-* CHANGED: Add security controls in the club's information edition mode
-* CHANGED: New rule to validate the above `preg_match('/^[A-Za-z0-9_\-. ]{3,}$/', $name)`
-* CHANGED: Move the rendering method in a dedicated library
+* CHG: Add security controls in the club's information edition mode
+* CHG: New rule to validate the above `preg_match('/^[A-Za-z0-9_\-. ]{3,}$/', $name)`
+* CHG: Move the rendering method in a dedicated library
 
 = 1.2 =
 * NEW: PHPLeague button available in the editor
 * NEW: New roles available (manage_phpleague and phpleague)
 * NEW: Possibility to have an odd number of teams in a league
-* CHANGED: Improvements during the results generation
+* CHG: Improvements during the results generation
 
 = 1.1 =
 * NEW: Possibility to rename a league and change his year
-* CHANGED: Display table once generated
-* CHANGED: Remove setting/competition/season tables
-* CHANGED: New fields in the league table from old tables
-* CHANGED: Remove last hardcoded strings left
-* CHANGED: Enhance plugin security by using nonces
-* CHANGED: Administration interface improvements (essentially the pagination)
-* CHANGED: Minor PHP & SQL improvements
+* CHG: Display table once generated
+* CHG: Remove setting/competition/season tables
+* CHG: New fields in the league table from old tables
+* CHG: Remove last hardcoded strings left
+* CHG: Enhance plugin security by using nonces
+* CHG: Administration interface improvements (essentially the pagination)
+* CHG: Minor PHP & SQL improvements
 * REMOVED: pagination_fixtures() has been removed
 
 = 1.0 =

@@ -46,6 +46,25 @@ if (isset($_POST['club']) && check_admin_referer('phpleague')) {
         $message[] = __('Club added successfully.', 'phpleague');
         $db->add_club($name, $country);
     }
+} elseif (isset($_POST['delete_club']) && check_admin_referer('phpleague')) {
+    // Check that the format is correct
+    $id_club = ( ! empty($_POST['id_club'])) ? $_POST['id_club'] : 0;
+    if ($id_club === 0) {
+        $message[] = __('We are sorry but it seems that you did not select a club.', 'phpleague');
+    } else {
+        if (is_array($id_club)) {
+            $i = 0;
+            foreach ($id_club as $value) {
+                $db->delete_club($value);
+                $i++;
+            }
+            
+            if ($i === 1)
+                $message[] = __('Club deleted successfully.', 'phpleague');
+            else
+                $message[] = __('Clubs deleted successfully.', 'phpleague');
+        }
+    }
 }
 
 if ($total == 0)
@@ -96,7 +115,7 @@ $output .= '
     foreach ($db->get_every_club($offset, $per_page, 'ASC', TRUE) as $club) {
         $output .= '
         <tr '.$fct->alternate('', 'class="alternate"').'>
-            <th class="check-column"><input type="checkbox" name="club_id[]" value="'.intval($club->id).'" /></th>
+            <th class="check-column"><input type="checkbox" name="id_club[]" value="'.intval($club->id).'" /></th>
             <td>'.intval($club->id).'</td>
             <td>
                 <a href="'.admin_url($base_url.'&id_club='.intval($club->id)).'">
@@ -110,7 +129,6 @@ $output .= '
     }
 
 $output .= '</tbody></table>';
-
 $data[] = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('Clubs Listing', 'phpleague'),

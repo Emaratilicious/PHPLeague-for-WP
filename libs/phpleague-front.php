@@ -83,7 +83,7 @@ if ( ! class_exists('PHPLeague_Front')) {
                 // Can we display a team?
                 if ($team_links) {
                     $url      = get_permalink();
-        			$url      = add_query_arg('team', $row->id_club, $url);
+                    $url      = add_query_arg('team', $row->id_club, $url);
                 }
                 
                 if ($place <= $nb_teams) {               

@@ -14,8 +14,8 @@ if ( ! class_exists('PHPLeague_Database')) {
     /**
      * Handle all the database interaction.
      *
-     * @package    PHPLeague
      * @category   Database
+     * @package    PHPLeague
      * @author     Maxime Dizerens
      * @copyright  (c) 2011 Mikaweb Design, Ltd
      */
@@ -109,6 +109,21 @@ if ( ! class_exists('PHPLeague_Database')) {
         {           
             global $wpdb;
             return $wpdb->insert($wpdb->club, array('name' => $name, 'id_country' => $id_country), array('%s', '%d'));
+        }
+
+        /**
+         * Delete club
+         *
+         * @param  integer $id_club
+         * @return void
+         */
+        public function delete_club($id_club)
+        {           
+            global $wpdb;
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->club WHERE id = %d", $id_club));
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id_club = %d", $id_club));
+
+            // TODO - Find a nice way to delete matches & players data associated...
         }
         
         /**
@@ -250,6 +265,24 @@ if ( ! class_exists('PHPLeague_Database')) {
         {           
             global $wpdb;
             return $wpdb->insert($wpdb->league, array('name' => $name, 'year' => $year), array('%s', '%d'));
+        }
+
+        /**
+         * Delete league
+         *
+         * @param  integer $id_league
+         * @return void
+         */
+        public function delete_league($id_league)
+        {           
+            global $wpdb;
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->league WHERE id = %d", $id_league));
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->fixture WHERE id_league = %d", $id_league));
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_cache WHERE id_league = %d", $id_league));
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id_league = %d", $id_league));
+
+            // TODO - Find a nice way to delete matches / teams associated...
+            // $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_predi WHERE id_league = %d", $id_league));
         }
         
         /**
@@ -1581,57 +1614,57 @@ if ( ! class_exists('PHPLeague_Database')) {
         }
         
         /**
-	     * Get all fixtures by league and team
-		 *
-		 * This method gives us the possibility to get all the fixtures
-		 * for a selected team in a league.
-		 *
-		 * @param  integer	$id_team
-		 * @param  integer	$id_league
-	     * @return object
-	     */
-		public function get_fixtures_by_team($id_team, $id_league)
-		{
-			global $wpdb;
-			return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
-			g.played, g.id as game_id, g.id_team_home, g.id_team_away
-				FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
-				WHERE g.id_team_home = home.id
-				AND g.id_team_away = away.id
-				AND (g.id_team_away = %d
-					OR g.id_team_home = %d)
-				AND d.id_league = %d
-				AND home.id_club = clhome.id
-				AND away.id_club = claway.id
-				AND g.id_fixture = d.id
-				ORDER BY d.number ASC",
-				$id_team, $id_team, $id_league));
-		}
-		
-		/**
-	     * Get all fixtures by league
-		 *
-		 * This method gives us the possibility to get all the fixtures
-		 * for a selected league.
-		 *
-		 * @param  integer	$id_league
-	     * @return object
-	     */
-		public function get_fixtures_by_league($id_league)
-		{
-			global $wpdb;
-			return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
-			g.played, g.id as game_id, g.id_team_home, g.id_team_away
-				FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
-				WHERE g.id_team_home = home.id
-				AND g.id_team_away = away.id
-				AND d.id_league = %d
-				AND home.id_club = clhome.id
-				AND away.id_club = claway.id
-				AND g.id_fixture = d.id
-				ORDER BY d.number ASC",
-				$id_league));
-		}
+         * Get all fixtures by league and team
+         *
+         * This method gives us the possibility to get all the fixtures
+         * for a selected team in a league.
+         *
+         * @param  integer  $id_team
+         * @param  integer  $id_league
+         * @return object
+         */
+        public function get_fixtures_by_team($id_team, $id_league)
+        {
+            global $wpdb;
+            return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
+            g.played, g.id as game_id, g.id_team_home, g.id_team_away
+                FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
+                WHERE g.id_team_home = home.id
+                AND g.id_team_away = away.id
+                AND (g.id_team_away = %d
+                    OR g.id_team_home = %d)
+                AND d.id_league = %d
+                AND home.id_club = clhome.id
+                AND away.id_club = claway.id
+                AND g.id_fixture = d.id
+                ORDER BY d.number ASC",
+                $id_team, $id_team, $id_league));
+        }
+        
+        /**
+         * Get all fixtures by league
+         *
+         * This method gives us the possibility to get all the fixtures
+         * for a selected league.
+         *
+         * @param  integer  $id_league
+         * @return object
+         */
+        public function get_fixtures_by_league($id_league)
+        {
+            global $wpdb;
+            return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
+            g.played, g.id as game_id, g.id_team_home, g.id_team_away
+                FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
+                WHERE g.id_team_home = home.id
+                AND g.id_team_away = away.id
+                AND d.id_league = %d
+                AND home.id_club = clhome.id
+                AND away.id_club = claway.id
+                AND g.id_fixture = d.id
+                ORDER BY d.number ASC",
+                $id_league));
+        }
         
         /**
          * Check if a team is already in a league

@@ -16,7 +16,8 @@ $menu = array(
     __('Clubs', 'phpleague')      => '#',
     __('Players', 'phpleague')    => '#',
     __('Shortcodes', 'phpleague') => '#',
-    __('Plugin', 'phpleague')     => '#'
+    __('Widgets', 'phpleague')    => '#',
+    __('About', 'phpleague')      => '#'
 );
 
 // Dashboard
@@ -108,7 +109,7 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
     'title' => __('The Countries', 'phpleague'),
-    'text'  => __('By default, the countries are in English but you can update them from your MySQL Administration software.', 'phpleague'),
+    'text'  => __('By default, the countries are in English but you can update them from your MySQL Administration software. The French version is available in the i18n folder of your plugin.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -173,23 +174,38 @@ $data[] = array(
     'class' => 'full'
 );
 
+// Widgets
+$data[] = array(
+    'menu'  => __('Widgets', 'phpleague'),
+    'title' => __('Overview', 'phpleague'),
+    'text'  => '',
+    'class' => 'full'
+);
+
+$data[] = array(
+    'menu'  => __('Widgets', 'phpleague'),
+    'title' => __('Widgets Listing', 'phpleague'),
+    'text'  => '',
+    'class' => 'full'
+);
+
 // Plugin Information
 $data[] = array(
-    'menu'  => __('Plugin', 'phpleague'),
+    'menu'  => __('About', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
     'text'  => __('You are currently using the <b>ULTIMATE</b> edition of the PHPLeague for WordPress Plugin.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
-    'menu'  => __('Plugin', 'phpleague'),
+    'menu'  => __('About', 'phpleague'),
     'title' => __('Requirements', 'phpleague'),
     'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.2+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
-    'menu'  => __('Plugin', 'phpleague'),
+    'menu'  => __('About', 'phpleague'),
     'title' => __('Thanks', 'phpleague'),
     'text'  => __('I would like to thanks everybody who contribute - indirectly - to develop this Plugin. The names I have in mind are: Alexis Mangin, jQuery Developers and WordPress Developers.', 'phpleague'),
     'class' => 'full'

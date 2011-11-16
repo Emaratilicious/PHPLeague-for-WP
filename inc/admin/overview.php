@@ -65,6 +65,25 @@ if ($get_option === 'generator' && $id_league) {
         $db->add_league($name, $year);
         $message[] = __('League added successfully. You are strongly recommended going to edit your settings straight away.', 'phpleague');
     }
+} elseif (isset($_POST['delete_league']) && check_admin_referer('phpleague')) {
+    // Check that the format is correct
+    $id_league = ( ! empty($_POST['id_league'])) ? $_POST['id_league'] : 0;
+    if ($id_league === 0) {
+        $message[] = __('We are sorry but it seems that you did not select a league.', 'phpleague');
+    } else {
+        if (is_array($id_league)) {
+            $i = 0;
+            foreach ($id_league as $value) {
+                $db->delete_league($value);
+                $i++;
+            }
+            
+            if ($i === 1)
+                $message[] = __('League deleted successfully.', 'phpleague');
+            else
+                $message[] = __('Leagues deleted successfully.', 'phpleague');
+        }
+    }
 }
 
 // Vars
@@ -100,7 +119,7 @@ if ($activation === 1)
     $message[] = __('PHPLeague has been activated with success! We hope that you will enjoy this plugin...', 'phpleague');
 
 $output  = $fct->form_open(admin_url('admin.php?page=phpleague_overview'));
-$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_player', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
+$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_league', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
 
 if ($pagination)
     $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
@@ -128,7 +147,7 @@ $output .= '
         $year = intval($league->year);
         $output .= '
         <tr '.$fct->alternate('', 'class="alternate"').'>
-            <th class="check-column"><input type="checkbox" name="league_id[]" value="'.$id.'" /></th>
+            <th class="check-column"><input type="checkbox" name="id_league[]" value="'.$id.'" /></th>
             <td>'.esc_html($league->name) .' '. $year.'/'.substr($year + 1, 2).'</td>
             <td>
                 <a href="'.admin_url($page_url.'&option=team&id_league='.$id).'">

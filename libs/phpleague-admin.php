@@ -153,7 +153,7 @@ if ( ! class_exists('PHPLeague_Admin')) {
             // Page Header
             echo $this->admin_header();
             
-            // Load libraries
+            // Initialize libraries
             $db  = new PHPLeague_Database();
             $ctl = new PHPLeague_Admin();
             $fct = new PHPLeague_Tools();
@@ -168,9 +168,6 @@ if ( ! class_exists('PHPLeague_Admin')) {
                     break;
                 case 'phpleague_about' :
                     require_once WP_PHPLEAGUE_PATH.'inc/admin/about.php';
-                    break;
-                case 'phpleague_setting' :
-                    require_once WP_PHPLEAGUE_PATH.'inc/admin/setting.php';
                     break;
                 case 'phpleague_overview' :
                 default :

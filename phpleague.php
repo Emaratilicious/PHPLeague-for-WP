@@ -99,6 +99,9 @@ if ( ! class_exists('PHPLeague')) {
                 
                 // Ajax request
                 add_action('wp_ajax_delete_player_history_team', array('PHPLeague_AJAX', 'delete_player_history_team'));
+
+                // Register PHPLeague_Widgets
+                //add_action('widgets_init', create_function('', 'register_widget("PHPLeague_Widgets");'));
             } else {
                 // Load the frontend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front.php';
@@ -189,72 +192,69 @@ if ( ! class_exists('PHPLeague')) {
                 return;
 
             // Some people encounter issues because they could not deal
-			// with a NOT DEFAULT without any value
-			if ($current_db_version < '1.2') {
-				// ALTER tables
-				$wpdb->query("ALTER TABLE $wpdb->country MODIFY name VARCHAR(100) DEFAULT NULL;");
-				$wpdb->query("ALTER TABLE $wpdb->club MODIFY venue VARCHAR(100) DEFAULT NULL;");
-				$wpdb->query("ALTER TABLE $wpdb->club MODIFY coach VARCHAR(100) DEFAULT NULL;");
-				$wpdb->query("ALTER TABLE $wpdb->club MODIFY logo_big VARCHAR(255) DEFAULT NULL;");
-				$wpdb->query("ALTER TABLE $wpdb->club MODIFY logo_mini VARCHAR(255) DEFAULT NULL;");
-			}
-			
-			// We add the 4 UK members
-			if ($current_db_version < '1.2.1') {
-				$countries = array(
-					238 => 'England',
-					239 => 'Wales',
-					240 => 'Northern Ireland',
-					241 => 'Scotland'
-				);
+            // with a NOT DEFAULT without any value
+            if ($current_db_version < '1.2') {
+                // ALTER tables
+                $wpdb->query("ALTER TABLE $wpdb->country MODIFY name VARCHAR(100) DEFAULT NULL;");
+                $wpdb->query("ALTER TABLE $wpdb->club MODIFY venue VARCHAR(100) DEFAULT NULL;");
+                $wpdb->query("ALTER TABLE $wpdb->club MODIFY coach VARCHAR(100) DEFAULT NULL;");
+                $wpdb->query("ALTER TABLE $wpdb->club MODIFY logo_big VARCHAR(255) DEFAULT NULL;");
+                $wpdb->query("ALTER TABLE $wpdb->club MODIFY logo_mini VARCHAR(255) DEFAULT NULL;");
+            }
+            
+            // We add the 4 UK members
+            if ($current_db_version < '1.2.1') {
+                $countries = array(
+                    238 => 'England',
+                    239 => 'Wales',
+                    240 => 'Northern Ireland',
+                    241 => 'Scotland'
+                );
 
-				// Update the country table with all of the above
-				foreach ($countries as $key => $country) {
-					$wpdb->query("INSERT INTO $wpdb->country VALUES($key, '".$country."');");
-				}
-				
-				// Penalty is not unsigned anymore
-				$wpdb->query("ALTER TABLE $wpdb->team MODIFY penalty TINYINT(1) NOT NULL DEFAULT '0';");
-			}
-			
-			// Drop constraints
-			if ($current_db_version < '1.2.2') {
-				// ALTER tables
-				$wpdb->query("ALTER TABLE $wpdb->fixture DROP FOREIGN KEY phpleague_fixture_ibfk_1;");
-				$wpdb->query("ALTER TABLE $wpdb->match DROP FOREIGN KEY phpleague_match_ibfk_1;");
-				$wpdb->query("ALTER TABLE $wpdb->table_cache DROP FOREIGN KEY phpleague_table_cache_ibfk_1;");			
-				$wpdb->query("ALTER TABLE $wpdb->team DROP FOREIGN KEY phpleague_team_ibfk_1;");
-			}
-			
-			// Few modifications
-			if ($current_db_version < '1.2.3') {
-				// ALTER tables
-				$wpdb->query("ALTER TABLE $wpdb->league MODIFY id_favorite smallint(4) unsigned NOT NULL DEFAULT '0';");
-				$wpdb->query("ALTER TABLE $wpdb->club ADD creation varchar(4) NOT NULL DEFAULT '0000' AFTER coach;");
-				$wpdb->query("ALTER TABLE $wpdb->club ADD website varchar(255) DEFAULT NULL AFTER creation;");
-				$wpdb->query("ALTER TABLE $wpdb->league ADD team_link enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
-				$wpdb->query("ALTER TABLE $wpdb->league ADD default_time time NOT NULL DEFAULT '17:00:00' AFTER team_link;");
-				
-				// Set the edition name in the database...
-				add_option('phpleague_edition', WP_PHPLEAGUE_EDITION);
-			}
-			
-			// Few modifications
-			if ($current_db_version < '1.3.0') {
-				// Not required anymore...
-				delete_option('phpleague_edition');
-
-                // Add the type of sport used...
-                add_option('phpleague_sport_type', 'soccer');
+                // Update the country table with all of the above
+                foreach ($countries as $key => $country) {
+                    $wpdb->query("INSERT INTO $wpdb->country VALUES($key, '".$country."');");
+                }
+                
+                // Penalty is not unsigned anymore
+                $wpdb->query("ALTER TABLE $wpdb->team MODIFY penalty TINYINT(1) NOT NULL DEFAULT '0';");
+            }
+            
+            // Drop constraints
+            if ($current_db_version < '1.2.2') {
+                // ALTER tables
+                $wpdb->query("ALTER TABLE $wpdb->fixture DROP FOREIGN KEY phpleague_fixture_ibfk_1;");
+                $wpdb->query("ALTER TABLE $wpdb->match DROP FOREIGN KEY phpleague_match_ibfk_1;");
+                $wpdb->query("ALTER TABLE $wpdb->table_cache DROP FOREIGN KEY phpleague_table_cache_ibfk_1;");          
+                $wpdb->query("ALTER TABLE $wpdb->team DROP FOREIGN KEY phpleague_team_ibfk_1;");
+            }
+            
+            // Few modifications
+            if ($current_db_version < '1.2.3') {
+                // ALTER tables
+                $wpdb->query("ALTER TABLE $wpdb->league MODIFY id_favorite smallint(4) unsigned NOT NULL DEFAULT '0';");
+                $wpdb->query("ALTER TABLE $wpdb->club ADD creation varchar(4) NOT NULL DEFAULT '0000' AFTER coach;");
+                $wpdb->query("ALTER TABLE $wpdb->club ADD website varchar(255) DEFAULT NULL AFTER creation;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD team_link enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD default_time time NOT NULL DEFAULT '17:00:00' AFTER team_link;");
+                
+                // Set the edition name in the database...
+                add_option('phpleague_edition', WP_PHPLEAGUE_EDITION);
+            }
+            
+            // Few modifications
+            if ($current_db_version < '1.3.0') {
+                // Not required anymore...
+                delete_option('phpleague_edition');
 
                 // Add new fields and table here...
-			}
+            }
 
-			if ($current_version < WP_PHPLEAGUE_VERSION) {
-				// Do stuff in order to upgrade PHPLeague
-				update_option('phpleague_version', WP_PHPLEAGUE_VERSION);
-				update_option('phpleague_db_version', WP_PHPLEAGUE_DB_VERSION);
-			}
+            if ($current_version < WP_PHPLEAGUE_VERSION) {
+                // Do stuff in order to upgrade PHPLeague
+                update_option('phpleague_version', WP_PHPLEAGUE_VERSION);
+                update_option('phpleague_db_version', WP_PHPLEAGUE_DB_VERSION);
+            }
         }
         
         /**
@@ -267,7 +267,7 @@ if ( ! class_exists('PHPLeague')) {
         {       
             global $wpdb;
 
-            // Core Edition
+            // All Tables
             $wpdb->club        = $wpdb->prefix.'phpleague_club';
             $wpdb->country     = $wpdb->prefix.'phpleague_country';
             $wpdb->fixture     = $wpdb->prefix.'phpleague_fixture';
@@ -275,8 +275,6 @@ if ( ! class_exists('PHPLeague')) {
             $wpdb->match       = $wpdb->prefix.'phpleague_match';
             $wpdb->table_cache = $wpdb->prefix.'phpleague_table_cache';
             $wpdb->team        = $wpdb->prefix.'phpleague_team';
-            
-            // Premium Edition
             $wpdb->player      = $wpdb->prefix.'phpleague_player';
             $wpdb->player_team = $wpdb->prefix.'phpleague_player_team';
             $wpdb->player_data = $wpdb->prefix.'phpleague_player_data';
@@ -683,7 +681,6 @@ if ( ! class_exists('PHPLeague')) {
             add_option('phpleague_version', WP_PHPLEAGUE_VERSION);
             add_option('phpleague_db_version', $db_version);
             add_option('phpleague_do_activation_redirect', TRUE);
-            add_option('phpleague_sport_type', 'soccer');
         }
 
         /**
@@ -713,7 +710,6 @@ if ( ! class_exists('PHPLeague')) {
             // Delete the version in the options table
             delete_option('phpleague_version');
             delete_option('phpleague_db_version');
-            delete_option('phpleague_sport_type');
             
             // Delete the PHPLeague directory and sub-directories
             PHPLeague_Tools::manage_directory(WP_PHPLEAGUE_UPLOADS_PATH, 'delete');
@@ -796,15 +792,6 @@ if ( ! class_exists('PHPLeague')) {
                     __('Players', 'phpleague'),
                     $this->access,
                     'phpleague_player',
-                    array($instance, 'admin_page')
-                );
-
-                add_submenu_page(
-                    $parent,
-                    __('Settings (PHPLeague)', 'phpleague'),
-                    __('Settings', 'phpleague'),
-                    $this->access,
-                    'phpleague_setting',
                     array($instance, 'admin_page')
                 );
                 

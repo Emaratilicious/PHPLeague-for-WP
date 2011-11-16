@@ -106,10 +106,21 @@ for ($i = 0; $i <= 50; $i++) {
 }
 
 // Get every club from the league
-$clubs_list[0] = '-- Select a team --';
+$clubs_list[0] = __('-- Select a team --', 'phpleague');
 foreach ($teams as $array) {
     $clubs_list[$array->club_id] = esc_html($array->name);  
 }
+
+// Get a list of every available sports
+$sports_list = array(
+    'american-football' => __('American Football', 'phpleague'),
+    'basketball'        => __('Basketball', 'phpleague'),
+    'football'          => __('Football', 'phpleague'),
+    'handball'          => __('Handball', 'phpleague'),
+    'hockey'            => __('Hockey', 'phpleague'),
+    'rugby'             => __('Rugby', 'phpleague'),
+    'volleyball'        => __('Volleyball', 'phpleague'),
+);
 
 $output  = $fct->form_open($page_url);
 $output .=
@@ -156,7 +167,10 @@ $output .=
         <td>'.__('Prediction Mod Enabled:', 'phpleague').'</td>
         <td>'.$fct->select('predict', $yes_no, $setting->prediction_mod).'</td>
     </tr>
-</table><div class="submit">'.$fct->input('general', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
+</table>
+<div>'.__('Keep in mind that the Player Mod is still in a development stage.', 'phpleague').'</div>
+<div>'.__('Prediction Mod has not been developed because I am waiting for the new WP 3.3 version.', 'phpleague').'</div>
+<div class="submit">'.$fct->input('general', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
 
 $output .= $fct->form_close();
 $data[]  = array(
@@ -176,6 +190,10 @@ if ($setting->player_mod === 'yes') {
             <td>'.$fct->select('starting', $numbers, $setting->starting).'</td>
             <td>'.__('Substitute Players:', 'phpleague').'</td>
             <td>'.$fct->select('substitute', $numbers, $setting->substitute).'</td>
+        </tr>
+        <tr>
+            <td>'.__('What Sport:', 'phpleague').'</td>
+            <td>'.$fct->select('sports', $sports_list).'</td>
         </tr>
     </table>';
 
