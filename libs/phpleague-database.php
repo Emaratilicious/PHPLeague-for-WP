@@ -120,10 +120,21 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function delete_club($id_club)
         {           
             global $wpdb;
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->club WHERE id = %d", $id_club));
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id_club = %d", $id_club));
 
-            // TODO - Find a nice way to delete matches & players data associated...
+            // Delete the club in clubs table
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->club WHERE id = %d", $id_club));
+
+            // Delete the club in every other tables
+            $wpdb->query($wpdb->prepare("DELETE a.*, b.*, c.*, d.*, e.*, f.*
+                FROM $wpdb->team a
+                LEFT JOIN $wpdb->match b ON (b.id_team_away = a.id OR b.id_team_home = a.id)
+                LEFT JOIN $wpdb->table_cache c ON c.id_team = a.id
+                LEFT JOIN $wpdb->player_team d ON d.id_team = a.id
+                LEFT JOIN $wpdb->player_data e ON e.id_player_team = d.id
+                LEFT JOIN $wpdb->table_chart f ON f.id_team = a.id
+                WHERE a.id_club = %d",
+                $id_club)
+            );
         }
         
         /**
@@ -276,13 +287,33 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function delete_league($id_league)
         {           
             global $wpdb;
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->league WHERE id = %d", $id_league));
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->fixture WHERE id_league = %d", $id_league));
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_cache WHERE id_league = %d", $id_league));
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->team WHERE id_league = %d", $id_league));
 
-            // TODO - Find a nice way to delete matches / teams associated...
-            // $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_predi WHERE id_league = %d", $id_league));
+            // Delete the league from leagues table
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->league WHERE id = %d", $id_league));
+
+            // Delete all league rankings from ranking table
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_cache WHERE id_league = %d", $id_league));
+
+            // Delete all league rankings from prediction table
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_predi WHERE id_league = %d", $id_league));
+
+            // Delete the league in fixtures, matches and players data tables
+            $wpdb->query($wpdb->prepare("DELETE a.*, b.*, c.*
+                FROM $wpdb->fixture a
+                LEFT JOIN $wpdb->match b ON b.id_fixture = a.id
+                LEFT JOIN $wpdb->player_data c ON c.id_match = b.id
+                WHERE a.id_league = %d",
+                $id_league)
+            );
+
+            // Delete the league in teams, charts and players team tables
+            $wpdb->query($wpdb->prepare("DELETE a.*, b.*, c.*
+                FROM $wpdb->team a
+                LEFT JOIN $wpdb->table_chart b ON b.id_team = a.id
+                LEFT JOIN $wpdb->player_team c ON c.id_team = a.id
+                WHERE a.id_league = %d",
+                $id_league)
+            );
         }
         
         /**
@@ -372,6 +403,20 @@ if ( ! class_exists('PHPLeague_Database')) {
             
             // Delete the team ranking
             $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_cache WHERE id_team = %d", $id_team));
+
+            // Delete team charts data
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_chart WHERE id_team = %d", $id_team));
+
+            // Delete players data
+            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->player_team WHERE id_team = %d", $id_team));
+
+            // Delete the players data associated to the team
+            $wpdb->query($wpdb->prepare("DELETE a.*, b.*
+                FROM $wpdb->player_team a
+                LEFT JOIN $wpdb->player_data b ON b.id_player_team = a.id
+                WHERE a.id_team = %d",
+                $id_team)
+            );
             
             // Delete the team matches
             $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->match WHERE (id_team_away = %d OR id_team_home = %d)", $id_team, $id_team));

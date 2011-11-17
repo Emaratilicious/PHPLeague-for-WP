@@ -178,6 +178,7 @@ $output .= '
     }
 
 $output .= '</tbody></table>';
+$output .= $fct->form_close();
 $data[]  = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('Dashboard', 'phpleague'),

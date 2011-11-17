@@ -60,9 +60,9 @@ if (isset($_POST['club']) && check_admin_referer('phpleague')) {
             }
             
             if ($i === 1)
-                $message[] = __('Club deleted successfully.', 'phpleague');
+                $message[] = __('Club deleted successfully with all data associated.', 'phpleague');
             else
-                $message[] = __('Clubs deleted successfully.', 'phpleague');
+                $message[] = __('Clubs deleted successfully with all data associated.', 'phpleague');
         }
     }
 }
@@ -129,6 +129,7 @@ $output .= '
     }
 
 $output .= '</tbody></table>';
+$output .= $fct->form_close();
 $data[] = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('Clubs Listing', 'phpleague'),

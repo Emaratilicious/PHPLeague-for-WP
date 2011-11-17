@@ -233,7 +233,7 @@ if ( ! class_exists('PHPLeague')) {
             if ($current_db_version < '1.2.3') {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->league MODIFY id_favorite smallint(4) unsigned NOT NULL DEFAULT '0';");
-                $wpdb->query("ALTER TABLE $wpdb->club ADD creation varchar(4) NOT NULL DEFAULT '0000' AFTER coach;");
+                $wpdb->query("ALTER TABLE $wpdb->club ADD creation year(4) NOT NULL DEFAULT '0000' AFTER coach;");
                 $wpdb->query("ALTER TABLE $wpdb->club ADD website varchar(255) DEFAULT NULL AFTER creation;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD team_link enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD default_time time NOT NULL DEFAULT '17:00:00' AFTER team_link;");
@@ -247,11 +247,20 @@ if ( ! class_exists('PHPLeague')) {
                 // Not required anymore...
                 delete_option('phpleague_edition');
 
-                // Add new fields and table here...
+                // ALTER league table
+                $wpdb->query("ALTER TABLE $wpdb->league ADD player_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_teams;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD sport_type varchar(50) NOT NULL DEFAULT 'football' AFTER player_mod;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD starting tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER sport_type;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD substitute tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER starting;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD prediction_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER substitute;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_right tinyint(1) unsigned NOT NULL DEFAULT '5' AFTER prediction_mod;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_wrong tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER point_right;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_part tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_wrong;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD deadline tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_part;");
             }
 
+            // Do stuff in order to upgrade PHPLeague...
             if ($current_version < WP_PHPLEAGUE_VERSION) {
-                // Do stuff in order to upgrade PHPLeague
                 update_option('phpleague_version', WP_PHPLEAGUE_VERSION);
                 update_option('phpleague_db_version', WP_PHPLEAGUE_DB_VERSION);
             }
@@ -420,6 +429,68 @@ if ( ! class_exists('PHPLeague')) {
                 KEY id_league (id_league)";
 
             PHPLeague::run_install_or_upgrade($wpdb->team, $sql, $db_version);
+
+            // -- New tables from 1.4.0 -- //
+
+            // Player table
+            $sql = "id smallint(6) unsigned NOT NULL AUTO_INCREMENT,
+                firstname varchar(100) NOT NULL DEFAULT '',
+                lastname varchar(100) NOT NULL DEFAULT '',
+                description text,
+                birthdate date NOT NULL DEFAULT '0000-00-00',
+                weight tinyint(1) unsigned NOT NULL DEFAULT '0',
+                height tinyint(1) unsigned NOT NULL DEFAULT '0',
+                picture varchar(255) NOT NULL DEFAULT '',
+                id_country tinyint(1) unsigned NOT NULL DEFAULT '0',
+                id_term smallint(6) unsigned NOT NULL DEFAULT '0',
+                KEY id_match (id_match),
+                KEY id_event (id_event),
+                KEY id_player_team (id_player_team)";
+
+            PHPLeague::run_install_or_upgrade($wpdb->player, $sql, $db_version);
+
+            // Player data table
+            $sql = "id_event tinyint(1) unsigned NOT NULL DEFAULT '0',
+                id_player_team smallint(4) unsigned NOT NULL DEFAULT '0',
+                id_match smallint(4) unsigned NOT NULL DEFAULT '0',
+                value tinyint(1) unsigned NOT NULL DEFAULT '0',
+                KEY id_match (id_match),
+                KEY id_event (id_event),
+                KEY id_player_team (id_player_team)";
+
+            PHPLeague::run_install_or_upgrade($wpdb->player_data, $sql, $db_version);
+
+            // Player team table
+            $sql = "id smallint(4) unsigned NOT NULL AUTO_INCREMENT,
+                id_player smallint(4) unsigned NOT NULL DEFAULT '0',
+                id_team smallint(4) unsigned NOT NULL DEFAULT '0',
+                number tinyint(1) unsigned NOT NULL DEFAULT '0',
+                position varchar(50) NOT NULL,
+                PRIMARY KEY (id),
+                KEY id_player (id_player),
+                KEY id_team (id_team)";
+
+            PHPLeague::run_install_or_upgrade($wpdb->player_team, $sql, $db_version);
+
+            // Charts table
+            $sql = "id_team mediumint(5) unsigned NOT NULL DEFAULT '0',
+                fixture tinyint(1) unsigned NOT NULL DEFAULT '0',
+                ranking tinyint(1) unsigned NOT NULL DEFAULT '0',
+                KEY id_team (id_team)";
+
+            PHPLeague::run_install_or_upgrade($wpdb->table_chart, $sql, $db_version);
+
+            // Prediction table
+            $sql = "id_league smallint(3) unsigned NOT NULL DEFAULT '0',
+                id_member smallint(3) unsigned NOT NULL DEFAULT '0',
+                points smallint(3) unsigned NOT NULL DEFAULT '0',
+                participation smallint(3) unsigned NOT NULL DEFAULT '0',
+                KEY id_league (id_league),
+                KEY id_member (id_member)";
+
+            // TODO - Add 'type' field later once I know how to handle it...
+
+            PHPLeague::run_install_or_upgrade($wpdb->table_predi, $sql, $db_version);
                         
             // Countries listing
             $countries = array(

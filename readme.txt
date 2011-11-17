@@ -76,14 +76,14 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 = 1.4.0 =
 * NEW: Get the latest PHPLeague news directly on your dashboard
-* NEW: Get helped from the new date validator when required
+* NEW: New date hint system when required
 * NEW: Show how many matches a team play at home or away
 * NEW: Redirect automatically users to the plugin homepage after activation
-* NEW: Add few new tables to manage Player & Prediction modules
+* NEW: Add the new tables to manage Player and Prediction modules
 * NEW: Possibility to delete a club and all data associated
 * NEW: Possibility to delete a league and all data associated
 * NEW: Possibility to get the ranking table as widget
-* CHG: When we remove a team from a league, all data associated are deleted
+* CHG: When we remove a team from a league, all data associated are now deleted
 * CHG: Don't show a link in the table when links are disabled in the settings
 * CHG: Remove edition name in the database
 * CHG: The fixtures interface has been rebuilt with dropdown lists
