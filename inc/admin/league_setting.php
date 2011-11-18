@@ -168,8 +168,8 @@ $output .=
         <td>'.$fct->select('predict', $yes_no, $setting->prediction_mod).'</td>
     </tr>
 </table>
-<div>'.__('Keep in mind that the Player Mod is still in a development stage.', 'phpleague').'</div>
-<div>'.__('Prediction Mod has not been developed because I am waiting for the new WP 3.3 version.', 'phpleague').'</div>
+<div>'.__('I do not recommend using the Player Mod in production environment yet.', 'phpleague').'</div>
+<div>'.__('Prediction Mod is not working at all except to save the points because I am waiting for the new WordPress 3.3.', 'phpleague').'</div>
 <div class="submit">'.$fct->input('general', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
 
 $output .= $fct->form_close();

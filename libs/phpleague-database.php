@@ -1642,7 +1642,9 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_league_table_data($type, $id_league, $nb_teams)
         {
             global $wpdb;
-            switch ($type) { // Not good for performance to have "*" in the select...
+
+            // Not good for performance to have "*" in the select...
+            switch ($type) {
                 case 'general':
                 default :
                     $query = "SELECT * FROM $wpdb->table_cache c LEFT JOIN $wpdb->team t ON t.id = c.id_team LEFT JOIN $wpdb->club a ON a.id = t.id_club WHERE c.id_league = $id_league ORDER BY c.points DESC, c.diff DESC, c.goal_for DESC, c.goal_against ASC, c.club_name ASC LIMIT $nb_teams";
@@ -1709,6 +1711,35 @@ if ( ! class_exists('PHPLeague_Database')) {
                 AND g.id_fixture = d.id
                 ORDER BY d.number ASC",
                 $id_league));
+        }
+
+        /**
+         * Get latest results of a team
+         *
+         * This method gives us the possibility to get the
+         * latest results for a team.
+         *
+         * @param  integer  $id_team
+         * @param  integer  $how_many
+         * @return object
+         */
+        public function get_latest_results($id_team, $how_many = 5)
+        {
+            global $wpdb;
+            return $wpdb->get_results($wpdb->prepare("SELECT g.goal_home, g.goal_away, g.id_team_home, g.id_team_away
+                FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
+                WHERE g.id_team_home = home.id
+                AND g.id_team_away = away.id
+                AND (g.id_team_away = %d
+                    OR g.id_team_home = %d)
+                AND home.id_club = clhome.id
+                AND away.id_club = claway.id
+                AND g.id_fixture = d.id
+                AND g.played <= CURDATE()
+                AND (g.goal_home IS NOT NULL OR g.goal_away IS NOT NULL)
+                ORDER BY g.played DESC
+                LIMIT $how_many",
+                $id_team, $id_team));
         }
         
         /**

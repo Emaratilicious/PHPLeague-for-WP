@@ -120,7 +120,7 @@ if ( ! class_exists('PHPLeague')) {
         public function define_constants()
         {
             define('WP_PHPLEAGUE_VERSION', '1.4.0');
-            define('WP_PHPLEAGUE_DB_VERSION', '1.3.0');
+            define('WP_PHPLEAGUE_DB_VERSION', '1.3');
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
@@ -243,7 +243,7 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Few modifications
-            if ($current_db_version < '1.3.0') {
+            if ($current_db_version < '1.3') {
                 // Not required anymore...
                 delete_option('phpleague_edition');
 
@@ -953,6 +953,9 @@ if ( ! class_exists('PHPLeague')) {
                 ),
                 $atts
             ));
+
+            // TODO - In the future, make a specific
+            // Front_Controller for every sport.
 
             $id    = intval($id);
             $front = new PHPLeague_Front();

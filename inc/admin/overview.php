@@ -116,7 +116,7 @@ $data[] = array(
 );
 
 if ($activation === 1)
-    $message[] = __('PHPLeague has been activated with success! We hope that you will enjoy this plugin...', 'phpleague');
+    $message[] = __('PHPLeague has been activated with success! I hope that you will enjoy the plugin...', 'phpleague');
 
 $output  = $fct->form_open(admin_url('admin.php?page=phpleague_overview'));
 $output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_league', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';

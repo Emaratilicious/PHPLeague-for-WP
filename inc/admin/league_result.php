@@ -75,10 +75,9 @@ else
     $nb_fixtures = ($nb_teams * $nb_legs) - $nb_legs;
 
 // If the player mod is enabled, we show the toggle button
+$button_players = '';
 if ($setting->player_mod === 'yes')
     $button_players = $fct->input('show_match', '#', array('type' => 'button', 'class' => 'button show_match'));
-else
-    $button_players = '';
 
 $pagination = $fct->pagination($nb_fixtures, 1, $id_fixture, 'id_fixture');
 $output    .= $fct->form_open(admin_url($page_url));
@@ -189,6 +188,7 @@ foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
 }
 $output .= '</table>';
 $output .= $fct->form_close();
+
 $data[]  = array(
     'menu'  => __('Results', 'phpleague'),
     'title' => __('Results of ', 'phpleague').$league_name,

@@ -72,6 +72,7 @@ if ( ! class_exists('PHPLeague_Front')) {
                         <th class="centered">'.__('F', 'phpleague').'</th>
                         <th class="centered">'.__('A', 'phpleague').'</th>
                         <th class="centered">'.__('+/-', 'phpleague').'</th>
+                        <th class="">'.__('Last 5 matches', 'phpleague').'</th>
                         <th class="centered"></th>
                     </tr>
                 </thead>
@@ -153,6 +154,31 @@ if ( ! class_exists('PHPLeague_Front')) {
                     $output .= '<td class="centered">'.$goal_for.'</td>';
                     $output .= '<td class="centered">'.$goal_against.'</td>';
                     $output .= '<td class="centered">'.$diff.'</td>';
+                    $output .= '<td>';
+
+                    // Get latest results
+                    $results = array_reverse($db->get_latest_results($row->id_team));
+                    foreach ($results as $result) {
+                        if ($row->id_team == $result->id_team_home) {
+                            if ($result->goal_home > $result->goal_away) {
+                                $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
+                            } elseif ($result->goal_home < $result->goal_away) {
+                                $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
+                            } elseif ($result->goal_home == $result->goal_away) {
+                                $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
+                            }
+                        } elseif ($row->id_team == $result->id_team_away) {
+                            if ($result->goal_home < $result->goal_away) {
+                                $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
+                            } elseif ($result->goal_home > $result->goal_away) {
+                                $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
+                            } elseif ($result->goal_home == $result->goal_away) {
+                                $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
+                            }
+                        }
+                    }
+                    
+                    $output .= '</td>';
                     $output .= '<td class="centered">'.$span.'</td></tr>';
 
                     $place++;
@@ -239,8 +265,8 @@ if ( ! class_exists('PHPLeague_Front')) {
 
             $info = $db->get_club_information($id);
             
-            // Coach & venure are empty,
-            // so we don't show the club information
+            // Coach and venue are empty, we assume that no information has been filled!
+            // We quit!
             if (empty($info->coach) && empty($info->venue))
                 return;
                 

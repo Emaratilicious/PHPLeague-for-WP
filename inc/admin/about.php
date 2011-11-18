@@ -24,56 +24,56 @@ $menu = array(
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
-    'text'  => __('This page is the dashboard and you should be able to manage most of the actions directly from here.', 'phpleague'),
+    'text'  => __('This page is your dashboard and the main point of contact to manage most of the actions.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Create a League', 'phpleague'),
-    'text'  => __('That is the PHPLeague starting point. You need to chose a name and a year for your league.', 'phpleague'),
+    'text'  => __('That is your first step ever. You need to chose a name and a year for your league. Duplicates are impossible :)', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Manage Teams', 'phpleague'),
-    'text'  => __('The first thing you need to do once your league has been created is to assign it teams. In order to help you, the plugin will avoid duplicate teams in a league. You have also the possibility to remove one BUT only if there is no matches related with the team. Please, make sure that you are having an even number of teams in your league. A little security check will make sure that you do not remove a team currently used by a league.', 'phpleague'),
+    'text'  => __('The first thing you need to do once your league has been created is to assign it teams. You can have an odd or even number of teams, PHPLeague is handling every case smoothly, but still two teams minimum are required. A little counter is showing you how many teams are in the current league.You can remove more than once team at the same time too.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Manage Fixtures', 'phpleague'),
-    'text'  => __('In the fixtures section, you will be asked to fill in every fixtures date. Please, respect the following date format: "YYYY-MM-DD". Be aware that I have chosen to insert automatically the fixtures time in the database. This time can be override in the results section. If anything is working fine, you should have the perfect number of fixtures to fill in but if anything went wrong, contact me. The option to choose the time might appear in the next release, nothing concrete about it yet.', 'phpleague'),
+    'text'  => __('In the fixtures section, you will be asked to fill in every fixtures date. Be aware that the fixtures time is automatically added in the database. This time can be override in the settings section but then you have to come back here and save it one more time to update all fixtures date time.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Manage Matches', 'phpleague'),
-    'text'  => __('In the matches sections, you have to relate every match between each others. Take time to fill in all the data because it is very easy to make a mistake. Fortunately, the plugin has a small counter whose able to count the numbers of matches for every team (home & away). Be aware that if you do not fill in the fixtures, you will not be able to fill in the matches.', 'phpleague'),
+    'text'  => __('In the matches sections, you have to relate every match between each others. Take time to fill in all the data because it is very easy to make a mistake. You can check if the data are OK in your teams section. Be aware that if you do not fill in the fixtures, you will not be able to fill in the matches.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Manage Results', 'phpleague'),
-    'text'  => __('In the results section, you will be asked to fill in all the results for a fixture. If you want to add the results of a team before all the others, that is not a problem. Let every input blank and fill in the one you are interested in. Do not forget to fill in the "date time" input in order to have the calendar perfectly ordered by date. Be aware that if you do not fill in the matches, you will not be able to fill in the matches.', 'phpleague'),
+    'text'  => __('In the results section, you will be asked to fill in all the results for a fixture. If you want to add the results of a team before all the others, that is not a problem. Let every input blank and fill in the one you are interested in.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Manage Settings', 'phpleague'),
-    'text'  => __('In this section, you have the possibility to setup every option used by the plugin like the number of points for a victory, a draw or a defeat. If might happen that a club received few penalty points. No problem, the plugin handle this perfectly. At the moment, all data must be equal or superior to zero but this might change in order to give "bonus" points in the next release.', 'phpleague'),
+    'text'  => __('In this section, you have the possibility to setup every option available with the plugin like the number of points for a victory, a draw or a defeat. It might happen that a club received a penalty point or more than one. No problem, the plugin handle this perfectly. You can also use this to add "bonus" point.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('The Generator', 'phpleague'),
-    'text'  => __('This is the final step in order to update your table. When you choose to generate your table, every result will be calculated according to your settings and the database table will be filled in with the latest data. A sample will be displayed once the task is done.', 'phpleague'),
+    'text'  => __('This is the final step in order to update your table. When you choose to generate your table, every result will be calculated according to your settings and the database table will be filled in with the latest data.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -95,14 +95,14 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
     'title' => __('Edit a Club', 'phpleague'),
-    'text'  => __('Once your club is created, you can edit him by clicking on his name. You will be redirected to the club edition mode. Currently, you have only six different options in the edition mode. To add your logos, you need to create a "phpleague" folder with 2 sub-folders ("logo_mini" and "logo_big") in the uploads directory.', 'phpleague'),
+    'text'  => __('Once your club is created, you can edit it by clicking on his name. You will be redirected to the club edition mode.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
     'title' => __('Remove a Club', 'phpleague'),
-    'text'  => __('In order to remove a club, you need to go in the edition mode. A little security check will be executed during the process and you will be protected against mistakes if the club is currently used in a league.', 'phpleague'),
+    'text'  => __('Keep in mind that once you delete a club, all data associated to will be destroyed. You can delete more than once club at the time.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -118,6 +118,14 @@ $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
     'text'  => __('This section of the plugin is entirely dedicated to the players management. You can add, edit or even delete a player once created.', 'phpleague'),
+    'class' => 'full'
+);
+
+// players
+$data[] = array(
+    'menu'  => __('Players', 'phpleague'),
+    'title' => __('Edit a Player', 'phpleague'),
+    'text'  => __('...', 'phpleague'),
     'class' => 'full'
 );
 
@@ -200,7 +208,7 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('About', 'phpleague'),
     'title' => __('Requirements', 'phpleague'),
-    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.2+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database.', 'phpleague'),
+    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.1+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database.', 'phpleague'),
     'class' => 'full'
 );
 

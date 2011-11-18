@@ -10,7 +10,7 @@ PHPLeague for WordPress is the best companion to manage your championships.
 
 == Description ==
 
-PHPLeague for WordPress is the best companion to manage your championships. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football (soccer) like handball, basketball, hockey or volleyball.
+PHPLeague for WordPress is the best companion to manage your championships. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football like handball, basketball, hockey or volleyball.
 
 **Features**
 
@@ -19,11 +19,11 @@ PHPLeague for WordPress is the best companion to manage your championships. This
 * Manage as many clubs as you want, no limitations
 * Manage as many players as you want, no limitations
 * A very powerful and nice backend to simplify your life
-* A clean (un)installer developed in order to keep your database secure and safe
+* A clean (un)installer to keep your database secure and safe
 
 **Languages**
 
-* This plugin is currently available in English and in French. Please help us translate it!
+* This plugin is currently available in English and in French. Please help me translate it!
 
 == Installation ==
 
@@ -60,7 +60,7 @@ In the front part, no Javascript at all. Always keeping in mind that plenty of b
 
 = Where do I need to add my logos? =
 
-Few folders are automatically created during the installation. They're located in your `uploads` directory.
+New folders are - normally - automatically created during the installation in your `uploads` directory.
 
 = Another question? =
 

@@ -50,9 +50,9 @@ if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
     if ($id_fixture === 0) {
         $message[] = __('An error occurred with the fixture ID.', 'phpleague');
     } elseif ($id_home === NULL || $id_away === NULL) {
-        $message[] = __('An error occurred with one of the input.', 'phpleague');
+        $message[] = __('An error occurred because of the data type given.', 'phpleague');
     } else {
-        // Remove old data whatever
+        // Remove all previous data
         $db->remove_matches_from_fixture($id_fixture);
         $array = array();
         
@@ -88,7 +88,7 @@ if ($pagination)
 // Check if the fixture exists in matches table
 $id_fixture = $db->get_fixture_id($get_id_fixture, $id_league, FALSE);
 $i = $team_home = $team_away = 0;
-$output .= '</div><table class="widefat"><thead><tr><th colspan="2">'.$league_name.__(' - Fixture: ', 'phpleague').$get_id_fixture.'</th></tr><tr><th style="text-align:center;">'.__('Home', 'phpleague').'</th><th style="text-align:center;">'.__('Away', 'phpleague').'</th></tr></thead>';
+$output .= '</div><table class="widefat"><thead><tr><th colspan="2">'.$league_name.__(' - Fixture: ', 'phpleague').$get_id_fixture.'</th></tr><tr><th class="text-centered">'.__('Home', 'phpleague').'</th><th class="text-centered">'.__('Away', 'phpleague').'</th></tr></thead>';
 
 foreach ($db->get_distinct_league_team($id_league) as $array) {
     $clubs_list[$array->club_id] = esc_html($array->name);  
@@ -96,7 +96,7 @@ foreach ($db->get_distinct_league_team($id_league) as $array) {
 
 // Matches
 for ($counter = $nb_matches; $counter > 0; $counter = $counter - 1) {
-    // Get team ids
+    // Get teams ID
     foreach ($db->get_matches_by_fixture($id_fixture, $counter - 1) as $row) {
         $team_home = intval($row->id_team_home);
         $team_away = intval($row->id_team_away);

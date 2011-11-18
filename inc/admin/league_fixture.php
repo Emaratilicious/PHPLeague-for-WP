@@ -36,8 +36,7 @@ if (isset($_POST['fixtures']) && check_admin_referer('phpleague')) {
     if ($post_years === NULL || $post_months === NULL || $post_days === NULL) {
         $message[] = __('The fixtures format is not good!', 'phpleague');   
     } else {
-        // Every input have the same number
-        // so it does not matter which one we use...
+        // It does not matter which one we count...
         $count = count($post_years);
         for ($i = 1; $i <= $count; $i++) {
             // We get each data separately...
@@ -47,7 +46,7 @@ if (isset($_POST['fixtures']) && check_admin_referer('phpleague')) {
 
             $date  = $year.'-'.$month.'-'.$day;
 
-            // Add the new fixtures in the db
+            // Edit the fixtures in the database...
             $db->edit_league_fixtures($i, $date, $id_league);
 
             // We update the match datetime using the default value
@@ -80,9 +79,10 @@ if ($nb_teams == 0 || $nb_teams == 1) {
 
     // Security check
     if ($nb_fixtures != $fixtures_number) {
-        // We removed "old" data
+        // We removed the "old" data
         $db->remove_fixtures_league($id_league);
 
+        // Add the new fixtures in the database...
         $number = 1;
         while ($number <= $fixtures_number) {
             $db->add_fixtures_league($number, $id_league);
@@ -119,10 +119,11 @@ if ($nb_teams == 0 || $nb_teams == 1) {
             
     foreach ($db->get_fixtures_league($id_league) as $row) {
         // Get years, months and days separately...
-        list($year, $month, $day) = split('-', $row->scheduled);
+        list($year, $month, $day) = explode('-', $row->scheduled);
         // Used as a key...
         $number = intval($row->number);
 
+        // Render the data row...
         $output .= '<tr>';
         $output .= '<td>'.$number.'</td>';
         $output .= '<td>'.$fct->select('year['.$number.']', $years, intval($year)).'</td>';
