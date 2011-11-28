@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `blog_phpleague_player_team` (
   `id_player` smallint(4) unsigned NOT NULL DEFAULT '0',
   `id_team` smallint(4) unsigned NOT NULL DEFAULT '0',
   `number` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `position` varchar(50) NOT NULL,
+  `position` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id_player` (`id_player`),
   KEY `id_team` (`id_team`)
