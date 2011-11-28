@@ -21,14 +21,26 @@ require_once ABSPATH.'/wp-admin/admin.php';
 // check for rights
 if ( ! current_user_can('phpleague')) die();
 
+// Load PHPLeague tools
+require_once ABSPATH.'/wp-content/plugins/phpleague/libs/phpleague-tools.php';
+
+$tools = new PHPLeague_Tools();
+
+// Database stuffs
 global $wpdb;
 
-$leagues  = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name`, `year` FROM {$wpdb->league} ORDER BY `year` DESC, `name` ASC"));
-$clubs    = $wpdb->get_results($wpdb->prepare("SELECT `id`, `name` FROM {$wpdb->club} ORDER BY `name` ASC"));
+$leagues  = $wpdb->get_results($wpdb->prepare("SELECT id, name, year FROM $wpdb->league ORDER BY year DESC, name ASC"));
+$clubs    = $wpdb->get_results($wpdb->prepare("SELECT id, name FROM $wpdb->club ORDER BY name ASC"));
+$fixtures = $wpdb->get_results($wpdb->prepare("SELECT l.id as league_id, l.name, l.year, f.number, f.id as fixture_id FROM $wpdb->league l INNER JOIN $wpdb->fixture f ON f.id_league = l.id ORDER BY l.year DESC, l.name ASC"));
 
-//$fixtures = $wpdb->get_results($wpdb->prepare("SELECT c.name, t.id as team_id FROM $wpdb->team t LEFT JOIN $wpdb->club c ON c.id = t.id_club ORDER BY c.name ASC")
-//$fixture  = $wpdb->get_results($wpdb->prepare("SELECT c.name, t.id as team_id FROM $wpdb->team t LEFT JOIN $wpdb->club c ON c.id = t.id_club ORDER BY c.name ASC"));
+// Fixtures listing into an array...
+$fixtures_list = array();
+foreach ($fixtures as $item) {
+    $year = (int) $item->year;
+    $fixtures_list[$item->name.' '.$year.'/'.substr($year + 1, 2)][$item->fixture_id] = $item->number;
+}
 
+// Get the website url
 $site_url = get_option('siteurl');
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -62,7 +74,7 @@ $site_url = get_option('siteurl');
                         <?php
                         if ($leagues) {
                             foreach($leagues as $league) {
-                                $year  = intval($league->year);
+                                $year = (int) $league->year;
                                 echo '<option value="'.$league->id.'" >'.esc_html($league->name).' '.$year.'/'.substr($year + 1, 2).'</option>'."\n";
                             }
                         }
@@ -71,12 +83,21 @@ $site_url = get_option('siteurl');
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="type"><?php _e('Style', 'phpleague') ?></label></td>
+                    <td><label for="style"><?php _e('Style', 'phpleague') ?></label></td>
                     <td>
                         <select size="1" name="style" id="style">
                             <option value="general"><?php _e('Normal', 'phpleague') ?></option>
                             <option value="home"><?php _e('Home', 'phpleague') ?></option>
                             <option value="away"><?php _e('Away', 'phpleague') ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="latest"><?php _e('Show latest results', 'phpleague') ?></label></td>
+                    <td>
+                        <select size="1" name="latest" id="latest">
+                            <option value="false"><?php _e('No', 'phpleague') ?></option>
+                            <option value="true"><?php _e('Yes', 'phpleague') ?></option>
                         </select>
                     </td>
                 </tr>
@@ -92,7 +113,7 @@ $site_url = get_option('siteurl');
                         <?php
                         if ($leagues) {
                             foreach($leagues as $league) {
-                                $year  = intval($league->year);
+                                $year = (int) $league->year;
                                 echo '<option value="'.$league->id.'" >'.esc_html($league->name).' '.$year.'/'.substr($year + 1, 2).'</option>'."\n";
                             }
                         }
@@ -103,6 +124,7 @@ $site_url = get_option('siteurl');
                     <td><input type="text" size="4" value="" name="id_team" id="id_team" /></td>
                 </tr>
             </table>
+            <p><?php _e('Display all fixtures for a chosen league or only those for a particular team into that league.', 'phpleague'); ?></p>
         </div>
         <!-- fixture panel -->
         <div id="fixture_panel" class="panel"><br />
@@ -110,15 +132,9 @@ $site_url = get_option('siteurl');
                 <tr>
                     <td><label for="fixture_id"><?php _e('Fixture', 'phpleague'); ?></label></td>
                     <td>
-                        <select id="fixture_id" name="fixture_id" style="width: 200px;">
                         <?php
-                        if ($leagues) {
-                            foreach($leagues as $league) {
-                                echo '<option value="'.$league->id.'" >'.esc_html($league->name).'</option>'."\n";
-                            }
-                        }
+                        echo $tools->select('fixture_id', $fixtures_list, '', array('id' => 'fixture_id', 'style' => 'width: 200px;'));
                         ?>
-                        </select>
                     </td>
                 </tr>
             </table>

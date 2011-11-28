@@ -62,8 +62,13 @@
         $('input[readonly="readonly"]').click(function() {
             $(this).toggleDisabled();
         });
+
+        $('.show_match').each(function() {
+            $(this).click(function () {
+                $(this).closest('tr').next('tr').toggle();
+            })
+        });
         
-        //$("input.masked-date").mask("9999-99-99");
         $("input.masked-time").mask("99:99:99");
         $("input.masked-full").mask("9999-99-99 99:99:99");
     });

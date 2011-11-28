@@ -6,15 +6,17 @@ function insertPHPLeague() {
 	var tagtext;
 	var tables 	 = document.getElementById('tables_panel');
 	var fixtures = document.getElementById('fixtures_panel');
+	var fixture  = document.getElementById('fixture_panel');
 	var clubs    = document.getElementById('clubs_panel');
 
 	// Table mode
 	if (tables.className.indexOf('current') != -1) {
 		var leagueId = document.getElementById('league_id').value;
 		var style 	 = document.getElementById('style').value;
+		var latest 	 = document.getElementById('latest').value;
 		
 		if (leagueId != 0)
-			tagtext = "[phpleague id=" + leagueId + " type=table style=" + style + "]";
+			tagtext = "[phpleague id=" + leagueId + " type=table latest=" + latest + " style=" + style + "]";
 		else
 			tinyMCEPopup.close();
 	}
@@ -32,6 +34,16 @@ function insertPHPLeague() {
 		
 		if (leagueId != 0)
 			tagtext = "[phpleague id=" + leagueId + " " + team + " type=fixtures]";
+		else
+			tinyMCEPopup.close();
+	}
+
+	// Fixture mode
+	if (fixture.className.indexOf('current') != -1) {
+		var fixtureId = document.getElementById('fixture_id').value;
+		
+		if (fixtureId != 0)
+			tagtext = "[phpleague type=fixture id=" + fixtureId + "]";
 		else
 			tinyMCEPopup.close();
 	}

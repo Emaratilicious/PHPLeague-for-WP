@@ -91,7 +91,7 @@ if ( ! class_exists('PHPLeague_Admin')) {
             foreach ($menu as $key => $item) {
                 $output .= '<div class="adminpanel-content-box" id="adminpanel-content-'.strtolower(str_replace(' ', '', $key)).'">';
                 foreach ($content as $value) {
-                    $hidden = (isset($value['hide']) && $value['hide'] === TRUE)  ? 'hidden' : '';
+                    $hidden = (isset($value['hide']) && $value['hide'] === TRUE) ? 'hidden' : '';
                     if ($key == $value['menu']) {
                         $output .= '
                         <div class="section">
@@ -148,7 +148,7 @@ if ( ! class_exists('PHPLeague_Admin')) {
         public function admin_page()
         {
             // JS must be enabled to use properly PHPLeague...
-            _e('<noscript>For full functionality of PHPLeague, it is necessary to enable JavaScript.</noscript>', 'phpleague');
+            _e('<noscript>For full functionality of PHPLeague, it is necessary to enable Javascript.</noscript>', 'phpleague');
             
             // Page Header
             echo $this->admin_header();

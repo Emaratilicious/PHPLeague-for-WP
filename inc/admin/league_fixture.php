@@ -15,8 +15,8 @@ if ($db->is_league_exists($id_league) === FALSE)
 // Vars
 $league_name = $db->return_league_name($id_league);
 $setting     = $db->get_league_settings($id_league);
-$nb_teams    = intval($setting->nb_teams);
-$nb_legs     = intval($setting->nb_leg);
+$nb_teams    = (int) $setting->nb_teams;
+$nb_legs     = (int) $setting->nb_leg;
 $output      = '';
 $data        = array();
 $menu        = array(
@@ -40,16 +40,16 @@ if (isset($_POST['fixtures']) && check_admin_referer('phpleague')) {
         $count = count($post_years);
         for ($i = 1; $i <= $count; $i++) {
             // We get each data separately...
-            $year  = $post_years[$i];
-            $month = $post_months[$i];
-            $day   = $post_days[$i];
+            $year  = (int) $post_years[$i];
+            $month = (int) $post_months[$i];
+            $day   = (int) $post_days[$i];
 
             $date  = $year.'-'.$month.'-'.$day;
 
             // Edit the fixtures in the database...
             $db->edit_league_fixtures($i, $date, $id_league);
 
-            // We update the match datetime using the default value
+            // We update the match datetime using the default time
             foreach ($db->get_fixture_id($i, $id_league) as $row) {
                 $db->edit_game_datetime($date.' '.$setting->default_time, $row->fixture_id);
             }
@@ -65,7 +65,7 @@ if (($nb_teams % 2) != 0)
 
 // We need to have at least 2 teams...
 if ($nb_teams == 0 || $nb_teams == 1) {
-    $message[] = __('It seems that '.$league_name.' has no team registered or only one.', 'phpleague');
+    $message[] = __('It seems that '.$league_name.' does not have teams registered or only one.', 'phpleague');
 } else {   
     $output = $fct->form_open(admin_url('admin.php?page=phpleague_overview&option=fixture&id_league='.$id_league));
     
@@ -121,14 +121,14 @@ if ($nb_teams == 0 || $nb_teams == 1) {
         // Get years, months and days separately...
         list($year, $month, $day) = explode('-', $row->scheduled);
         // Used as a key...
-        $number = intval($row->number);
+        $number = (int) $row->number;
 
-        // Render the data row...
+        // Render rows...
         $output .= '<tr>';
         $output .= '<td>'.$number.'</td>';
-        $output .= '<td>'.$fct->select('year['.$number.']', $years, intval($year)).'</td>';
-        $output .= '<td>'.$fct->select('month['.$number.']', $months, intval($month)).'</td>';
-        $output .= '<td>'.$fct->select('day['.$number.']', $days, intval($day)).'</td>';
+        $output .= '<td>'.$fct->select('year['.$number.']', $years, (int) $year).'</td>';
+        $output .= '<td>'.$fct->select('month['.$number.']', $months, (int) $month).'</td>';
+        $output .= '<td>'.$fct->select('day['.$number.']', $days, (int) $day).'</td>';
         $output .= '</tr>';
 
     }

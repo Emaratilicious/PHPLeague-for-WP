@@ -10,8 +10,8 @@
  */
 
 // Vars
-$get_option = ( ! empty($_GET['option'])    ? trim($_GET['option'])      : '');
-$id_league  = ( ! empty($_GET['id_league']) ? intval($_GET['id_league']) : 0);
+$get_option = ( ! empty($_GET['option'])    ? trim($_GET['option'])    : '');
+$id_league  = ( ! empty($_GET['id_league']) ? (int) $_GET['id_league'] : 0);
 $message    = array();
 
 // Sub-requests
@@ -40,10 +40,10 @@ if ($get_option === 'generator' && $id_league) {
     // Secure vars...
     $setting  = $db->get_league_settings($id_league);
     $max      = $db->get_max_fixtures_played($id_league);
-    $nb_teams = intval($setting->nb_teams);
-    $pt_v     = intval($setting->pt_victory);
-    $pt_d     = intval($setting->pt_draw);
-    $pt_l     = intval($setting->pt_defeat);
+    $nb_teams = (int) $setting->nb_teams;
+    $pt_v     = (int) $setting->pt_victory;
+    $pt_d     = (int) $setting->pt_draw;
+    $pt_l     = (int) $setting->pt_defeat;
     $start    = 0;
     
     // Fill in the table
@@ -51,8 +51,8 @@ if ($get_option === 'generator' && $id_league) {
     $message[] = __('Table updated successfully.', 'phpleague');
 } elseif (isset($_POST['add_league']) && check_admin_referer('phpleague')) {
     // Secure vars...
-    $year = ( ! empty($_POST['year'])) ? intval($_POST['year']) : 0;
-    $name = ( ! empty($_POST['name'])) ? trim($_POST['name'])   : NULL;
+    $year = ( ! empty($_POST['year'])) ? (int) $_POST['year'] : 0;
+    $name = ( ! empty($_POST['name'])) ? trim($_POST['name']) : NULL;
     if ( ! preg_match('/^([0-9]{4})$/', $year)) {
        $message[] = __('The year must be 4 digits.', 'phpleague');
     } elseif (in_array($name, array(NULL, FALSE, ''))) {
@@ -88,8 +88,8 @@ if ($get_option === 'generator' && $id_league) {
 
 // Vars
 $per_page   = 7;
-$p_number   = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
-$activation = ( ! empty($_GET['activation']) ? intval($_GET['activation']) : 0);
+$p_number   = ( ! empty($_GET['p_nb']) ? (int) $_GET['p_nb'] : 1);
+$activation = ( ! empty($_GET['activation']) ? (int) $_GET['activation'] : 0);
 $offset     = ($p_number - 1 ) * $per_page;
 $total      = $db->count_leagues();
 $pagination = $fct->pagination($total, $per_page, $p_number);
@@ -143,8 +143,8 @@ $output .= '
     <tbody>';
     
     foreach ($db->get_every_league($offset, $per_page) as $league) {
-        $id   = intval($league->id);
-        $year = intval($league->year);
+        $id   = (int) $league->id;
+        $year = (int) $league->year;
         $output .= '
         <tr '.$fct->alternate('', 'class="alternate"').'>
             <th class="check-column"><input type="checkbox" name="id_league[]" value="'.$id.'" /></th>

@@ -1,11 +1,11 @@
 noscript {
 background:red;
-color:white;
+color:#FFF;
 }
 
 .required {
 font-weight:700!important;
-color: #333;
+color:#333;
 }
 
 #adminpanel-logo {
@@ -27,7 +27,7 @@ padding:10px;
 background-color:#fff;
 }
 
-#adminpanel .widefat .text-centered {
+#adminpanel .text-centered,#adminpanel .text-centered th {
 text-align:center!important;
 }
 
@@ -52,12 +52,11 @@ width:80px;
 }
 
 #adminpanel .submit {
-padding:.5em 0;
 text-align:right;
+padding:.5em 0;
 }
 
-#adminpanel table input,
-#adminpanel table select {
+#adminpanel table input,#adminpanel table select {
 text-align:center;
 }
 
@@ -87,8 +86,8 @@ box-shadow:inset 1px 1px 0 rgba(255,255,255,.2),inset -1px -1px 0 rgba(255,255,2
 
 #adminpanel-header .logo {
 float:left;
-margin:24px 0 0 25px;
 height:35px;
+margin:24px 0 0 25px;
 }
 
 #adminpanel-header .theme-info {
@@ -140,7 +139,6 @@ margin:0;
 #adminpanel-menu ul li .adminpanel-menu-link {
 font-size:12px;
 line-height:16px;
-padding:12px;
 display:block;
 font-weight:700;
 border-top:1px solid #FFF;
@@ -148,6 +146,7 @@ border-bottom:1px solid #d8d8d8;
 border-right:1px solid #d8d8d8;
 color:#717171;
 text-decoration:none;
+padding:12px;
 }
 
 #adminpanel-menu ul li .adminpanel-menu-link:focus {
@@ -158,8 +157,7 @@ outline:0;
 background-color:#eee;
 }
 
-#adminpanel-menu ul li .visible,
-#adminpanel-menu ul li .visible:hover {
+#adminpanel-menu ul li .visible,#adminpanel-menu ul li .visible:hover {
 background-color:#fff;
 color:#111;
 border-right:0;
@@ -175,8 +173,8 @@ margin-left:-1px;
 }
 
 #adminpanel-content .adminpanel-content-box {
-padding:15px;
 display:none;
+padding:15px;
 }
 
 #adminpanel-content .visible {
@@ -193,9 +191,9 @@ border-bottom-right-radius:8px;
 border-bottom:1px solid #d8d8d8;
 border-left:1px solid #d8d8d8;
 border-right:1px solid #d8d8d8;
-padding:10px;
 height:10px;
 background:#f3f3f3;
+padding:10px;
 }
 
 .clear {
@@ -204,12 +202,12 @@ clear:both;
 
 #adminpanel #support-links {
 height:32px;
-padding:0 0 0 15px;
 background-color:#f3f3f3;
 border-top:1px solid #fff;
 border-bottom:1px solid #D8D8D8;
 border-left:1px solid #D8D8D8;
 border-right:1px solid #D8D8D8;
+padding:0 0 0 15px;
 }
 
 #adminpanel #support-links ul li {
@@ -232,18 +230,18 @@ color:#155876;
 }
 
 #adminpanel #support-links ul li.changelog {
-padding:2px 0 2px 20px;
 background:url(../img/ico-changelog.png) no-repeat left center;
+padding:2px 0 2px 20px;
 }
 
 #adminpanel #support-links ul li.docs {
-padding:1px 0 1px 20px;
 background:url(../img/ico-docs.png) no-repeat left top;
+padding:1px 0 1px 20px;
 }
 
 #adminpanel #support-links ul li.help {
-padding:1px 0 1px 20px;
 background:url(../img/ico-forum.png) no-repeat left top;
+padding:1px 0 1px 20px;
 }
 
 #adminpanel #support-links ul li.right {
@@ -257,17 +255,17 @@ margin-bottom:10px;
 
 #adminpanel .section h3.heading {
 font-size:1.1em;
-margin:0;
-padding:0;
 border-bottom:1px solid #e7e7e7;
 cursor:pointer;
+margin:0;
+padding:0;
 }
 
 #adminpanel .section .full {
 float:left;
 width:100%;
-margin:10px 15px 0 0;
 font-size:11px;
 color:#999;
 font-family:sans-serif;
+margin:10px 15px 0 0;
 }

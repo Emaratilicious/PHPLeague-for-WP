@@ -23,7 +23,7 @@ PHPLeague for WordPress is the best companion to manage your championships. This
 
 **Languages**
 
-* This plugin is currently available in English and in French. Please help me translate it!
+* This plugin is currently available in English, French and German. Please help me translate it!
 
 == Installation ==
 
@@ -83,6 +83,8 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * NEW: Possibility to delete a club and all data associated
 * NEW: Possibility to delete a league and all data associated
 * NEW: Possibility to get the ranking table as widget
+* NEW: Plugin translated in German (thanks to Michael Fürst)
+* NEW: Possibility to display the 5 latest results in the table
 * CHG: When we remove a team from a league, all data associated are now deleted
 * CHG: Don't show a link in the table when links are disabled in the settings
 * CHG: Remove edition name in the database
@@ -90,6 +92,7 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * CHG: Remove input values when it's a field by default
 * CHG: FRENCH language has been updated and countries list added!
 * CHG: No more Premium Edition! FREE for Life...
+* FIX: If someone try to access a non-existing fixture, he can't!
 
 = 1.3 =
 * NEW: Possibility to display all the fixtures

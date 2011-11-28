@@ -10,7 +10,7 @@
  */
 
 // Vars
-$id_club  = ( ! empty($_GET['id_club'])  ? intval($_GET['id_club'])  : 0);
+$id_club  = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : 0);
 $message  = array();
 $data     = array();
 $menu     = array(__('Club Information', 'phpleague') => '#');
@@ -29,7 +29,7 @@ if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
     $website  = (string) trim($_POST['website']);
     $logo_b   = (string) trim($_POST['path_b_logo']);
     $logo_m   = (string) trim($_POST['path_m_logo']);
-    $country  = intval($_POST['country']);
+    $country  = (int) $_POST['country'];
     
     // Coach and venue field not required but secured
     if ($fct->valid_text($venue, 5) === FALSE) {
@@ -78,7 +78,7 @@ $table       =
             <td class="required">'.__('Club Name:', 'phpleague').'</td>
             <td>'.$fct->input('name', esc_html($club_info->name)).'</td>
             <td class="required">'.__('Country:', 'phpleague').'</td>
-            <td>'.$fct->select('country', $countries_list, intval($club_info->id_country)).'</td>
+            <td>'.$fct->select('country', $countries_list, (int) $club_info->id_country).'</td>
         </tr>
         <tr>
             <td>'.__('Coach Name:', 'phpleague').'</td> 

@@ -291,7 +291,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
         public function form_open($action = NULL, array $attributes = NULL)
         {
             if ($action === NULL)
-                return wp_die(__('An error occurred! We need to fix this later...', 'phpleague'));
+                return wp_die(__('An error occurred! I need to fix this later...', 'phpleague'));
 
             // Add the form action to the attributes
             $attributes['action'] = $action;

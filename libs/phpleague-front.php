@@ -34,9 +34,10 @@ if ( ! class_exists('PHPLeague_Front')) {
          *
          * @param  integer $id_league
          * @param  string  $style
+         * @param  string  $last_results
          * @return string
          */
-        public function get_league_table($id_league, $style = 'general')
+        public function get_league_table($id_league, $style = 'general', $last_results = 'true')
         {
             global $wpdb;
             $db = new PHPLeague_Database();
@@ -46,17 +47,22 @@ if ( ! class_exists('PHPLeague_Front')) {
                 return;
 
             $setting    = $db->get_league_settings($id_league);
-            $nb_teams   = intval($setting->nb_teams);
-            $promotion  = intval($setting->promotion);
-            $qualifying = intval($setting->qualifying) + $promotion;
-            $favorite   = intval($setting->id_favorite);
-            $relegation = $nb_teams - intval($setting->relegation);
+            $nb_teams   = (int) $setting->nb_teams;
+            $promotion  = (int) $setting->promotion;
+            $qualifying = (int) $setting->qualifying + $promotion;
+            $favorite   = (int) $setting->id_favorite;
+            $relegation = $nb_teams - (int) $setting->relegation;
             $team_links = ($setting->team_link == 'yes') ? TRUE : FALSE;
             
-            if (isset($_GET['team'])) {
+            if (isset($_GET['club'])) {
                 $front = new PHPLeague_Front();
-                echo $front->get_club_information(intval($_GET['team']));
+                echo $front->get_club_information((int) $_GET['club']);
             }
+
+            if ($last_results == 'true')
+                $th_latest = '<th>'.__('Last 5 matches', 'phpleague').'</th>';
+            else
+                $th_latest = '';
 
             $output =
             '<table id="phpleague">
@@ -72,7 +78,7 @@ if ( ! class_exists('PHPLeague_Front')) {
                         <th class="centered">'.__('F', 'phpleague').'</th>
                         <th class="centered">'.__('A', 'phpleague').'</th>
                         <th class="centered">'.__('+/-', 'phpleague').'</th>
-                        <th class="">'.__('Last 5 matches', 'phpleague').'</th>
+                        '.$th_latest.'
                         <th class="centered"></th>
                     </tr>
                 </thead>
@@ -83,8 +89,8 @@ if ( ! class_exists('PHPLeague_Front')) {
             foreach ($db->get_league_table_data($style, $id_league, $nb_teams) as $row) {
                 // Can we display a team?
                 if ($team_links) {
-                    $url      = get_permalink();
-                    $url      = add_query_arg('team', $row->id_club, $url);
+                    $permalink = get_permalink();
+                    $url       = add_query_arg('club', $row->id_club, $permalink);
                 }
                 
                 if ($place <= $nb_teams) {               
@@ -103,32 +109,32 @@ if ( ! class_exists('PHPLeague_Front')) {
                         $span = '<span></span>';
 
                     if ($style == 'home') {
-                        $points       = intval($row->home_points);
-                        $played       = intval($row->home_played);
-                        $victory      = intval($row->home_v);
-                        $draw         = intval($row->home_d);
-                        $defeat       = intval($row->home_l);
-                        $goal_for     = intval($row->home_g_for);
-                        $goal_against = intval($row->home_g_against);
-                        $diff         = intval($row->home_diff);
+                        $points       = (int) $row->home_points;
+                        $played       = (int) $row->home_played;
+                        $victory      = (int) $row->home_v;
+                        $draw         = (int) $row->home_d;
+                        $defeat       = (int) $row->home_l;
+                        $goal_for     = (int) $row->home_g_for;
+                        $goal_against = (int) $row->home_g_against;
+                        $diff         = (int) $row->home_diff;
                     } elseif ($style == 'away') {
-                        $points       = intval($row->away_points);
-                        $played       = intval($row->away_played);
-                        $victory      = intval($row->away_v);
-                        $draw         = intval($row->away_d);
-                        $defeat       = intval($row->away_l);
-                        $goal_for     = intval($row->away_g_for);
-                        $goal_against = intval($row->away_g_against);
-                        $diff         = intval($row->away_diff);
+                        $points       = (int) $row->away_points;
+                        $played       = (int) $row->away_played;
+                        $victory      = (int) $row->away_v;
+                        $draw         = (int) $row->away_d;
+                        $defeat       = (int) $row->away_l;
+                        $goal_for     = (int) $row->away_g_for;
+                        $goal_against = (int) $row->away_g_against;
+                        $diff         = (int) $row->away_diff;
                     } else {
-                        $points       = intval($row->points);
-                        $played       = intval($row->played);
-                        $victory      = intval($row->victory);
-                        $draw         = intval($row->draw);
-                        $defeat       = intval($row->defeat);
-                        $goal_for     = intval($row->goal_for);
-                        $goal_against = intval($row->goal_against);
-                        $diff         = intval($row->diff);
+                        $points       = (int) $row->points;
+                        $played       = (int) $row->played;
+                        $victory      = (int) $row->victory;
+                        $draw         = (int) $row->draw;
+                        $defeat       = (int) $row->defeat;
+                        $goal_for     = (int) $row->goal_for;
+                        $goal_against = (int) $row->goal_against;
+                        $diff         = (int) $row->diff;
                     }
                     
                     $output .= '<td class="centered">'.$place.'</td>';
@@ -138,7 +144,7 @@ if ( ! class_exists('PHPLeague_Front')) {
                         if (empty($url))
                             $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;'.esc_html($row->club_name).'</td>';
                         else
-                            $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;<a title="'.esc_html($row->club_name).'" href="'.$club_url.'">'.esc_html($row->club_name).'</a></td>';
+                            $output .= '<td><img src="'.content_url('uploads/phpleague/logo_mini/'.$row->logo_mini).'" alt="'.esc_html($row->club_name).'" />&nbsp;&nbsp;<a title="'.esc_html($row->club_name).'" href="'.$url.'">'.esc_html($row->club_name).'</a></td>';
                     } else {
                         if (empty($url))
                             $output .= '<td>'.esc_html($row->club_name).'</td>';
@@ -154,31 +160,39 @@ if ( ! class_exists('PHPLeague_Front')) {
                     $output .= '<td class="centered">'.$goal_for.'</td>';
                     $output .= '<td class="centered">'.$goal_against.'</td>';
                     $output .= '<td class="centered">'.$diff.'</td>';
-                    $output .= '<td>';
 
-                    // Get latest results
-                    $results = array_reverse($db->get_latest_results($row->id_team));
-                    foreach ($results as $result) {
-                        if ($row->id_team == $result->id_team_home) {
-                            if ($result->goal_home > $result->goal_away) {
-                                $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
-                            } elseif ($result->goal_home < $result->goal_away) {
-                                $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
-                            } elseif ($result->goal_home == $result->goal_away) {
-                                $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
-                            }
-                        } elseif ($row->id_team == $result->id_team_away) {
-                            if ($result->goal_home < $result->goal_away) {
-                                $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
-                            } elseif ($result->goal_home > $result->goal_away) {
-                                $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
-                            } elseif ($result->goal_home == $result->goal_away) {
-                                $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
+                    // Show latest results if enabled
+                    if ($last_results == 'true') {
+
+                        // Open the td tag
+                        $output .= '<td>';
+
+                        // Get the latest results
+                        $results = array_reverse($db->get_latest_results($row->id_team));
+                        foreach ($results as $result) {
+                            if ($row->id_team == $result->id_team_home) {
+                                if ($result->goal_home > $result->goal_away) {
+                                    $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
+                                } elseif ($result->goal_home < $result->goal_away) {
+                                    $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
+                                } elseif ($result->goal_home == $result->goal_away) {
+                                    $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
+                                }
+                            } elseif ($row->id_team == $result->id_team_away) {
+                                if ($result->goal_home < $result->goal_away) {
+                                    $output .= '<span class="win">'.__('W', 'phpleague').'</span>';
+                                } elseif ($result->goal_home > $result->goal_away) {
+                                    $output .= '<span class="lose">'.__('L', 'phpleague').'</span>';
+                                } elseif ($result->goal_home == $result->goal_away) {
+                                    $output .= '<span class="draw">'.__('D', 'phpleague').'</span>';
+                                }
                             }
                         }
+
+                        // Close the td tag
+                        $output .= '</td>';
                     }
                     
-                    $output .= '</td>';
                     $output .= '<td class="centered">'.$span.'</td></tr>';
 
                     $place++;
@@ -190,7 +204,48 @@ if ( ! class_exists('PHPLeague_Front')) {
         }
 
         /**
+         * Show one specific fixture.
+         *
+         * @param  integer $id_fixture
+         * @return string
+         */
+        public function get_league_fixture($id_fixture)
+        {
+            global $wpdb;
+            $db = new PHPLeague_Database();
+
+            // ID not in the database
+            if ($db->is_fixture_exists((int) $id_fixture) === FALSE)
+                return;
+
+            $output =
+            '<table id="phpleague"><tbody>
+            <tr>
+                <th>'.__('Date', 'phpleague').'</th>
+                <th>'.__('Match', 'phpleague').'</th>
+                <th class="centered">'.__('Score', 'phpleague').'</th>
+            </tr>';
+            
+            foreach ($db->get_fixture_results((int) $id_fixture) as $row) {
+                    $output .= '<tr>';
+                    $output .= '<td>'.strftime("%a %e %b, %H:%M", strtotime($row->played)).'</td>';
+                    $output .= '<td>'.esc_html($row->home_name).' - '.esc_html($row->away_name).'</td>';
+
+                    if (date('Y-m-d') >= $row->played)
+                        $output .= '<td class="centered">'.$row->goal_home.' - '.$row->goal_away.'</td>';
+                    else
+                        $output .= '<td class="centered"> - </td>';
+
+                    $output .= '</tr>';
+                }
+
+            $output .= '</tbody></table>';
+            return $output;
+        }
+
+        /**
          * Show the league fixtures.
+         * Also possible to show only for one team...
          *
          * @param  integer $id_league
          * @param  integer $id_team
@@ -215,10 +270,10 @@ if ( ! class_exists('PHPLeague_Front')) {
             </tr>';
             
             if (isset($id_team) && $db->is_team_already_in_league($id_league, $id_team) === FALSE) { // We got a team...
-                foreach ($db->get_fixtures_by_team(intval($id_team), intval($id_league)) as $row) {
+                foreach ($db->get_fixtures_by_team((int) $id_team, (int) $id_league) as $row) {
                     $output .= '<tr>';
                     $output .= '<td>'.strftime("%a %e %b, %H:%M", strtotime($row->played)).'</td>';
-                    $output .= '<td class="centered">'.intval($row->number).'</td>';
+                    $output .= '<td class="centered">'.(int) $row->number.'</td>';
                     $output .= '<td>'.esc_html($row->home_name).' - '.esc_html($row->away_name).'</td>';
 
                     if (date('Y-m-d') >= $row->played)
@@ -229,10 +284,10 @@ if ( ! class_exists('PHPLeague_Front')) {
                     $output .= '</tr>';
                 }
             } else { // No team has been given...
-                foreach ($db->get_fixtures_by_league(intval($id_league)) as $row) {
+                foreach ($db->get_fixtures_by_league((int) $id_league) as $row) {
                     $output .= '<tr>';
                     $output .= '<td>'.strftime("%a %e %b, %H:%M", strtotime($row->played)).'</td>';
-                    $output .= '<td class="centered">'.intval($row->number).'</td>';
+                    $output .= '<td class="centered">'.(int) $row->number.'</td>';
                     $output .= '<td>'.esc_html($row->home_name).' - '.esc_html($row->away_name).'</td>';
 
                     if (date('Y-m-d') >= $row->played)
@@ -264,16 +319,11 @@ if ( ! class_exists('PHPLeague_Front')) {
                 return;
 
             $info = $db->get_club_information($id);
-            
-            // Coach and venue are empty, we assume that no information has been filled!
-            // We quit!
-            if (empty($info->coach) && empty($info->venue))
-                return;
                 
             if ($info->creation == 0)
                 $creation = '';
             else
-                $creation = intval($info->creation);
+                $creation = (int) $info->creation;
 
             $output  = '<table id="phpleague"><caption>'.esc_html($info->name).__(' Factfile', 'phpleague').'</caption><tbody>';
             $output .= '<tr><th rows="2">'.__('Details', 'phpleague').'</th></tr>';

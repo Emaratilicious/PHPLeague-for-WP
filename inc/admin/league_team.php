@@ -27,7 +27,7 @@ $menu        = array(
 
 // $_POST data processing...
 if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
-    $id_club = intval($_POST['id_club']);
+    $id_club = (int) $_POST['id_club'];
     
     if ($db->is_club_unique($id_club, 'id') === TRUE) {
         $message[] = __('We did not find the club in the database.', 'phpleague');
@@ -35,16 +35,16 @@ if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
         $message[] = __('You cannot add twice the same club in a league.', 'phpleague');
     } else {
         $db->add_club_in_league($id_league, $id_club);
-        $db->update_nb_teams(1, $id_league); // Edit the number of teams in the league
+        $db->update_nb_teams(1, $id_league); // Update the number of teams
         $message[] = __('Club added successfully in ', 'phpleague').$league_name;
     }
 } elseif (isset($_POST['remove_club']) && check_admin_referer('phpleague')) {
-    $id_club = ( ! empty($_POST['id_club']) && is_array($_POST['id_club'])) ? $_POST['id_club'] : 0;
+    $id_club = ( ! empty($_POST['id_club']) && is_array($_POST['id_club'])) ? $_POST['id_club'] : NULL;
     
-    if ($id_club === 0) {
-        // Check that the format is correct
+    if ($id_club === NULL) {
         $message[] = __('We are sorry but it seems that you did not select a club.', 'phpleague');
     } else {
+        // Affected data counter
         $i = 0;
         foreach ($id_club as $value) {
             $db->remove_club_from_league($value);
@@ -54,7 +54,7 @@ if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
         // Edit the number of teams in the league
         $db->update_nb_teams($i, $id_league, 'minus');
         
-        if ($i === 1)
+        if ($i === 1) // Only one row affected
             $message[] = __('Club removed successfully from ', 'phpleague').$league_name;
         else
             $message[] = __('Clubs removed successfully from ', 'phpleague').$league_name;
@@ -63,12 +63,13 @@ if (isset($_POST['add_club']) && check_admin_referer('phpleague')) {
 
 // Vars
 $per_page   = 7;
-$page       = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
+$page       = ( ! empty($_GET['p_nb']) ? (int) $_GET['p_nb'] : 1);
 $offset     = ($page - 1 ) * $per_page;
 $setting    = $db->get_league_settings($id_league);
-$total      = intval($setting->nb_teams);
+$total      = (int) $setting->nb_teams;
 $pagination = $fct->pagination($total, $per_page, $page);
 
+// Get clubs list
 foreach ($db->get_every_club(0, $nb_clubs, 'ASC', TRUE) as $array) {
     $clubs_list[$array->country][$array->id] = esc_html($array->name);  
 }
@@ -113,8 +114,8 @@ $output .=
         <tbody>';
         
         foreach ($db->get_every_club_in_league($id_league, TRUE, $offset, $per_page) as $club) {
-            $home_matches = $db->team_nb_matches_in_league($club->id);
-            $away_matches = $db->team_nb_matches_in_league($club->id, 'away');
+            $home_matches = (int) $db->team_nb_matches_in_league($club->id);
+            $away_matches = (int) $db->team_nb_matches_in_league($club->id, 'away');
             $output .=
                 '<tr '.$fct->alternate('', 'class="alternate"').'>
                     <th class="check-column"><input type="checkbox" name="id_club[]" value="'.intval($club->id).'" /></th>

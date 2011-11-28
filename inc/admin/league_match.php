@@ -10,7 +10,10 @@
  */
 
 // ID Fixture
-$get_id_fixture = ( ! empty($_GET['id_fixture']) ? intval($_GET['id_fixture']) : 1);
+if ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE)
+    $get_id_fixture = (int) $_GET['id_fixture'];
+else
+    $get_id_fixture = 1;
 
 // Security
 if ($db->is_league_exists($id_league) === FALSE)
@@ -19,8 +22,8 @@ if ($db->is_league_exists($id_league) === FALSE)
 // Vars
 $league_name = $db->return_league_name($id_league);
 $setting     = $db->get_league_settings($id_league);
-$nb_teams    = intval($setting->nb_teams);
-$nb_legs     = intval($setting->nb_leg);
+$nb_teams    = (int) $setting->nb_teams;
+$nb_legs     = (int) $setting->nb_leg;
 $page_url    = 'admin.php?page=phpleague_overview&option=match&id_league='.$id_league.'&id_fixture='.$get_id_fixture;
 $output      = '';
 $data        = array();
@@ -32,7 +35,7 @@ $menu        = array(
     __('Settings', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=setting&id_league='.$id_league)
 );
 
-// Check what kind of fixture we have (odd/even)
+// Check what kind of fixtures we are dealing with (odd/even)
 if (($nb_teams % 2) != 0) {
     $nb_fixtures = $nb_teams * $nb_legs;
     $nb_matches  = ($nb_teams - 1) / 2;
@@ -43,7 +46,7 @@ if (($nb_teams % 2) != 0) {
 
 // $_POST data processing...
 if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
-    $id_fixture = ( ! empty($_POST['id_fixture'])) ? intval($_POST['id_fixture']) : 0;
+    $id_fixture = ( ! empty($_POST['id_fixture'])) ? (int) $_POST['id_fixture'] : 0;
     $id_home    = ( ! empty($_POST['id_home']) && is_array($_POST['id_home'])) ? $_POST['id_home'] : NULL;
     $id_away    = ( ! empty($_POST['id_away']) && is_array($_POST['id_away'])) ? $_POST['id_away'] : NULL;
     
@@ -54,6 +57,8 @@ if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
     } else {
         // Remove all previous data
         $db->remove_matches_from_fixture($id_fixture);
+
+        // Array containing the teams to avoid duplicate
         $array = array();
         
         // Insert new data
@@ -63,11 +68,11 @@ if (isset($_POST['matches']) && check_admin_referer('phpleague')) {
                 $message[] = __('You cannot have the same team at home and away.', 'phpleague');
                 break;
             } elseif (in_array($id_home[$counter], $array) || in_array($id_away[$counter], $array)) {
-                $message[] = __('You cannot have the same team twice by fixture.', 'phpleague');
+                $message[] = __('You cannot have the same team twice in a fixture.', 'phpleague');
                 break;
             }
 
-            $db->add_matches_to_fixture($id_fixture, $id_home[$counter], $id_away[$counter]);
+            $db->add_matches_to_fixture($id_fixture, (int) $id_home[$counter], (int) $id_away[$counter]);
 
             // Add the teams in the array to check them later...
             $array[] = $id_home[$counter];
@@ -83,7 +88,10 @@ $output .= $fct->form_open(admin_url($page_url));
 $output .= '<div class="tablenav"><div class="alignleft actions">'.$fct->input('matches', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
 
 if ($pagination)
-    $output .= '<div class="tablenav-pages">'.$pagination.'</div>'; 
+    $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
+
+// TODO - If the fixture doesn't exist
+// we need to redirect to number uno...
 
 // Check if the fixture exists in matches table
 $id_fixture = $db->get_fixture_id($get_id_fixture, $id_league, FALSE);
@@ -98,8 +106,8 @@ foreach ($db->get_distinct_league_team($id_league) as $array) {
 for ($counter = $nb_matches; $counter > 0; $counter = $counter - 1) {
     // Get teams ID
     foreach ($db->get_matches_by_fixture($id_fixture, $counter - 1) as $row) {
-        $team_home = intval($row->id_team_home);
-        $team_away = intval($row->id_team_away);
+        $team_home = (int) $row->id_team_home;
+        $team_away = (int) $row->id_team_away;
     }
 
     // Home matches

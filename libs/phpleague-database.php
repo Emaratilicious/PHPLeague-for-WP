@@ -332,7 +332,7 @@ if ( ! class_exists('PHPLeague_Database')) {
             );
             
             foreach ($obj as $row) {
-                $year = intval($row->year);
+                $year = (int) $row->year;
                 $output = esc_html($row->name).' '.$year.'/'.substr($year + 1, 2);
             }
 
@@ -408,7 +408,7 @@ if ( ! class_exists('PHPLeague_Database')) {
             $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_chart WHERE id_team = %d", $id_team));
 
             // Delete players data
-            $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->player_team WHERE id_team = %d", $id_team));
+            // $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->player_team WHERE id_team = %d", $id_team));
 
             // Delete the players data associated to the team
             $wpdb->query($wpdb->prepare("DELETE a.*, b.*
@@ -454,6 +454,24 @@ if ( ! class_exists('PHPLeague_Database')) {
                 ORDER BY c.name",
                 $id_league)
             );
+        }
+
+        /**
+         * Check if a fixture exists
+         *
+         * @param  integer $id_fixture
+         * @return boolean
+         */
+        public function is_fixture_exists($id_fixture)
+        {
+            global $wpdb;
+            $exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->fixture WHERE id = %d", $id_fixture));
+            
+            // We didn't find a row
+            if ($exist == 0)
+                return FALSE;    
+            else
+                return TRUE;
         }
         
         /**
@@ -1305,7 +1323,7 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_player_history($id_player)
         {
             global $wpdb;
-            return $wpdb->get_results($wpdb->prepare("SELECT pt.id as id_player_team, pt.id_player, pt.id_team, pt.number, c.name as club, l.name as league, l.year, l.id as league_id
+            return $wpdb->get_results($wpdb->prepare("SELECT pt.id as id_player_team, pt.id_player, pt.id_team, pt.number, pt.position, c.name as club, l.name as league, l.year, l.id as league_id
                 FROM $wpdb->player_team pt
                 LEFT JOIN $wpdb->team t ON t.id = pt.id_team
                 LEFT JOIN $wpdb->club c ON c.id = t.id_club
@@ -1322,19 +1340,20 @@ if ( ! class_exists('PHPLeague_Database')) {
          * @param  integer $id_player
          * @param  integer $id_team
          * @param  integer $number
+         * @param  integer $position
          * @param  string  $action
          * @return object
          */
-        public function update_player_history($id_player, $id_team, $number, $action = 'update')
+        public function update_player_history($id_player, $id_team, $number, $position, $action = 'update')
         {
             global $wpdb;
             if ($action === 'update') {
                 return
                 $wpdb->update( 
                     $wpdb->player_team, 
-                    array('number' => $number), 
+                    array('number' => $number, 'position' => $position), 
                     array('id_player' => $id_player, 'id_team' => $id_team), 
-                    array('%d'), 
+                    array('%d', '%d'), 
                     array('%d', '%d') 
                 );
             } elseif ($action === 'insert') {
@@ -1344,9 +1363,10 @@ if ( ! class_exists('PHPLeague_Database')) {
                     array(
                         'id_player'   => $id_player,
                         'id_team'     => $id_team,
-                        'number'      => $number
+                        'number'      => $number,
+                        'position'    => $position,
                     ), 
-                    array('%d', '%d', '%d')
+                    array('%d', '%d', '%d', '%d')
                 );
             } else {
                 return;
@@ -1700,8 +1720,7 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_fixtures_by_league($id_league)
         {
             global $wpdb;
-            return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away,
-            g.played, g.id as game_id, g.id_team_home, g.id_team_away
+            return $wpdb->get_results($wpdb->prepare("SELECT d.number, clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away, g.played, g.id as game_id, g.id_team_home, g.id_team_away
                 FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
                 WHERE g.id_team_home = home.id
                 AND g.id_team_away = away.id
@@ -1709,8 +1728,32 @@ if ( ! class_exists('PHPLeague_Database')) {
                 AND home.id_club = clhome.id
                 AND away.id_club = claway.id
                 AND g.id_fixture = d.id
-                ORDER BY d.number ASC",
+                ORDER BY d.number ASC, g.played ASC, clhome.name ASC",
                 $id_league));
+        }
+
+        /**
+         * Get all results by fixture
+         *
+         * This method gives us the possibility to get all the results
+         * for a selected fixture.
+         *
+         * @param  integer  $id_fixture
+         * @return object
+         */
+        public function get_fixture_results($id_fixture)
+        {
+            global $wpdb;
+            return $wpdb->get_results($wpdb->prepare("SELECT clhome.name as home_name, claway.name as away_name, g.goal_home, g.goal_away, g.played, g.id as game_id, g.id_team_home, g.id_team_away
+                FROM $wpdb->team home, $wpdb->team away, $wpdb->match g, $wpdb->fixture d, $wpdb->club clhome, $wpdb->club claway
+                WHERE g.id_team_home = home.id
+                AND g.id_team_away = away.id
+                AND home.id_club = clhome.id
+                AND away.id_club = claway.id
+                AND d.id = %d
+                AND g.id_fixture = d.id
+                ORDER BY g.played ASC, clhome.name ASC",
+                $id_fixture));
         }
 
         /**

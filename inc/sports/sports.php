@@ -21,10 +21,6 @@ if ( ! class_exists('PHPLeague_Sports')) {
      */
   abstract class PHPLeague_Sports {
 
-        // Static vars
-        public static $events    = array();
-        public static $positions = array();
-  
         /**
          * Constructor
          *
@@ -32,27 +28,5 @@ if ( ! class_exists('PHPLeague_Sports')) {
          * @return void
          */
         public function __construct() {}
-
-        /**
-         * Return all events
-         *
-         * @param  none
-         * @return void
-         */
-        public function get_events()
-        {
-             
-        }
-
-        /**
-         * Return all positions
-         *
-         * @param  none
-         * @return void
-         */
-        public function get_positions()
-        {
-            
-        }
     }
 }

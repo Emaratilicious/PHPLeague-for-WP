@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-$id_club  = ( ! empty($_GET['id_club']) ? intval($_GET['id_club']) : NULL);
+$id_club  = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : NULL);
 
 // Club edition mode...
 if ($db->is_club_unique($id_club, 'id') === FALSE)
@@ -17,7 +17,7 @@ if ($db->is_club_unique($id_club, 'id') === FALSE)
 
 // Vars
 $per_page   = 7;
-$page       = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
+$page       = ( ! empty($_GET['p_nb']) ? (int) $_GET['p_nb'] : 1);
 $offset     = ($page - 1 ) * $per_page;
 $total      = $db->count_clubs();
 $base_url   = 'admin.php?page=phpleague_club';
@@ -35,7 +35,7 @@ foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
 if (isset($_POST['club']) && check_admin_referer('phpleague')) {
     // Clean up vars
     $name    = (string) trim($_POST['club_name']);
-    $country = intval($_POST['club_country']);
+    $country = (int) $_POST['club_country'];
     if (in_array($name, array(NULL, FALSE, ''))) {
         $message[] = __('The name cannot be empty.', 'phpleague');
     } elseif ($fct->valid_text($name, 3) === FALSE) {

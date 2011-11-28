@@ -10,7 +10,7 @@
  */
 
 // Vars
-$id_player = ( ! empty($_GET['id_player']) ? intval($_GET['id_player']) : 0);
+$id_player = ( ! empty($_GET['id_player']) ? (int) $_GET['id_player'] : 0);
 $page_url  = admin_url('admin.php?page=phpleague_player&id_player='.$id_player);
 $message   = array();
 $data      = array();
@@ -28,10 +28,10 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     $birthdate = (string) trim($_POST['birthdate']);
     $picture   = (string) trim($_POST['picture']);
     $desc      = (string) trim($_POST['description']);
-    $weight    = intval($_POST['weight']);
-    $height    = intval($_POST['height']);
-    $country   = intval($_POST['country']);
-    $term      = intval($_POST['term']);
+    $weight    = (int) $_POST['weight'];
+    $height    = (int) $_POST['height'];
+    $country   = (int) $_POST['country'];
+    $term      = (int) $_POST['term'];
 
     // We need to pass those tests to insert the data
     if ($id_player === 0) {
@@ -59,7 +59,7 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     }
     $message[] = __('Data updated successfully.', 'phpleague');
 } elseif (isset($_POST['add_team']) && check_admin_referer('phpleague')) {
-    $id_team = ( ! empty($_POST['id_team'])) ? intval($_POST['id_team']) : 0;
+    $id_team = ( ! empty($_POST['id_team'])) ? (int) $_POST['id_team'] : 0;
     if ($id_team === 0) {
         $message[] = __('No team has been selected!', 'phpleague');
     } elseif ($db->player_already_in_team($id_player, $id_team) === TRUE) {
@@ -95,21 +95,21 @@ $table     =
         </tr>
         <tr>
             <td class="required">'.__('Height:', 'phpleague').'</td> 
-            <td>'.$fct->input('height', intval($player->height)).'</td>
+            <td>'.$fct->input('height', (int) $player->height).'</td>
             <td class="required">'.__('Weight:', 'phpleague').'</td>
-            <td>'.$fct->input('weight', intval($player->weight)).'</td>
+            <td>'.$fct->input('weight', (int) $player->weight).'</td>
         </tr>
         <tr>
             <td class="required">'.__('Birthdate:', 'phpleague').'</td>
             <td>'.$fct->input('birthdate', esc_html($player->birthdate)).'</td>
             <td class="required">'.__('Country:', 'phpleague').'</td>
-            <td>'.$fct->select('country', $countries_list, intval($player->id_country)).'</td>
+            <td>'.$fct->select('country', $countries_list, (int) $player->id_country).'</td>
         </tr>
         <tr>
             <td>'.__('Picture:', 'phpleague').'</td>
             <td>'.$fct->select('picture', $pics_list, esc_html($player->picture)).'</td>
             <td>'.__('Term:', 'phpleague').'</td>
-            <td>'.$fct->select('term', $tags_list, intval($player->id_term)).'</td>
+            <td>'.$fct->select('term', $tags_list, (int) $player->id_term).'</td>
         </tr>
     </table>';
     
@@ -191,25 +191,20 @@ $output .=
     <tbody>';
     
     // Display all the information...
-    // Check if we have some "positions" for every league
     $positions_list[0] = __('-- Select a position --', 'phpleague');
-    if ($history) {
-        foreach ($history as $row) {
-            $positions = $db->get_positions($row->league_id);
-            foreach (maybe_unserialize($positions) as $position) {
-                if ($position != 'NULL' || $position != '') {
-                    foreach (maybe_unserialize($position) as $item) {
-                        $positions_list[$item['id']] = esc_html($item['name']); 
-                    }
-                }
-            }
-                        
-            $output .= '<tr id="'.$row->id_player_team.'"><td>'.esc_html($row->league).' '.$row->year.'/'.($row->year + 1).'</td>';
-            $output .= '<td>'.esc_html($row->club).'</td>';
-            $output .= '<td>'.$fct->input('history['.$row->id_team.'][number]', intval($row->number), array('size' => 4)).'</td>';
-            $output .= '<td>'.$fct->select('history['.$row->id_team.'][id_position]', $positions_list, intval($row->id_position)).'</td>';
-            $output .= '<td>'.$fct->input('delete_player_team', __('Delete', 'phpleague'), array('type' => 'button', 'class' => 'button delete_player_team')).'</td></tr>';
+
+    // Only display if we get an history...
+    foreach ($history as $row) {
+        // Get positions list...
+        foreach (PHPLeague_Sports_Soccer::$positions as $key => $value) {
+            $positions_list[$key] = $value; 
         }
+
+        $output .= '<tr id="'.$row->id_player_team.'"><td>'.esc_html($row->league).' '.$row->year.'/'.($row->year + 1).'</td>';
+        $output .= '<td>'.esc_html($row->club).'</td>';
+        $output .= '<td>'.$fct->input('history['.$row->id_team.'][number]', (int) $row->number, array('size' => 4)).'</td>';
+        $output .= '<td>'.$fct->select('history['.$row->id_team.'][id_position]', $positions_list, (int) $row->position).'</td>';
+        $output .= '<td>'.$fct->input('delete_player_team', __('Delete', 'phpleague'), array('type' => 'button', 'class' => 'button delete_player_team')).'</td></tr>';
     }
 
 $output .= '</tbody></table>';

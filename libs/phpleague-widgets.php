@@ -85,7 +85,7 @@ if ( ! class_exists('PHPLeague_Widgets')) {
             echo '<select id="league_id" name="league_id">';
             if ($leagues) {
                 foreach($leagues as $league) {
-                    $year  = intval($league->year);
+                    $year = (int) $league->year;
                     echo '<option value="'.$league->id.'" >'.esc_html($league->name).' '.$year.'/'.substr($year + 1, 2).'</option>'."\n";
                 }
             }

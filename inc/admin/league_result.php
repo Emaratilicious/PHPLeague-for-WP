@@ -10,7 +10,10 @@
  */
 
 // ID Fixture
-$id_fixture = ( ! empty($_GET['id_fixture']) ? intval($_GET['id_fixture']) : 1);
+if ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE)
+    $id_fixture = (int) $_GET['id_fixture'];
+else
+    $id_fixture = 1;
 
 if ($db->is_league_exists($id_league) === FALSE)
     wp_die(__('We did not find the league in the database.', 'phpleague'));
@@ -18,9 +21,9 @@ if ($db->is_league_exists($id_league) === FALSE)
 // Vars
 $league_name = $db->return_league_name($id_league);
 $setting     = $db->get_league_settings($id_league);
-$nb_teams    = intval($setting->nb_teams);
-$nb_legs     = intval($setting->nb_leg);
-$nb_players  = intval($setting->starting) + intval($setting->substitute);
+$nb_teams    = (int) $setting->nb_teams;
+$nb_legs     = (int) $setting->nb_leg;
+$nb_players  = (int) $setting->starting + (int) $setting->substitute;
 $page_url    = 'admin.php?page=phpleague_overview&option=result&id_league='.$id_league.'&id_fixture='.$id_fixture;
 $output      = '';
 $data        = array();
@@ -88,11 +91,11 @@ if ($pagination)
 
 $output .= '</div><table class="widefat"><thead><tr><th colspan="7">'.$league_name.__(' - Fixture: ', 'phpleague').$id_fixture.'</th></tr></thead>';
 foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
-    $output .= '<tr><td class="check-column">'.intval($row->match_id).'</td><td style="text-align:right;">'.esc_html($row->name_home).'</td>';
+    $output .= '<tr><td class="check-column">'.(int) $row->match_id.'</td><td style="text-align:right;">'.esc_html($row->name_home).'</td>';
     $output .= '<td class="check-column">'.$fct->input('array['.$key.'][goal_home]', $row->goal_home, array('size' => 2)).'</td>';
     $output .= '<td class="check-column">'.$fct->input('array['.$key.'][goal_away]', $row->goal_away, array('size' => 2)).'</td>';
     $output .= '<td>'.esc_html($row->name_away).'</td>';
-    $output .= '<td class="check-column">'.$fct->input('array['.$key.'][date]', esc_html($row->played), array('size' => 18, 'class' => 'masked-full')).$fct->input('array['.$key.'][id_match]', intval($row->match_id), array('type' => 'hidden')).'</td>';
+    $output .= '<td class="check-column">'.$fct->input('array['.$key.'][date]', esc_html($row->played), array('size' => 18, 'class' => 'masked-full')).$fct->input('array['.$key.'][id_match]', (int) $row->match_id, array('type' => 'hidden')).'</td>';
     $output .= '<td class="check-column">'.$button_players.'</td></tr>';
     
     // If we have the player mode enabled, we show it
@@ -133,7 +136,7 @@ foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
             }
         } else { // We got players in the database so we showed them...
             foreach ($player_match_home as $player_m_home) {
-                $select_home .= $fct->select('players['.$row->match_id.'][]', $home_players, intval($player_m_home->player_id));
+                $select_home .= $fct->select('players['.$row->match_id.'][]', $home_players, (int) $player_m_home->player_id);
             }
             
             // If we have less players selected than authorized, we show the rest of them...
@@ -161,7 +164,7 @@ foreach ($db->get_results_by_fixture($id_fixture, $id_league) as $key => $row) {
             }
         } else { // We got players in the database so we showed them...
             foreach ($player_match_away as $player_m_away) {
-                $select_away .= $fct->select('players['.$row->match_id.'][]', $away_players, intval($player_m_away->player_id));
+                $select_away .= $fct->select('players['.$row->match_id.'][]', $away_players, (int) $player_m_away->player_id);
             }
             
             // If we have less players selected than authorized, we show the rest of them...

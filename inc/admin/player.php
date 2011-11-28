@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-$id_player  = ( ! empty($_GET['id_player']) ? intval($_GET['id_player']) : NULL);
+$id_player  = ( ! empty($_GET['id_player']) ? (int) $_GET['id_player'] : NULL);
 
 if ($db->is_player_unique($id_player) === FALSE)
     return require_once WP_PHPLEAGUE_PATH.'inc/admin/player_edit.php';    
 
 // Vars
 $per_page   = 7;
-$page       = ( ! empty($_GET['p_nb']) ? intval($_GET['p_nb']) : 1);
+$page       = ( ! empty($_GET['p_nb']) ? (int) $_GET['p_nb'] : 1);
 $offset     = ($page - 1 ) * $per_page;
 $total      = $db->count_players();
 $base_url   = 'admin.php?page=phpleague_player';
@@ -94,16 +94,6 @@ $output .= '
             <th>'.__('Weight', 'phpleague').'</th>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <th class="check-column"><input type="checkbox"/></th>
-            <th>'.__('ID', 'phpleague').'</th>
-            <th>'.__('Name', 'phpleague').'</th>
-            <th>'.__('Birthdate', 'phpleague').'</th>
-            <th>'.__('Height', 'phpleague').'</th>
-            <th>'.__('Weight', 'phpleague').'</th>
-        </tr>
-    </tfoot>
     <tbody>';
     
     foreach ($db->get_every_player($offset, $per_page, 'ASC', TRUE) as $player) {

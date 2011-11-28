@@ -71,6 +71,11 @@ if ( ! class_exists('PHPLeague')) {
             require_once WP_PHPLEAGUE_PATH.'libs/phpleague-tools.php';
             require_once WP_PHPLEAGUE_PATH.'libs/phpleague-database.php';
             require_once WP_PHPLEAGUE_PATH.'libs/phpleague-widgets.php';
+
+            // Sports files
+            // Soccer is used for testing...
+            require_once WP_PHPLEAGUE_PATH.'inc/sports/sports.php';
+            require_once WP_PHPLEAGUE_PATH.'inc/sports/soccer.php';
             
             // Load our tables
             $this->define_tables();
@@ -188,7 +193,7 @@ if ( ! class_exists('PHPLeague')) {
             $current_db_version = isset($db_version) ? $db_version : 0;
 
             // You're already using the latest version
-            if ($current_version == WP_PHPLEAGUE_VERSION || $current_version == 0 || $current_db_version == 0)
+            if ($current_version == WP_PHPLEAGUE_VERSION)
                 return;
 
             // Some people encounter issues because they could not deal
@@ -242,7 +247,7 @@ if ( ! class_exists('PHPLeague')) {
                 add_option('phpleague_edition', WP_PHPLEAGUE_EDITION);
             }
             
-            // Few modifications
+            // Few modifications to handle player/prediction modules
             if ($current_db_version < '1.3') {
                 // Not required anymore...
                 delete_option('phpleague_edition');
@@ -465,7 +470,7 @@ if ( ! class_exists('PHPLeague')) {
                 id_player smallint(4) unsigned NOT NULL DEFAULT '0',
                 id_team smallint(4) unsigned NOT NULL DEFAULT '0',
                 number tinyint(1) unsigned NOT NULL DEFAULT '0',
-                position varchar(50) NOT NULL,
+                position tinyint(1) unsigned NOT NULL DEFAULT '0',
                 PRIMARY KEY (id),
                 KEY id_player (id_player),
                 KEY id_team (id_team)";
@@ -817,6 +822,11 @@ if ( ! class_exists('PHPLeague')) {
             if (isset($_GET['page'])) {
                 if ( ! in_array(trim($_GET['page']), $this->pages))
                     return;
+                
+                // Make sure to use the latest version of jQuery...
+                wp_deregister_script('jquery');
+                wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
+                wp_enqueue_script('jquery');
 
                 wp_register_script('phpleague', plugins_url('phpleague/assets/js/admin.js'), array('jquery'));
                 wp_register_script('phpleague-mask', plugins_url('phpleague/assets/js/jquery.maskedinput.js'), array('jquery'));
@@ -946,10 +956,11 @@ if ( ! class_exists('PHPLeague')) {
         {
             extract(shortcode_atts(
                 array(
-                    'id'      => 1,
-                    'type'    => 'table',
-                    'style'   => 'general',
-                    'id_team' => ''
+                    'id'         => 1,
+                    'type'       => 'table',
+                    'style'      => 'general',
+                    'id_team'    => '',
+                    'latest'     => 'false'
                 ),
                 $atts
             ));
@@ -957,28 +968,40 @@ if ( ! class_exists('PHPLeague')) {
             // TODO - In the future, make a specific
             // Front_Controller for every sport.
 
-            $id    = intval($id);
+            $id    = (int) $id;
             $front = new PHPLeague_Front();
             
+            // Display ranking table
             if ($type == 'table') {
                 if ($style == 'home')
-                    return $front->get_league_table($id, 'home');
+                    return $front->get_league_table($id, 'home', $latest);
                 elseif ($style == 'away')
-                    return $front->get_league_table($id, 'away');
+                    return $front->get_league_table($id, 'away', $latest);
                 else
-                    return $front->get_league_table($id);
-            } elseif ($type == 'fixtures') {
+                    return $front->get_league_table($id, 'general', $latest);
+            }
+            // Display fixture table
+            elseif ($type == 'fixture') {
+                return $front->get_league_fixture($id);                
+            }
+            // Display fixtures table
+            elseif ($type == 'fixtures') {
                 if ( ! empty($id_team))
                     return $front->get_league_fixtures($id, $id_team);
                 else
                     return $front->get_league_fixtures($id);                
-            } elseif ($type == 'club') {
+            }
+            // Display club information
+            elseif ($type == 'club') {
                 return $front->get_club_information($id);                   
-            } else {
+            }
+            // Display ranking table by default
+            else {
                 return $front->get_league_table($id);
             }
         }
     }
     
+    // Let's get it started!
     $phpleague = new PHPLeague();
 }
