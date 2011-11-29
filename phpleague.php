@@ -42,7 +42,6 @@ if ( ! class_exists('PHPLeague')) {
         public $longname  = 'PHPLeague for WordPress';
         public $shortname = 'PHPLeague for WP';
         public $homepage  = 'http://www.phpleague.com/';
-        public $feed      = 'http://www.phpleague.com/feed/';
         public $edition   = 'Ultimate Edition';
         public $access    = '';
         public $pages     = array(
@@ -50,7 +49,7 @@ if ( ! class_exists('PHPLeague')) {
             'phpleague_club',
             'phpleague_overview',
             'phpleague_player',
-            'phpleague_setting',
+            'phpleague_setting'
         );
 
         /**
@@ -75,7 +74,7 @@ if ( ! class_exists('PHPLeague')) {
             // Sports files
             // Soccer is used for testing...
             require_once WP_PHPLEAGUE_PATH.'inc/sports/sports.php';
-            require_once WP_PHPLEAGUE_PATH.'inc/sports/soccer.php';
+            require_once WP_PHPLEAGUE_PATH.'inc/sports/football.php';
             
             // Load our tables
             $this->define_tables();
@@ -97,16 +96,13 @@ if ( ! class_exists('PHPLeague')) {
                 add_action('admin_menu', array(&$this, 'admin_menu'));
                 add_action('admin_print_styles', array(&$this, 'print_admin_styles'));
                 add_action('admin_print_scripts', array(&$this, 'print_admin_scripts'));
-                add_action('wp_dashboard_setup', array(&$this, 'register_widgets'));
+                add_action('wp_dashboard_setup', array(&$this, 'register_admin_widgets'));
                 
                 // AJAX library
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-ajax.php';
                 
-                // Ajax request
+                // Ajax request to delete a team in player history
                 add_action('wp_ajax_delete_player_history_team', array('PHPLeague_AJAX', 'delete_player_history_team'));
-
-                // Register PHPLeague_Widgets
-                //add_action('widgets_init', create_function('', 'register_widget("PHPLeague_Widgets");'));
             } else {
                 // Load the frontend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front.php';
@@ -165,14 +161,14 @@ if ( ! class_exists('PHPLeague')) {
         }
         
         /**
-         * Add all widgets here...
+         * Register admin widgets
          *
          * @param  none
          * @return void
          */
-        public function register_widgets()
+        public function register_admin_widgets()
         {
-             wp_add_dashboard_widget('phpleague_dashboard', 'PHPLeague Latest News', array('PHPLeague_Widgets', 'dashboard'));
+            wp_add_dashboard_widget('phpleague_dashboard', 'PHPLeague Latest News', array('PHPLeague_Widgets', 'latest_news'));
         }
         
         /**
@@ -196,7 +192,7 @@ if ( ! class_exists('PHPLeague')) {
             if ($current_version == WP_PHPLEAGUE_VERSION)
                 return;
 
-            // Some people encounter issues because they could not deal
+            // Some people encounter issues because they cannot deal
             // with a NOT DEFAULT without any value
             if ($current_db_version < '1.2') {
                 // ALTER tables
@@ -281,7 +277,7 @@ if ( ! class_exists('PHPLeague')) {
         {       
             global $wpdb;
 
-            // All Tables
+            // PHPLeague tables
             $wpdb->club        = $wpdb->prefix.'phpleague_club';
             $wpdb->country     = $wpdb->prefix.'phpleague_country';
             $wpdb->fixture     = $wpdb->prefix.'phpleague_fixture';
@@ -769,6 +765,7 @@ if ( ! class_exists('PHPLeague')) {
         {
             global $wpdb;
 
+            // PHPLeague tables
             $tables = array(
                 $wpdb->fixture,
                 $wpdb->league,
@@ -776,9 +773,14 @@ if ( ! class_exists('PHPLeague')) {
                 $wpdb->country,
                 $wpdb->match,
                 $wpdb->table_cache,
-                $wpdb->team
+                $wpdb->team,
+                $wpdb->player_team,
+                $wpdb->player_data,
+                $wpdb->table_chart,
+                $wpdb->table_predi
             );
-            
+
+            // Delete every table one by one
             foreach ($tables as $table) {
                 $wpdb->query('DROP TABLE IF EXISTS '.$table.';');
             }
@@ -824,9 +826,9 @@ if ( ! class_exists('PHPLeague')) {
                     return;
                 
                 // Make sure to use the latest version of jQuery...
-                wp_deregister_script('jquery');
-                wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
-                wp_enqueue_script('jquery');
+                //wp_deregister_script('jquery');
+                //wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
+                //wp_enqueue_script('jquery');
 
                 wp_register_script('phpleague', plugins_url('phpleague/assets/js/admin.js'), array('jquery'));
                 wp_register_script('phpleague-mask', plugins_url('phpleague/assets/js/jquery.maskedinput.js'), array('jquery'));
@@ -954,6 +956,7 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function display_phpleague($atts)
         {
+            // Extract data
             extract(shortcode_atts(
                 array(
                     'id'         => 1,
@@ -965,9 +968,9 @@ if ( ! class_exists('PHPLeague')) {
                 $atts
             ));
 
-            // TODO - In the future, make a specific
-            // Front_Controller for every sport.
+            // TODO - In the future, make a specific Front_Controller for every sport.
 
+            // Secure the ID
             $id    = (int) $id;
             $front = new PHPLeague_Front();
             
@@ -982,18 +985,18 @@ if ( ! class_exists('PHPLeague')) {
             }
             // Display fixture table
             elseif ($type == 'fixture') {
-                return $front->get_league_fixture($id);                
+                return $front->get_league_fixture($id);         
             }
             // Display fixtures table
             elseif ($type == 'fixtures') {
                 if ( ! empty($id_team))
                     return $front->get_league_fixtures($id, $id_team);
                 else
-                    return $front->get_league_fixtures($id);                
+                    return $front->get_league_fixtures($id);
             }
             // Display club information
             elseif ($type == 'club') {
-                return $front->get_club_information($id);                   
+                return $front->get_club_information($id);
             }
             // Display ranking table by default
             else {

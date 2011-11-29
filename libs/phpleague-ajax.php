@@ -44,7 +44,7 @@ if ( ! class_exists('PHPLeague_AJAX')) {
             $db->delete_player_history_team($id_player_team);
             $db->delete_player_team_data($id_player_team);
 
-            _e('Team deleted successfully from the profile with all the data associated.', 'phpleague');
+            _e('Team deleted successfully from the player history with all the data associated.', 'phpleague');
             exit();
         }
     }

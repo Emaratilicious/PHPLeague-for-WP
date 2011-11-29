@@ -20,6 +20,9 @@ if ( ! class_exists('PHPLeague_Sports')) {
      * @copyright  (c) 2011 Mikaweb Design, Ltd
      */
   abstract class PHPLeague_Sports {
+        
+        // Player positions
+        public static $positions = array();
 
         /**
          * Constructor

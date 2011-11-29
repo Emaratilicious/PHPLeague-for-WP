@@ -103,7 +103,7 @@ $output .= '
             <td>'.intval($player->id).'</td>
             <td>
                 <a href="'.admin_url($base_url.'&id_player='.intval($player->id)).'">
-                    '.esc_html($player->firstname).' '.esc_html($player->lastname).'
+                    '.esc_html($player->lastname).' '.esc_html($player->firstname).'
                 </a>
             </td>
             <td>'.esc_html($player->birthdate).'</td>

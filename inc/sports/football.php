@@ -9,19 +9,19 @@
  * file that was distributed with this source code.
  */
 
-if ( ! class_exists('PHPLeague_Sports_Soccer')) {
+if ( ! class_exists('PHPLeague_Sports_Football')) {
     
     /**
-     * PHPLeague Sports (Soccer) library.
+     * PHPLeague Sports (Football) library.
      *
-     * @category   Sports_Soccer
+     * @category   Sports_Football
      * @package    PHPLeague
      * @author     Maxime Dizerens
      * @copyright  (c) 2011 Mikaweb Design, Ltd
      */
-    class PHPLeague_Sports_Soccer extends PHPLeague_Sports {
+    class PHPLeague_Sports_Football extends PHPLeague_Sports {
 
-        // Static vars
+        // Player positions
         public static $positions = array(
             1  => 'Goalkeeper',
             2  => 'Left Back',

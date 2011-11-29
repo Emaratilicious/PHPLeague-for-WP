@@ -10,10 +10,7 @@
  */
 
 // ID Fixture
-if ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE)
-    $get_id_fixture = (int) $_GET['id_fixture'];
-else
-    $get_id_fixture = 1;
+$get_id_fixture = ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE) ? (int) $_GET['id_fixture'] : 1;
 
 // Security
 if ($db->is_league_exists($id_league) === FALSE)
@@ -89,9 +86,6 @@ $output .= '<div class="tablenav"><div class="alignleft actions">'.$fct->input('
 
 if ($pagination)
     $output .= '<div class="tablenav-pages">'.$pagination.'</div>';
-
-// TODO - If the fixture doesn't exist
-// we need to redirect to number uno...
 
 // Check if the fixture exists in matches table
 $id_fixture = $db->get_fixture_id($get_id_fixture, $id_league, FALSE);

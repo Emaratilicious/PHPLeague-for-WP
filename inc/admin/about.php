@@ -31,7 +31,14 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Dashboard', 'phpleague'),
     'title' => __('Create a League', 'phpleague'),
-    'text'  => __('That is your first step ever. You need to chose a name and a year for your league. Duplicates are impossible :)', 'phpleague'),
+    'text'  => __('Choose a name and a year then you can create your league.', 'phpleague'),
+    'class' => 'full'
+);
+
+$data[] = array(
+    'menu'  => __('Dashboard', 'phpleague'),
+    'title' => __('Delete a League', 'phpleague'),
+    'text'  => __('Keep in mind that once you delete a league, all data associated will be destroyed.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -101,8 +108,8 @@ $data[] = array(
 
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
-    'title' => __('Remove a Club', 'phpleague'),
-    'text'  => __('Keep in mind that once you delete a club, all data associated to will be destroyed. You can delete more than once club at the time.', 'phpleague'),
+    'title' => __('Delete a Club', 'phpleague'),
+    'text'  => __('Keep in mind that once you delete a club, all data associated will be destroyed.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -113,7 +120,7 @@ $data[] = array(
     'class' => 'full'
 );
 
-// players
+// Players
 $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Overview', 'phpleague'),
@@ -121,10 +128,24 @@ $data[] = array(
     'class' => 'full'
 );
 
-// players
+// Players
+$data[] = array(
+    'menu'  => __('Players', 'phpleague'),
+    'title' => __('Add a Player', 'phpleague'),
+    'text'  => __('...', 'phpleague'),
+    'class' => 'full'
+);
+
 $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Edit a Player', 'phpleague'),
+    'text'  => __('...', 'phpleague'),
+    'class' => 'full'
+);
+
+$data[] = array(
+    'menu'  => __('Players', 'phpleague'),
+    'title' => __('Delete a Player', 'phpleague'),
     'text'  => __('...', 'phpleague'),
     'class' => 'full'
 );
@@ -135,44 +156,55 @@ $table = '
     <tr>
         <th scope="col">'.__('Parameter', 'phpleague').'</th>
         <th scope="col">'.__('Description', 'phpleague').'</th>
+        <th scope="col">'.__('Data Type', 'phpleague').'</th>
         <th scope="col">'.__('Type', 'phpleague').'</th>
         <th scope="col">'.__('Default', 'phpleague').'</th>
         <th scope="col">'.__('Optional', 'phpleague').'</th>
     </tr>
 </thead>
 <tbody>
-    <tr class="" valign="top">
+    <tr valign="top">
         <td>id</td>
         <td>'.__('League ID', 'phpleague').'</td>
         <td><em>integer</em></td>
+        <td>&#160;</td>
         <td>&#160;</td>
         <td>'.__('No', 'phpleague').'</td>
     </tr>
     <tr class="alternate" valign="top">
         <td>type</td>
-        <td>'.__('What kind of information to display?', 'phpleague').'</td>
-        <td><em>fixtures/table</em></td>
+        <td>'.__('Information to show => "table/fixtures/fixture"', 'phpleague').'</td>
+        <td><em>string</em></td>
+        <td>&#160;</td>
         <td>table</td>
         <td>'.__('Yes', 'phpleague').'</td>
     </tr>
-    <tr class="" valign="top">
+    <tr valign="top">
         <td>style</td>
-        <td>'.__('Do we want a specific ranking table?', 'phpleague').'</td>
-        <td><em>general/home/away</em></td>
+        <td>'.__('Kind of style => "general/home/away"', 'phpleague').'</td>
+        <td><em>string</em></td>
+        <td>'.__('table', 'phpleague').'</td>
         <td>general</td>
         <td>'.__('Yes', 'phpleague').'</td>
     </tr>
     <tr class="alternate" valign="top">
         <td>id_team</td>
-        <td>'.__('For which team do we want to display the fixtures?', 'phpleague').'</td>
+        <td>'.__('Show all fixtures but only for that team', 'phpleague').'</td>
         <td><em>integer</em></td>
-        <td>your favorite team</td>
+        <td>'.__('fixtures', 'phpleague').'</td>
+        <td>1</td>
+        <td>'.__('Yes', 'phpleague').'</td>
+    </tr>
+    <tr valign="top">
+        <td>latest</td>
+        <td>'.__('Show the 5 latest results in ranking table', 'phpleague').'</td>
+        <td><em>boolean</em></td>
+        <td>'.__('table', 'phpleague').'</td>
+        <td>false</td>
         <td>'.__('Yes', 'phpleague').'</td>
     </tr>
 </tbody>
 </table>';
-
-$table .= __('All those short codes need to be activated with the following string: [phpleague].<br />The "id_team" parameter is only used by the fixtures so as the "style" option for the table.', 'phpleague');
 
 // Shortcodes
 $data[] = array(
@@ -183,17 +215,28 @@ $data[] = array(
 );
 
 // Widgets
-$data[] = array(
-    'menu'  => __('Widgets', 'phpleague'),
-    'title' => __('Overview', 'phpleague'),
-    'text'  => '',
-    'class' => 'full'
-);
+$table = '
+<table class="widefat">
+<thead>
+    <tr>
+        <th scope="col">'.__('Name', 'phpleague').'</th>
+        <th scope="col">'.__('Description', 'phpleague').'</th>
+        <th scope="col">'.__('Option', 'phpleague').'</th>
+    </tr>
+</thead>
+<tbody>
+    <tr valign="top">
+        <td>'.__('PHPleague Ranking Table', 'phpleague').'</td>
+        <td>'.__('Display a mini ranking table in the sidebar', 'phpleague').'</td>
+        <td><em>'.__('Select one league from the dropdown list', 'phpleague').'</em></td>
+    </tr>
+</tbody>
+</table>';
 
 $data[] = array(
     'menu'  => __('Widgets', 'phpleague'),
     'title' => __('Widgets Listing', 'phpleague'),
-    'text'  => '',
+    'text'  => $table,
     'class' => 'full'
 );
 
@@ -208,7 +251,7 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('About', 'phpleague'),
     'title' => __('Requirements', 'phpleague'),
-    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.1+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database.', 'phpleague'),
+    'text'  => __('I did not test the plugin under all Operating Systems but I am pretty sure it must handle every environment. As WordPress 3.1+, the minimum version of PHP required is 5.2.4 or greater and MySQL version 5 or greater for your database. Javascript must be enabled in the back-end of PHPLeague.', 'phpleague'),
     'class' => 'full'
 );
 

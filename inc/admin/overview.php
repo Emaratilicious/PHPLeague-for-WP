@@ -133,13 +133,6 @@ $output .= '
             <th colspan="5">'.__('Options', 'phpleague').'</th>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <th class="check-column"><input type="checkbox"/></th>
-            <th>'.__('League', 'phpleague').'</th>
-            <th colspan="5">'.__('Options', 'phpleague').'</th>
-        </tr>
-    </tfoot>
     <tbody>';
     
     foreach ($db->get_every_league($offset, $per_page) as $league) {

@@ -144,6 +144,8 @@ if ( ! class_exists('PHPLeague_Tools')) {
                     rmdir($path);
                     return TRUE;
                 }
+            } else {
+                return;
             }
         }
 
@@ -157,7 +159,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
         public function return_dir_files($path = NULL, $extension = array('png'))
         {
             $files = array();
-            $list  = array(0 => __('-- Select an image --', 'phpleague'));
+            $list  = array(0 => __('-- Select a file --', 'phpleague'));
             
             if ( ! is_dir($path))
                 return $list;
@@ -313,6 +315,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public function form_close()
         {
+            // Little security against XSS attack
             $nonce = '';
             if (is_admin())
                 $nonce = wp_nonce_field('phpleague');

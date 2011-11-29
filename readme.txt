@@ -1,25 +1,48 @@
 === PHPLeague for WordPress ===
 Contributors: Maxime Dizerens
 Donate link: http://www.phpleague.com/
-Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey
+Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
 Requires at least: 3.1
 Tested up to: 3.2.1
 Stable tag: 1.4.0
 
-PHPLeague for WordPress is the best companion to manage your championships.
+PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
 == Description ==
+PHPLeague for WordPress is a plugin that let you manage your own sports leagues instead of relying on a third-party website.
+This lets you have an integrated site without a lot of coding, and still letting you customize it exactly the way you’d like.
 
-PHPLeague for WordPress is the best companion to manage your championships. This plugin is very customizable and easy to use. This plugin works perfectly for other sports than football like handball, basketball, hockey or volleyball.
+First, you activate and set up the plugin, which makes your site have all functionalities available. Then, you can get it started by inserting every data you want, one by one.
 
-**Features**
+Bonus: I'm always listening to your requests and most of these are added regularly in the sourcecode improving the quality of PHPLeague. And by the way, PHPLeague will never be a premium plugin. It's 100% FREE and will stay that way!
 
-* The League's table and fixtures can be published via your posts/pages
-* Manage as many leagues as you want, no limitations
-* Manage as many clubs as you want, no limitations
-* Manage as many players as you want, no limitations
-* A very powerful and nice backend to simplify your life
-* A clean (un)installer to keep your database secure and safe
+Requires WordPress 3.1+ and PHP 5.2+.
+
+**Current features**
+* Unlimited leagues
+* Unlimited clubs
+* Unlimited players
+* Accessible easily through your posts or pages
+* Display full or partial data, it's up to you
+* Get widgets everywhere on your website
+* A very powerful and user-friendly back-end
+* A clean and efficient (un)installer keeping your data safe.
+
+**Coming features**
+* A prediction module
+* More and more statistics
+* More and more sports
+* A complete team dashboard section
+* Export your data and use PHPLeague CMS instead.
+
+If you have suggestions for a new add-on, feel free to email me at mdizerens@gmail.com.
+Want regular updates? Go on PHPLeague.com!
+
+http://www.phpleague.com/
+
+Or follow me on Twitter!
+
+http://twitter.com/mdizerens
 
 **Languages**
 
@@ -29,20 +52,20 @@ PHPLeague for WordPress is the best companion to manage your championships. This
 
 PHPLeague is really easy to install so just follow the guide:
 
-1. Upload the `phpleague` folder to the `/wp-content/plugins/` directory
+1. Upload the `phpleague` folder to the `/wp-content/plugins/` directory or install it from the repository
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Create your season and competition then generate a league
-4. Create your clubs and affect them to your league
-5. Insert the fixtures then the matches
-6. Insert your results then generate the table & calendar
-7. Place `[phpleague id=ID_LEAGUE]` in your post/page
-8. Manage your options and enjoy the plugin!
+3. First of all, you are required to create a first league with a name and year
+4. Then, you need to create the clubs - accessible on your PHPLeague menu
+5. Go back on the dashboard and click on "Teams" to assign the clubs in this particular league
+6. Then, follow the steps on your sub-menu till the last one named "Generate"
+7. Once the data generated, go in your news editor and use the PHPLeague button to insert the data in your post
+8. Still some trouble? Have a look to the "About" menu or go on PHPLeague.com.
 
 == Frequently Asked Questions ==
 
 = I've just activated PHPLeague, what do I need to do now? =
 
-First, I strongly encourage you to read the guide I wrote for you. It may help you better understand the plugin and save you some precious time although PHPLeague is user-friendly oriented.
+First, I strongly encourage you to read the guide I wrote for you. It may help you better understand the plugin and save you some precious time although PHPLeague is supposed to be user-friendly.
 
 = Why did you choose not to use WordPress default tables? =
 
@@ -60,7 +83,7 @@ In the front part, no Javascript at all. Always keeping in mind that plenty of b
 
 = Where do I need to add my logos? =
 
-New folders are - normally - automatically created during the installation in your `uploads` directory.
+A new `phpleague` is - supposedly - automatically created during the installation in your `uploads` directory. Then, add your logos in the right folders (mini or big).
 
 = Another question? =
 
@@ -68,9 +91,9 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 == Screenshots ==
 
-1. Help section
-2. PHPLeague Dashboard
-3. Clubs Listing
+1. PHPLeague Editor Button
+2. PHPLeague Ranking Table
+3. PHPLeague Administration Dashboard
 
 == Changelog ==
 
@@ -84,15 +107,16 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * NEW: Possibility to delete a league and all data associated
 * NEW: Possibility to get the ranking table as widget
 * NEW: Plugin translated in German (thanks to Michael Fürst)
-* NEW: Possibility to display the 5 latest results in the table
+* NEW: Possibility to show the 5 latest results in the table
+* NEW: Possibility to show a mini ranking table as widget
 * CHG: When we remove a team from a league, all data associated are now deleted
 * CHG: Don't show a link in the table when links are disabled in the settings
 * CHG: Remove edition name in the database
 * CHG: The fixtures interface has been rebuilt with dropdown lists
 * CHG: Remove input values when it's a field by default
 * CHG: FRENCH language has been updated and countries list added!
-* CHG: No more Premium Edition! FREE for Life...
-* FIX: If someone try to access a non-existing fixture, he can't!
+* CHG: No more Premium Edition! FREE for life...
+* FIX: If someone try to access a non-existing fixture, he can't no more!
 
 = 1.3 =
 * NEW: Possibility to display all the fixtures

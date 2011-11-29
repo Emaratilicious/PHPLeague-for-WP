@@ -10,10 +10,7 @@
  */
 
 // ID Fixture
-if ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE)
-    $id_fixture = (int) $_GET['id_fixture'];
-else
-    $id_fixture = 1;
+$id_fixture = ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE) ? (int) $_GET['id_fixture'] : 1;
 
 if ($db->is_league_exists($id_league) === FALSE)
     wp_die(__('We did not find the league in the database.', 'phpleague'));

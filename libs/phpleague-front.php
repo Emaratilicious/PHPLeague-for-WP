@@ -12,7 +12,7 @@
 if ( ! class_exists('PHPLeague_Front')) {
     
     /**
-     * Manage the rendering in the front-end.
+     * Manage the PHPLeague front-end.
      *
      * @category   Front
      * @package    PHPLeague
@@ -30,7 +30,7 @@ if ( ! class_exists('PHPLeague_Front')) {
         public function __construct() {}
 
         /**
-         * Show the league table.
+         * Show the league ranking table.
          *
          * @param  integer $id_league
          * @param  string  $style
@@ -334,6 +334,65 @@ if ( ! class_exists('PHPLeague_Front')) {
             $output .= '<tr><td><strong>'.__('Creation: ', 'phpleague').'</strong></td><td>'.$creation.'</td></tr>';
             $output .= '</tbody></table>';
 
+            return $output;
+        }
+
+        /**
+         * Show the league ranking as widget.
+         *
+         * @param  integer $id_league
+         * @return string
+         */
+        public function widget_ranking_table($id_league)
+        {
+            global $wpdb;
+            $db = new PHPLeague_Database();
+
+            // ID not in the database
+            if ($db->is_league_exists($id_league) === FALSE)
+                return;
+
+            $setting    = $db->get_league_settings($id_league);
+            $nb_teams   = (int) $setting->nb_teams;
+            $favorite   = (int) $setting->id_favorite;
+
+            $output =
+            '<table id="phpleague">
+                <thead>
+                    <tr>
+                        <th class="centered">'.__('Pos', 'phpleague').'</th>
+                        <th>'.__('Team', 'phpleague').'</th>
+                        <th class="centered">'.__('Pts', 'phpleague').'</th>
+                        <th class="centered">'.__('P', 'phpleague').'</th>
+                        <th class="centered">'.__('+/-', 'phpleague').'</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+            $place = 1;
+
+            foreach ($db->get_league_table_data($style, $id_league, $nb_teams) as $row) {                
+                if ($place <= $nb_teams) {               
+                    if ($favorite == $row->id_team)
+                        $output .= '<tr class="id-favorite">';
+                    else
+                        $output .= '<tr>';
+
+                    $points = (int) $row->points;
+                    $played = (int) $row->played;
+                    $diff   = (int) $row->diff;
+                    
+                    $output .= '<td class="centered">'.$place.'</td>';
+                    $output .= '<td>'.esc_html($row->club_name).'</td>';                    
+                    $output .= '<td class="centered">'.$points.'</td>';
+                    $output .= '<td class="centered">'.$played.'</td>';
+                    $output .= '<td class="centered">'.$diff.'</td></tr>';                    
+
+                    $place++;
+                }
+            }
+
+            $output .= '</tbody></table>';
             return $output;
         }
     }

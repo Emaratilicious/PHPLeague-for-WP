@@ -20,7 +20,7 @@ $menu      = array(__('Player Information', 'phpleague') => '#', __('Player Reco
 if ($db->is_player_unique($id_player) === TRUE)
     wp_die(__('We did not find the player in the database.', 'phpleague'));
 
-// $_POST data processing...
+// We edit the player basic information
 if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     // Secure data
     $firstname = (string) trim($_POST['firstname']);
@@ -50,15 +50,19 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
         $message[] = __('Player edited with success!', 'phpleague');
         $db->update_player($id_player, $firstname, $lastname, $birthdate, $height, $weight, $desc, $picture, $country, $term);
     }
-} elseif (isset($_POST['player_history']) && check_admin_referer('phpleague')) {
+}
+// We update the player history
+elseif (isset($_POST['player_history']) && check_admin_referer('phpleague')) {
     $data = ( ! empty($_POST['history'])) ? $_POST['history'] : NULL;
     if (is_array($data)) {
         foreach ($data as $key => $item) {
             $db->update_player_history($id_player, $key, $item['number'], $item['id_position']);
         }
     }
-    $message[] = __('Data updated successfully.', 'phpleague');
-} elseif (isset($_POST['add_team']) && check_admin_referer('phpleague')) {
+    $message[] = __('Profile updated successfully.', 'phpleague');
+}
+// We add one team in the player history
+elseif (isset($_POST['add_team']) && check_admin_referer('phpleague')) {
     $id_team = ( ! empty($_POST['id_team'])) ? (int) $_POST['id_team'] : 0;
     if ($id_team === 0) {
         $message[] = __('No team has been selected!', 'phpleague');
@@ -70,12 +74,12 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     }
 }
 
-// Get every country as a list
+// Get countries list
 foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
     $countries_list[$array->id] = esc_html($array->name);
 }
 
-// Get every tag as a list
+// Get terms list
 $tags_list[0] = __('-- Select a term --', 'phpleague');
 foreach (get_tags(array('hide_empty' => FALSE)) as $tag) {
     $tags_list[$tag->term_id] = esc_html($tag->name);
@@ -195,8 +199,9 @@ $output .=
 
     // Only display if we get an history...
     foreach ($history as $row) {
+        // TODO - This is only a test..
         // Get positions list...
-        foreach (PHPLeague_Sports_Soccer::$positions as $key => $value) {
+        foreach (PHPLeague_Sports_Football::$positions as $key => $value) {
             $positions_list[$key] = $value; 
         }
 

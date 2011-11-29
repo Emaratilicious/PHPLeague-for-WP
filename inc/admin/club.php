@@ -31,7 +31,7 @@ foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
     $countries_list[$array->id] = esc_html($array->name);
 }
 
-// $_POST data processing...
+// We add a new club...
 if (isset($_POST['club']) && check_admin_referer('phpleague')) {
     // Clean up vars
     $name    = (string) trim($_POST['club_name']);
@@ -46,7 +46,9 @@ if (isset($_POST['club']) && check_admin_referer('phpleague')) {
         $message[] = __('Club added successfully.', 'phpleague');
         $db->add_club($name, $country);
     }
-} elseif (isset($_POST['delete_club']) && check_admin_referer('phpleague')) {
+}
+// We delete one or few clubs
+elseif (isset($_POST['delete_club']) && check_admin_referer('phpleague')) {
     // Check that the format is correct
     $id_club = ( ! empty($_POST['id_club'])) ? $_POST['id_club'] : 0;
     if ($id_club === 0) {
@@ -100,16 +102,6 @@ $output .= '
             <th>'.__('Venue', 'phpleague').'</th>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <th class="check-column"><input type="checkbox"/></th>
-            <th>'.__('ID', 'phpleague').'</th>
-            <th>'.__('Name', 'phpleague').'</th>
-            <th>'.__('Country', 'phpleague').'</th>
-            <th>'.__('Coach', 'phpleague').'</th>
-            <th>'.__('Venue', 'phpleague').'</th>
-        </tr>
-    </tfoot>
     <tbody>';
     
     foreach ($db->get_every_club($offset, $per_page, 'ASC', TRUE) as $club) {

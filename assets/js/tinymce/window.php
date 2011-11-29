@@ -29,9 +29,20 @@ $tools = new PHPLeague_Tools();
 // Database stuffs
 global $wpdb;
 
-$leagues  = $wpdb->get_results($wpdb->prepare("SELECT id, name, year FROM $wpdb->league ORDER BY year DESC, name ASC"));
-$clubs    = $wpdb->get_results($wpdb->prepare("SELECT id, name FROM $wpdb->club ORDER BY name ASC"));
-$fixtures = $wpdb->get_results($wpdb->prepare("SELECT l.id as league_id, l.name, l.year, f.number, f.id as fixture_id FROM $wpdb->league l INNER JOIN $wpdb->fixture f ON f.id_league = l.id ORDER BY l.year DESC, l.name ASC"));
+// Get leagues
+$leagues  = $wpdb->get_results(
+    $wpdb->prepare("SELECT id, name, year FROM $wpdb->league ORDER BY year DESC, name ASC")
+);
+
+// Get clubs
+$clubs    = $wpdb->get_results(
+    $wpdb->prepare("SELECT id, name FROM $wpdb->club ORDER BY name ASC")
+);
+
+// Get fixtures
+$fixtures = $wpdb->get_results(
+    $wpdb->prepare("SELECT l.id as league_id, l.name, l.year, f.number, f.id as fixture_id FROM $wpdb->league l INNER JOIN $wpdb->fixture f ON f.id_league = l.id ORDER BY l.year DESC, l.name ASC")
+);
 
 // Fixtures listing into an array...
 $fixtures_list = array();
@@ -124,7 +135,7 @@ $site_url = get_option('siteurl');
                     <td><input type="text" size="4" value="" name="id_team" id="id_team" /></td>
                 </tr>
             </table>
-            <p><?php _e('Display all fixtures for a chosen league or only those for a particular team into that league.', 'phpleague'); ?></p>
+            <p><?php _e('Display all fixtures for a chosen league or only those for a team into that particular league.', 'phpleague'); ?></p>
         </div>
         <!-- fixture panel -->
         <div id="fixture_panel" class="panel"><br />

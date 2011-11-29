@@ -27,26 +27,29 @@ if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
     $coach    = (string) trim($_POST['coach']);
     $creation = (string) trim($_POST['creation']);
     $website  = (string) trim($_POST['website']);
-    $logo_b   = (string) trim($_POST['path_b_logo']);
-    $logo_m   = (string) trim($_POST['path_m_logo']);
+    $logo_b   = (string) trim($_POST['big_logo']);
+    $logo_m   = (string) trim($_POST['mini_logo']);
     $country  = (int) $_POST['country'];
     
-    // Coach and venue field not required but secured
+    // We filter the venue name
     if ($fct->valid_text($venue, 5) === FALSE) {
         $venue = '';
         $message[] = __('The venue must be alphanumeric and 5 characters long at least (optional).', 'phpleague'); 
     }
     
+    // We filter the coach name
     if ($fct->valid_text($coach, 5) === FALSE) {
         $coach = '';
         $message[] = __('The coach must be alphanumeric and 5 characters long at least (optional).', 'phpleague');
     }
     
+    // Date must follow a particular pattern
     if ( ! preg_match('/^([0-9]{4})$/', $creation)) {
         $creation = '0000';
         $message[] = __('The creation date must be 4 digits (optional).', 'phpleague');
     }
     
+    // We filter the website address
     if ( ! filter_var($website, FILTER_VALIDATE_URL)) {
         $website = '';
         $message[] = __('The website is not valid (optional).', 'phpleague');
@@ -63,7 +66,7 @@ if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
     }
 }
 
-// Get every country
+// Get countries list... 
 foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
     $countries_list[$array->id] = esc_html($array->name);
 }
@@ -90,13 +93,13 @@ $table       =
             <td>'.__('Club Website:', 'phpleague').'</td>
             <td>'.$fct->input('website', esc_html($club_info->website)).'</td>
             <td>'.__('Creation Year:', 'phpleague').'</td>
-            <td>'.$fct->input('creation', $club_info->creation).'</td>
+            <td>'.$fct->input('creation', (int) $club_info->creation).'</td>
         </tr>
         <tr>
-            <td>'.__('Path Big Logo:', 'phpleague').'</td>
-            <td>'.$fct->select('path_b_logo', $logo_b_list, esc_html($club_info->logo_big)).'</td>
-            <td>'.__('Path Mini Logo:', 'phpleague').'</td>
-            <td>'.$fct->select('path_m_logo', $logo_m_list, esc_html($club_info->logo_mini)).'</td>
+            <td>'.__('Big Logo:', 'phpleague').'</td>
+            <td>'.$fct->select('big_logo', $logo_b_list, esc_html($club_info->logo_big)).'</td>
+            <td>'.__('Mini Logo:', 'phpleague').'</td>
+            <td>'.$fct->select('mini_logo', $logo_m_list, esc_html($club_info->logo_mini)).'</td>
         </tr>
     </table>
     <div class="submit">

@@ -102,15 +102,6 @@ $output .=
                 <th>'.__('Away Matches', 'phpleague').'</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <th class="check-column"><input type="checkbox"/></th>
-                <th>'.__('ID', 'phpleague').'</th>
-                <th>'.__('Name', 'phpleague').'</th>
-                <th>'.__('Home Matches', 'phpleague').'</th>
-                <th>'.__('Away Matches', 'phpleague').'</th>
-            </tr>
-        </tfoot>
         <tbody>';
         
         foreach ($db->get_every_club_in_league($id_league, TRUE, $offset, $per_page) as $club) {
