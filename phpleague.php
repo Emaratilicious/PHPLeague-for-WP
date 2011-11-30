@@ -125,7 +125,7 @@ if ( ! class_exists('PHPLeague')) {
         public function define_constants()
         {
             define('WP_PHPLEAGUE_VERSION', '1.4.0');
-            define('WP_PHPLEAGUE_DB_VERSION', '1.3');
+            define('WP_PHPLEAGUE_DB_VERSION', '1.3.0');
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
@@ -187,13 +187,13 @@ if ( ! class_exists('PHPLeague')) {
             
             // Get the data from the database
             $version = get_option('phpleague_version');
-            $current_version = isset($version) ? $version : 0;
+            $current_version = isset($version) ? (int) $version : 0;
             
             $db_version = get_option('phpleague_db_version');
-            $current_db_version = isset($db_version) ? $db_version : 0;
+            $current_db_version = isset($db_version) ? (int) $db_version : 0;
 
             // You're already using the latest version
-            if ($current_version == WP_PHPLEAGUE_VERSION)
+            if ($current_version == WP_PHPLEAGUE_VERSION && $current_db_version == WP_PHPLEAGUE_DB_VERSION)
                 return;
 
             // Some people encounter issues because they cannot deal
@@ -253,7 +253,7 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Few modifications to handle player/prediction modules
-            if ($current_db_version < '1.3')
+            if ($current_db_version < '1.3.0')
             {
                 // No more premium edition...
                 delete_option('phpleague_edition');
@@ -261,9 +261,9 @@ if ( ! class_exists('PHPLeague')) {
                 // ALTER league table
                 $wpdb->query("ALTER TABLE $wpdb->league ADD player_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_teams;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD sport_type varchar(50) NOT NULL DEFAULT 'football' AFTER player_mod;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD starting tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER sport_type;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD substitute tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER starting;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD prediction_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER substitute;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_starter tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER sport_type;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_bench tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER nb_starter;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD prediction_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_bench;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD point_right tinyint(1) unsigned NOT NULL DEFAULT '5' AFTER prediction_mod;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD point_wrong tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER point_right;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD point_part tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_wrong;");
@@ -456,9 +456,7 @@ if ( ! class_exists('PHPLeague')) {
                 picture varchar(255) NOT NULL DEFAULT '',
                 id_country tinyint(1) unsigned NOT NULL DEFAULT '0',
                 id_term smallint(6) unsigned NOT NULL DEFAULT '0',
-                KEY id_match (id_match),
-                KEY id_event (id_event),
-                KEY id_player_team (id_player_team)";
+                PRIMARY KEY (id)";
 
             PHPLeague::run_install_or_upgrade($wpdb->player, $sql, $db_version);
 
@@ -788,6 +786,7 @@ if ( ! class_exists('PHPLeague')) {
                 $wpdb->match,
                 $wpdb->table_cache,
                 $wpdb->team,
+                $wpdb->player,
                 $wpdb->player_team,
                 $wpdb->player_data,
                 $wpdb->table_chart,

@@ -755,8 +755,8 @@ if ( ! class_exists('PHPLeague_Database')) {
             $wpdb->update( 
                 $wpdb->league,
                 array(
-                    'starting'   => $starting,
-                    'substitute' => $substitute
+                    'nb_starter' => $starting,
+                    'nb_bench'   => $substitute
                 ), 
                 array('id' => $id_league),
                 array(

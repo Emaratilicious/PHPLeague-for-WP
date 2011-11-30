@@ -20,7 +20,7 @@ $league_name = $db->return_league_name($id_league);
 $setting     = $db->get_league_settings($id_league);
 $nb_teams    = (int) $setting->nb_teams;
 $nb_legs     = (int) $setting->nb_leg;
-$nb_players  = (int) $setting->starting + (int) $setting->substitute;
+$nb_players  = (int) $setting->nb_starter + (int) $setting->nb_bench;
 $page_url    = 'admin.php?page=phpleague_overview&option=result&id_league='.$id_league.'&id_fixture='.$id_fixture;
 $output      = '';
 $data        = array();
@@ -73,6 +73,7 @@ if (isset($_POST['results']) && check_admin_referer('phpleague'))
                 $db->remove_players_data_match($key);
                 foreach ($item as $row)
                 {
+                    // TODO - Show a message that we intercept a duplicata try
                     // $key = id_match, $row = id_player_team
                     // Check that the player is real and not already once in the match
                     if ($row > 0 && $db->player_data_already_match($row, $key) === FALSE)

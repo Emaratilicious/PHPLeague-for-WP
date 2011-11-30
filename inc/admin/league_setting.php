@@ -216,9 +216,9 @@ if ($setting->player_mod === 'yes')
     '<table class="form-table">
         <tr>
             <td>'.__('Starting Players:', 'phpleague').'</td>
-            <td>'.$fct->select('starting', $numbers, (int) $setting->starting).'</td>
+            <td>'.$fct->select('starting', $numbers, (int) $setting->nb_starter).'</td>
             <td>'.__('Substitute Players:', 'phpleague').'</td>
-            <td>'.$fct->select('substitute', $numbers, (int) $setting->substitute).'</td>
+            <td>'.$fct->select('substitute', $numbers, (int) $setting->nb_bench).'</td>
         </tr>
         <tr>
             <td>'.__('What Sport:', 'phpleague').'</td>
