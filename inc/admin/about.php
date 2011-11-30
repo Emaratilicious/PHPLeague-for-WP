@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-// Vars
+// Variables
 $data = array();
 $menu = array(
     __('Dashboard', 'phpleague')  => '#',
@@ -95,14 +95,14 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
     'title' => __('Add a Club', 'phpleague'),
-    'text'  => __('Create a club is really simple. You just need to choose a name and assign him a country. Unfortunately the plugin cannot handle having two identical names even if the country is different.', 'phpleague'),
+    'text'  => __('Create a club is really simple. You just need to choose a name and assign him a country.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Clubs', 'phpleague'),
     'title' => __('Edit a Club', 'phpleague'),
-    'text'  => __('Once your club is created, you can edit it by clicking on his name. You will be redirected to the club edition mode.', 'phpleague'),
+    'text'  => __('Once your club is available, you can edit it by clicking on his name.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -132,21 +132,21 @@ $data[] = array(
 $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Add a Player', 'phpleague'),
-    'text'  => __('...', 'phpleague'),
+    'text'  => __('Create a player is really simple. You just need to choose a firstname and a lastname.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Edit a Player', 'phpleague'),
-    'text'  => __('...', 'phpleague'),
+    'text'  => __('Once your player is available, you can edit it by clicking on his name. In edition mode, you can assign teams in the player profile. Once assigned, the player is available in the "results" section.', 'phpleague'),
     'class' => 'full'
 );
 
 $data[] = array(
     'menu'  => __('Players', 'phpleague'),
     'title' => __('Delete a Player', 'phpleague'),
-    'text'  => __('...', 'phpleague'),
+    'text'  => __('Keep in mind that once you delete a player, all data associated will be destroyed.', 'phpleague'),
     'class' => 'full'
 );
 
@@ -227,7 +227,7 @@ $table = '
 <tbody>
     <tr valign="top">
         <td>'.__('PHPleague Ranking Table', 'phpleague').'</td>
-        <td>'.__('Display a mini ranking table in the sidebar', 'phpleague').'</td>
+        <td>'.__('Display a lightweight ranking table', 'phpleague').'</td>
         <td><em>'.__('Select one league from the dropdown list', 'phpleague').'</em></td>
     </tr>
 </tbody>
@@ -262,5 +262,5 @@ $data[] = array(
     'class' => 'full'
 );
 
-// Show everything...
+// Render the page
 echo $ctl->admin_container($menu, $data);

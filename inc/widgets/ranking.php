@@ -46,7 +46,7 @@ if ( ! class_exists('PHPLeague_Widgets_Ranking')) {
         public function widget($args, $instance)
         {
             // PHPLeague_Database
-            $db = new PHPLeague_Database();
+            $db = new PHPLeague_Database;
 
             // Extract arguments
             extract($args);
@@ -66,7 +66,7 @@ if ( ! class_exists('PHPLeague_Widgets_Ranking')) {
 
             // Display the ranking table
             if ($league) {
-                $front = new PHPLeague_Front();
+                $front = new PHPLeague_Front;
                 echo $front->widget_ranking_table($league);
             }
 
@@ -97,7 +97,7 @@ if ( ! class_exists('PHPLeague_Widgets_Ranking')) {
         public function form($instance)
         {
             // PHPLeague_Tools
-            $tools = new PHPLeague_Tools();
+            $tools = new PHPLeague_Tools;
 
             // Get all leagues in the database
             global $wpdb;

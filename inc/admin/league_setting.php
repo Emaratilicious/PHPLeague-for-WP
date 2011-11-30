@@ -12,9 +12,10 @@
 if ($db->is_league_exists($id_league) === FALSE)
     wp_die(__('We did not find the league in the database.', 'phpleague'));
 
-// $_POST data processing...
-if (isset($_POST['general']) && check_admin_referer('phpleague')) {
-    // Secure vars...
+// Data processing...
+if (isset($_POST['general']) && check_admin_referer('phpleague'))
+{
+    // Secure data
     $time     = (preg_match('/^\d{2}:\d{2}:\d{2}$/', $_POST['time'])) ? trim($_POST['time']) : '17:00:00';
     $victory  = ( ! empty($_POST['pt_victory']))  ? (int) $_POST['pt_victory']  : 0;
     $draw     = ( ! empty($_POST['pt_draw']))     ? (int) $_POST['pt_draw']     : 0;
@@ -29,34 +30,55 @@ if (isset($_POST['general']) && check_admin_referer('phpleague')) {
     $player   = ( ! empty($_POST['player']))      ? trim($_POST['player'])      : 'no';
     $year     = ( ! empty($_POST['year']))        ? (int) $_POST['year']        : 0000;
     
-    if ($_POST['predict'] === 'yes' && $year >= date('Y')) {
+    if ($_POST['predict'] === 'yes' && $year >= date('Y'))
+    {
         $predict = 'yes';
-    } elseif ($_POST['predict'] === 'no') {
+    }
+    elseif ($_POST['predict'] === 'no')
+    {
         $predict = 'no';
-    } else {
+    }
+    else
+    {
         $predict = 'no';
         $message[] = __('You cannot activate the Prediction Mod because the year is past.', 'phpleague');
     }
     
-    if ($db->is_league_setting_in_db($id_league) === FALSE) {
+    if ($db->is_league_setting_in_db($id_league) === FALSE)
+    {
         $message[] = __('We did not find the corresponding settings to this league.', 'phpleague');
-    } elseif ( ! preg_match('/^([0-9]{4})$/', $year)) {
+    }
+    elseif ( ! preg_match('/^([0-9]{4})$/', $year))
+    {
         $message[] = __('The year must be 4 digits.', 'phpleague');
-    } elseif (in_array($name, array(NULL, FALSE, ''))) {
+    }
+    elseif (in_array($name, array(NULL, FALSE, '')))
+    {
         $message[] = __('The name cannot be empty.', 'phpleague');
-    } elseif ($fct->valid_text($name, 3) === FALSE) {
+    }
+    elseif ($fct->valid_text($name, 3) === FALSE)
+    {
         $message[] = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
-    } else { // Update the database
+    }
+    else // Update the database
+    {
         $db->update_league_settings($name, $year, $id_league, $victory, $draw, $defeat, $promo, $qualif, $releg, $favorite, $nb_leg, $link, $time, $player, $predict);
         $message[] = __('Settings updated successfully.', 'phpleague');
     }
-} elseif (isset($_POST['bonus_malus']) && check_admin_referer('phpleague')) {
+}
+elseif (isset($_POST['bonus_malus']) && check_admin_referer('phpleague'))
+{
+    // Secure data
     $malus = ( ! empty($_POST['malus']) && is_array($_POST['malus'])) ? $_POST['malus'] : 0;
     
-    if ($malus === 0) {
+    if ($malus === 0)
+    {
         $message[] = __('We are sorry but it seems that an error occurred.', 'phpleague');
-    } else {
-        foreach ($malus as $key => $row) {
+    }
+    else
+    {
+        foreach ($malus as $key => $row)
+        {
             $row = (int) $row;
             $key = (int) $key;
             $db->edit_bonus_malus($row, $key);
@@ -64,7 +86,9 @@ if (isset($_POST['general']) && check_admin_referer('phpleague')) {
         
         $message[] = __('Bonus/Malus updated successfully!', 'phpleague');
     }
-} elseif (isset($_POST['prediction']) && check_admin_referer('phpleague')) {
+}
+elseif (isset($_POST['prediction']) && check_admin_referer('phpleague'))
+{
     // Secure data
     $point_right = ( ! empty($_POST['point_right'])) ? (int) $_POST['point_right'] : 5;
     $point_wrong = ( ! empty($_POST['point_wrong'])) ? (int) $_POST['point_wrong'] : 0;
@@ -73,7 +97,9 @@ if (isset($_POST['general']) && check_admin_referer('phpleague')) {
     
     $db->edit_prediction_settings($id_league, $point_right, $point_wrong, $point_part, $deadline);
     $message[] = __('Prediction settings updated successfully!', 'phpleague');
-} elseif (isset($_POST['player']) && check_admin_referer('phpleague')) {
+}
+elseif (isset($_POST['player']) && check_admin_referer('phpleague'))
+{
     // Secure data
     $starting   = ( ! empty($_POST['starting']))   ? (int) $_POST['starting']   : 0;
     $substitute = ( ! empty($_POST['substitute'])) ? (int) $_POST['substitute'] : 0;
@@ -82,7 +108,7 @@ if (isset($_POST['general']) && check_admin_referer('phpleague')) {
     $message[] = __('Players settings updated successfully!', 'phpleague');
 }
 
-// Vars
+// Variables
 $league_name = $db->return_league_name($id_league);
 $teams       = $db->get_distinct_league_team($id_league);
 $setting     = $db->get_league_settings($id_league);
@@ -100,26 +126,28 @@ $menu        = array(
     __('Generate', 'phpleague') => admin_url('admin.php?page=phpleague_overview&option=generator&id_league='.$id_league)
 );
 
-// Used for the player/prediction modes
-for ($i = 0; $i <= 50; $i++) {
+// Numbers list
+for ($i = 0; $i <= 50; $i++)
+{
     $numbers[$i] = $i;
 }
 
 // Get every team from the league
 $clubs_list[0] = __('-- Select a team --', 'phpleague');
-foreach ($teams as $array) {
+foreach ($teams as $array)
+{
     $clubs_list[$array->club_id] = esc_html($array->name);  
 }
 
 // Get a list of every available sports
 $sports_list = array(
-    'american-football' => __('American Football', 'phpleague'),
-    'basketball'        => __('Basketball', 'phpleague'),
+    //'american-football' => __('American Football', 'phpleague'),
+    //'basketball'        => __('Basketball', 'phpleague'),
     'football'          => __('Football', 'phpleague'),
-    'handball'          => __('Handball', 'phpleague'),
-    'hockey'            => __('Hockey', 'phpleague'),
-    'rugby'             => __('Rugby', 'phpleague'),
-    'volleyball'        => __('Volleyball', 'phpleague')
+    //'handball'          => __('Handball', 'phpleague'),
+    //'hockey'            => __('Hockey', 'phpleague'),
+    //'rugby'             => __('Rugby', 'phpleague'),
+    //'volleyball'        => __('Volleyball', 'phpleague')
 );
 
 $output  = $fct->form_open($page_url);
@@ -181,7 +209,8 @@ $data[]  = array(
 );
 
 // If the player mode is enabled...
-if ($setting->player_mod === 'yes') {
+if ($setting->player_mod === 'yes')
+{
     $output  = $fct->form_open($page_url);
     $output .=
     '<table class="form-table">
@@ -208,7 +237,8 @@ if ($setting->player_mod === 'yes') {
 }
 
 // If the prediction mode is enabled...
-if ($setting->prediction_mod === 'yes') {
+if ($setting->prediction_mod === 'yes')
+{
     $output  = $fct->form_open($page_url);
     $output .=
     '<table class="form-table">
@@ -241,18 +271,15 @@ if ($setting->prediction_mod === 'yes') {
 $output  = $fct->form_open($page_url);
 $output .= '<table class="form-table">';
 
-foreach ($teams as $row) {
-    $output .=
-    '<tr>
-        <td>'.esc_html($row->name).'</td>
-        <td>'.$fct->input('malus['.(int) $row->club_id.']', (int) $row->penalty, array('size' => 4)).'</td>
-    </tr>';
+foreach ($teams as $row)
+{
+    $output .= '<tr><td>'.esc_html($row->name).'</td>'
+            .'<td>'.$fct->input('malus['.(int) $row->club_id.']', (int) $row->penalty, array('size' => 4)).'</td></tr>';
 }
     
-$output .= '</table><div class="submit">'.$fct->input('bonus_malus', __('Save'), array('type' => 'submit')).'</div>';
-$output .= $fct->form_close();
-
-$data[] = array(
+$output .= '</table><div class="submit">'.$fct->input('bonus_malus',
+        __('Save'), array('type' => 'submit')).'</div>'.$fct->form_close();
+$data[]  = array(
     'menu'  => __('Settings', 'phpleague'),
     'title' => __('Bonus/Malus for ', 'phpleague').$league_name,
     'text'  => $output,
@@ -260,5 +287,5 @@ $data[] = array(
     'class' => 'full'
 );
 
-// Show everything...
+// Render the page
 echo $ctl->admin_container($menu, $data, $message);

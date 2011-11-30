@@ -38,7 +38,7 @@ if ( ! class_exists('PHPLeague')) {
      */
     class PHPLeague {
 
-        // Vars
+        // Variables
         public $longname  = 'PHPLeague for WordPress';
         public $shortname = 'PHPLeague for WP';
         public $homepage  = 'http://www.phpleague.com/';
@@ -79,8 +79,10 @@ if ( ! class_exists('PHPLeague')) {
             // Load our tables
             $this->define_tables();
             
-            if (is_admin()) {
-                // Specific actions
+            // PHPLeague back-end
+            if (is_admin())
+            {
+                // Specific WP actions...
                 register_activation_hook(__FILE__, array('PHPLeague', 'activate'));
                 register_uninstall_hook(__FILE__, array('PHPLeague', 'uninstall'));
                 
@@ -103,12 +105,14 @@ if ( ! class_exists('PHPLeague')) {
                 
                 // Ajax request to delete a team in player history
                 add_action('wp_ajax_delete_player_history_team', array('PHPLeague_AJAX', 'delete_player_history_team'));
-            } else {
+            }
+            else // PHPLeague front-end
+            {
                 // Load the frontend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front.php';
                 
                 add_action('wp_print_styles', array(&$this, 'print_front_styles'));
-                add_shortcode('phpleague', array(&$this, 'display_phpleague'));
+                add_shortcode('phpleague', array(&$this, 'shortcodes_controller'));
             }
         }
         
@@ -127,8 +131,6 @@ if ( ! class_exists('PHPLeague')) {
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
         }
         
-        // -- Backend methods -- //
-        
         /**
          * Admin initializer
          *
@@ -137,8 +139,9 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function plugin_admin_init()
         {
-            // Just after the activation, users are automatically redirected to PHPLeague...
-            if (get_option('phpleague_do_activation_redirect', FALSE)) {
+            // Just after the plugin activation, we redirect user to PHPLeague...
+            if (get_option('phpleague_do_activation_redirect', FALSE))
+            {
                 delete_option('phpleague_do_activation_redirect');
                 wp_redirect(get_option('siteurl').'/wp-admin/admin.php?page=phpleague_overview&activation=1');
                 exit();
@@ -153,8 +156,9 @@ if ( ! class_exists('PHPLeague')) {
             $role = get_role('editor');
             $role->add_cap('phpleague');
             
-            // Make sure using this only on PHPLeague pages
-            if (isset($_GET['page']) && in_array(trim($_GET['page']), $this->pages)) {
+            // On every PHPLeague page, we check the permission!
+            if (isset($_GET['page']) && in_array(trim($_GET['page']), $this->pages))
+            {
                 if ( ! current_user_can('manage_phpleague'))
                     wp_die(__('Permission insufficient to run PHPLeague!', 'phpleague'));
             }
@@ -194,7 +198,8 @@ if ( ! class_exists('PHPLeague')) {
 
             // Some people encounter issues because they cannot deal
             // with a NOT DEFAULT without any value
-            if ($current_db_version < '1.2') {
+            if ($current_db_version < '1.2')
+            {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->country MODIFY name VARCHAR(100) DEFAULT NULL;");
                 $wpdb->query("ALTER TABLE $wpdb->club MODIFY venue VARCHAR(100) DEFAULT NULL;");
@@ -203,8 +208,9 @@ if ( ! class_exists('PHPLeague')) {
                 $wpdb->query("ALTER TABLE $wpdb->club MODIFY logo_mini VARCHAR(255) DEFAULT NULL;");
             }
             
-            // We add the 4 UK members
-            if ($current_db_version < '1.2.1') {
+            // We add the 4 UK missing members
+            if ($current_db_version < '1.2.1')
+            {
                 $countries = array(
                     238 => 'England',
                     239 => 'Wales',
@@ -213,7 +219,8 @@ if ( ! class_exists('PHPLeague')) {
                 );
 
                 // Update the country table with all of the above
-                foreach ($countries as $key => $country) {
+                foreach ($countries as $key => $country)
+                {
                     $wpdb->query("INSERT INTO $wpdb->country VALUES($key, '".$country."');");
                 }
                 
@@ -222,7 +229,8 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Drop constraints
-            if ($current_db_version < '1.2.2') {
+            if ($current_db_version < '1.2.2')
+            {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->fixture DROP FOREIGN KEY phpleague_fixture_ibfk_1;");
                 $wpdb->query("ALTER TABLE $wpdb->match DROP FOREIGN KEY phpleague_match_ibfk_1;");
@@ -231,7 +239,8 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Few modifications
-            if ($current_db_version < '1.2.3') {
+            if ($current_db_version < '1.2.3')
+            {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->league MODIFY id_favorite smallint(4) unsigned NOT NULL DEFAULT '0';");
                 $wpdb->query("ALTER TABLE $wpdb->club ADD creation year(4) NOT NULL DEFAULT '0000' AFTER coach;");
@@ -244,8 +253,9 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Few modifications to handle player/prediction modules
-            if ($current_db_version < '1.3') {
-                // Not required anymore...
+            if ($current_db_version < '1.3')
+            {
+                // No more premium edition...
                 delete_option('phpleague_edition');
 
                 // ALTER league table
@@ -260,8 +270,9 @@ if ( ! class_exists('PHPLeague')) {
                 $wpdb->query("ALTER TABLE $wpdb->league ADD deadline tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_part;");
             }
 
-            // Do stuff in order to upgrade PHPLeague...
-            if ($current_version < WP_PHPLEAGUE_VERSION) {
+            // Basic actions to do everytime we upgrade PHPLeague...
+            if ($current_version < WP_PHPLEAGUE_VERSION)
+            {
                 update_option('phpleague_version', WP_PHPLEAGUE_VERSION);
                 update_option('phpleague_db_version', WP_PHPLEAGUE_DB_VERSION);
             }
@@ -304,10 +315,13 @@ if ( ! class_exists('PHPLeague')) {
         {
             global $wpdb;
             
-            // Table does not exist, creates it!
-            // We use InnoDB AND UTF-8
-            if ($wpdb->get_var("SHOW TABLES LIKE '".$table_name."'") != $table_name) {
+            // Table does not exist, we create it!
+            // We use InnoDB and UTF-8 by default
+            if ($wpdb->get_var("SHOW TABLES LIKE '".$table_name."'") != $table_name)
+            {
                 $create = "CREATE TABLE ".$table_name." ( ".$sql." ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;";
+
+                // We use the dbDelta method given by WP!
                 require_once ABSPATH.'wp-admin/includes/upgrade.php';
                 dbDelta($create);
             }
@@ -431,8 +445,6 @@ if ( ! class_exists('PHPLeague')) {
 
             PHPLeague::run_install_or_upgrade($wpdb->team, $sql, $db_version);
 
-            // -- New tables from 1.4.0 -- //
-
             // Player table
             $sql = "id smallint(6) unsigned NOT NULL AUTO_INCREMENT,
                 firstname varchar(100) NOT NULL DEFAULT '',
@@ -489,7 +501,8 @@ if ( ! class_exists('PHPLeague')) {
                 KEY id_league (id_league),
                 KEY id_member (id_member)";
 
-            // TODO - Add 'type' field later once I know how to handle it...
+            // TODO - Add 'type of ranking (monthly, weekly, yearly, ...)' field later
+            // TODO - Give possibility to predict the score too...
 
             PHPLeague::run_install_or_upgrade($wpdb->table_predi, $sql, $db_version);
                         
@@ -739,7 +752,8 @@ if ( ! class_exists('PHPLeague')) {
             );
             
             // Add every country in the database
-            foreach ($countries as $key => $country) {
+            foreach ($countries as $key => $country)
+            {
                 $wpdb->query("INSERT INTO $wpdb->country VALUES($key, '".$country."');");
             }
             
@@ -780,8 +794,9 @@ if ( ! class_exists('PHPLeague')) {
                 $wpdb->table_predi
             );
 
-            // Delete every table one by one
-            foreach ($tables as $table) {
+            // Delete each table one by one
+            foreach ($tables as $table)
+            {
                 $wpdb->query('DROP TABLE IF EXISTS '.$table.';');
             }
 
@@ -804,7 +819,10 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function print_admin_styles()
         {
-            if (isset($_GET['page'])) {
+            // Execute this only when we are on a PHPLeague page
+            if (isset($_GET['page']))
+            {
+                // We quit if the current page isn't one of PHPLeague
                 if ( ! in_array(trim($_GET['page']), $this->pages))
                     return;
 
@@ -821,14 +839,17 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function print_admin_scripts()
         {
-            if (isset($_GET['page'])) {
+            // Execute this only when we are on a PHPLeague page
+            if (isset($_GET['page']))
+            {
+                // We quit if the current page isn't one of PHPLeague
                 if ( ! in_array(trim($_GET['page']), $this->pages))
                     return;
                 
                 // Make sure to use the latest version of jQuery...
-                //wp_deregister_script('jquery');
-                //wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
-                //wp_enqueue_script('jquery');
+                wp_deregister_script('jquery');
+                wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
+                wp_enqueue_script('jquery');
 
                 wp_register_script('phpleague', plugins_url('phpleague/assets/js/admin.js'), array('jquery'));
                 wp_register_script('phpleague-mask', plugins_url('phpleague/assets/js/jquery.maskedinput.js'), array('jquery'));
@@ -845,10 +866,11 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function admin_menu()
         {
-            $instance = new PHPLeague_Admin();
+            $instance = new PHPLeague_Admin;
             $parent   = 'phpleague_overview';
             
-            if (function_exists('add_menu_page')) {
+            if (function_exists('add_menu_page'))
+            {
                 add_menu_page(
                     __('Dashboard (PHPLeague)', 'phpleague'),
                     __('PHPLeague', 'phpleague'),
@@ -859,7 +881,8 @@ if ( ! class_exists('PHPLeague')) {
                 );
             }
             
-            if (function_exists('add_submenu_page')) {
+            if (function_exists('add_submenu_page'))
+            {
                 add_submenu_page(
                     $parent,
                     __('Clubs (PHPLeague)', 'phpleague'),
@@ -904,7 +927,8 @@ if ( ! class_exists('PHPLeague')) {
             if ( ! current_user_can('phpleague')) return;
 
             // Add only in Rich Editor mode
-            if (get_user_option('rich_editing') == 'true') {
+            if (get_user_option('rich_editing') == 'true')
+            {
                 add_filter('mce_external_plugins', array(&$this, 'add_editor_plugin'));
                 add_filter('mce_buttons', array(&$this, 'register_editor_button'));
             }
@@ -933,8 +957,6 @@ if ( ! class_exists('PHPLeague')) {
             array_push($buttons, 'separator', 'PHPLeague');
             return $buttons;
         }
-        
-        // -- Frontend methods -- //
 
         /**
          * Add the front css
@@ -949,33 +971,36 @@ if ( ! class_exists('PHPLeague')) {
         }
         
         /**
-         * We got all the public functions in here
+         * The shortcodes controller
          *
-         * @param  none
+         * @param  mixed $attributes
          * @return void
          */
-        public function display_phpleague($atts)
+        public function shortcodes_controller($attributes)
         {
             // Extract data
             extract(shortcode_atts(
                 array(
-                    'id'         => 1,
-                    'type'       => 'table',
-                    'style'      => 'general',
-                    'id_team'    => '',
-                    'latest'     => 'false'
+                    'id'      => 1,
+                    'type'    => 'table',
+                    'style'   => 'general',
+                    'id_team' => '',
+                    'latest'  => 'false'
                 ),
-                $atts
+                $attributes
             ));
 
             // TODO - In the future, make a specific Front_Controller for every sport.
 
-            // Secure the ID
+            // Make sure the ID is an integer
             $id    = (int) $id;
-            $front = new PHPLeague_Front();
+
+            // Get front-end methods
+            $front = new PHPLeague_Front;
             
             // Display ranking table
-            if ($type == 'table') {
+            if ($type == 'table')
+            {
                 if ($style == 'home')
                     return $front->get_league_table($id, 'home', $latest);
                 elseif ($style == 'away')
@@ -983,28 +1008,28 @@ if ( ! class_exists('PHPLeague')) {
                 else
                     return $front->get_league_table($id, 'general', $latest);
             }
-            // Display fixture table
-            elseif ($type == 'fixture') {
+            elseif ($type == 'fixture') // Display fixture table
+            {
                 return $front->get_league_fixture($id);         
             }
-            // Display fixtures table
-            elseif ($type == 'fixtures') {
+            elseif ($type == 'fixtures') // Display fixtures table
+            {
                 if ( ! empty($id_team))
                     return $front->get_league_fixtures($id, $id_team);
                 else
                     return $front->get_league_fixtures($id);
             }
-            // Display club information
-            elseif ($type == 'club') {
+            elseif ($type == 'club') // Display club information
+            {
                 return $front->get_club_information($id);
             }
-            // Display ranking table by default
-            else {
+            else // Display ranking table by default
+            {
                 return $front->get_league_table($id);
             }
         }
     }
     
     // Let's get it started!
-    $phpleague = new PHPLeague();
+    $phpleague = new PHPLeague;
 }

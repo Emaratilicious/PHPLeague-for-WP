@@ -56,14 +56,17 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_every_club($offset = 0, $limit = 10, $order = 'DESC', $join_country = FALSE)
         {
             global $wpdb;
-            if ($join_country === FALSE) {
+            if ($join_country === FALSE)
+            {
                 return $wpdb->get_results($wpdb->prepare("SELECT id, name, id_country
                     FROM $wpdb->club
                     ORDER BY name $order
                     LIMIT %d, %d",
                     $offset, $limit)
                 );
-            } else {
+            }
+            else
+            {
                 return $wpdb->get_results($wpdb->prepare("SELECT c.id, c.name, d.name as country, coach, venue
                     FROM $wpdb->club c
                     LEFT JOIN $wpdb->country d ON c.id_country = d.id
@@ -434,7 +437,8 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_every_club_in_league($id_league, $pagination = FALSE, $offset = 0, $limit = 10)
         {
             global $wpdb;
-            if ($pagination) {
+            if ($pagination)
+            {
                 return $wpdb->get_results($wpdb->prepare("SELECT c.name, t.id
                     FROM $wpdb->club c,
                          $wpdb->team t
@@ -573,7 +577,8 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function get_fixture_id($number, $id_league, $with_game = TRUE)
         {
             global $wpdb;
-            if ($with_game) {
+            if ($with_game)
+            {
                 return $wpdb->get_results($wpdb->prepare("SELECT f.id as fixture_id
                     FROM $wpdb->fixture f, $wpdb->match g
                     WHERE f.id = g.id_fixture
@@ -582,7 +587,9 @@ if ( ! class_exists('PHPLeague_Database')) {
                     $number,
                     $id_league)
                 );
-            } else {
+            }
+            else
+            {
                 return $wpdb->get_var($wpdb->prepare("SELECT id
                     FROM $wpdb->fixture
                     WHERE number = %d
@@ -977,7 +984,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['home_v'] = $row->count_home_id;
 
@@ -1006,7 +1014,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['home_l'] = $row->count_home_id;
 
@@ -1037,7 +1046,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['home_d'] = $row->count_home_id;
 
@@ -1066,7 +1076,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['away_v'] = $row->count_away_id;
 
@@ -1095,7 +1106,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['away_l'] = $row->count_away_id;
 
@@ -1126,7 +1138,8 @@ if ( ! class_exists('PHPLeague_Database')) {
                     AND d.number <= $fixture
                     GROUP BY c.name";
 
-            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row) {
+            foreach ($wpdb->get_results($wpdb->prepare($query)) as $row)
+            {
                 $name = trim($row->name);
                 $table[$name]['away_d'] = $row->count_away_id;
 
@@ -1142,7 +1155,8 @@ if ( ! class_exists('PHPLeague_Database')) {
             }
 
             // Get all the data we need to fill in the table
-            foreach ($self->get_teams_information_table($id_league) as $row) {           
+            foreach ($self->get_teams_information_table($id_league) as $row)
+            {           
                 $name           = trim($row->name);
                 $home_victory   = (isset($table[$name]['home_v']) ? $table[$name]['home_v'] : '');
                 $home_draw      = (isset($table[$name]['home_d']) ? $table[$name]['home_d'] : '');
@@ -1347,7 +1361,8 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function update_player_history($id_player, $id_team, $number, $position, $action = 'update')
         {
             global $wpdb;
-            if ($action === 'update') {
+            if ($action === 'update')
+            {
                 return
                 $wpdb->update( 
                     $wpdb->player_team, 
@@ -1356,7 +1371,9 @@ if ( ! class_exists('PHPLeague_Database')) {
                     array('%d', '%d'), 
                     array('%d', '%d') 
                 );
-            } elseif ($action === 'insert') {
+            }
+            elseif ($action === 'insert')
+            {
                 return
                 $wpdb->insert( 
                     $wpdb->player_team, 
@@ -1368,7 +1385,9 @@ if ( ! class_exists('PHPLeague_Database')) {
                     ), 
                     array('%d', '%d', '%d', '%d')
                 );
-            } else {
+            }
+            else
+            {
                 return;
             }
         }
@@ -1664,7 +1683,8 @@ if ( ! class_exists('PHPLeague_Database')) {
             global $wpdb;
 
             // Not good for performance to have "*" in the select...
-            switch ($type) {
+            switch ($type)
+            {
                 case 'general':
                 default :
                     $query = "SELECT * FROM $wpdb->table_cache c LEFT JOIN $wpdb->team t ON t.id = c.id_team LEFT JOIN $wpdb->club a ON a.id = t.id_club WHERE c.id_league = $id_league ORDER BY c.points DESC, c.diff DESC, c.goal_for DESC, c.goal_against ASC, c.club_name ASC LIMIT $nb_teams";

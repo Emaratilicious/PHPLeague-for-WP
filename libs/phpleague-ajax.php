@@ -38,7 +38,7 @@ if ( ! class_exists('PHPLeague_AJAX')) {
         public function delete_player_history_team()
         {
             global $wpdb;
-            $db = new PHPLeague_Database();
+            $db = new PHPLeague_Database;
             
             $id_player_team = (int) $_POST['id_player_team'];
             $db->delete_player_history_team($id_player_team);

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-// Vars
+// Variables
 $id_player = ( ! empty($_GET['id_player']) ? (int) $_GET['id_player'] : 0);
 $page_url  = admin_url('admin.php?page=phpleague_player&id_player='.$id_player);
 $message   = array();
@@ -21,7 +21,8 @@ if ($db->is_player_unique($id_player) === TRUE)
     wp_die(__('We did not find the player in the database.', 'phpleague'));
 
 // We edit the player basic information
-if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
+if (isset($_POST['edit_player']) && check_admin_referer('phpleague'))
+{
     // Secure data
     $firstname = (string) trim($_POST['firstname']);
     $lastname  = (string) trim($_POST['lastname']);
@@ -34,54 +35,80 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague')) {
     $term      = (int) $_POST['term'];
 
     // We need to pass those tests to insert the data
-    if ($id_player === 0) {
+    if ($id_player === 0)
+    {
        $message[] = __('Busted! ID is not correct!', 'phpleague');
-    } elseif ($fct->valid_text($firstname, 3) === FALSE) {
+    }
+    elseif ($fct->valid_text($firstname, 3) === FALSE)
+    {
        $message[] = __('The first name must be alphanumeric and 3 characters long at least.', 'phpleague');
-    } elseif ($fct->valid_text($lastname, 3) === FALSE) {
+    }
+    elseif ($fct->valid_text($lastname, 3) === FALSE)
+    {
        $message[] = __('The last name must be alphanumeric and 3 characters long at least.', 'phpleague');
-    } elseif ( ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate)) {
+    }
+    elseif ( ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate))
+    {
        $message[] = __('The birthdate must follow the pattern: "YYYY-MM-DD".', 'phpleague');
-    } elseif ($weight == 0 || $weight > 255) {
+    }
+    elseif ($weight == 0 || $weight > 255)
+    {
        $message[] = __('The weight must be bigger than 0 and lower than 255.', 'phpleague');
-    } elseif ($height == 0 || $height > 255) {
+    }
+    elseif ($height == 0 || $height > 255)
+    {
        $message[] = __('The height must be bigger than 0 and lower than 255.', 'phpleague');
-    } else {
+    }
+    else
+    {
         $message[] = __('Player edited with success!', 'phpleague');
         $db->update_player($id_player, $firstname, $lastname, $birthdate, $height, $weight, $desc, $picture, $country, $term);
     }
 }
-// We update the player history
-elseif (isset($_POST['player_history']) && check_admin_referer('phpleague')) {
+elseif (isset($_POST['player_history']) && check_admin_referer('phpleague')) // We update the player history
+{
+    // Secure data
     $data = ( ! empty($_POST['history'])) ? $_POST['history'] : NULL;
-    if (is_array($data)) {
-        foreach ($data as $key => $item) {
+
+    if (is_array($data))
+    {
+        foreach ($data as $key => $item)
+        {
             $db->update_player_history($id_player, $key, $item['number'], $item['id_position']);
         }
     }
     $message[] = __('Profile updated successfully.', 'phpleague');
 }
-// We add one team in the player history
-elseif (isset($_POST['add_team']) && check_admin_referer('phpleague')) {
+elseif (isset($_POST['add_team']) && check_admin_referer('phpleague')) // We add one team in the player history
+{
+    // Secure data
     $id_team = ( ! empty($_POST['id_team'])) ? (int) $_POST['id_team'] : 0;
-    if ($id_team === 0) {
+
+    if ($id_team === 0)
+    {
         $message[] = __('No team has been selected!', 'phpleague');
-    } elseif ($db->player_already_in_team($id_player, $id_team) === TRUE) {
+    }
+    elseif ($db->player_already_in_team($id_player, $id_team) === TRUE)
+    {
         $message[] = __('A player cannot be twice in the same team.', 'phpleague');
-    } else {
+    }
+    else
+    {
         $db->update_player_history($id_player, $id_team, 0, 0, 'insert');
         $message[] = __('Team added successfully to the profile.', 'phpleague');
     }
 }
 
 // Get countries list
-foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
+foreach ($db->get_every_country(0, 250, 'ASC') as $array)
+{
     $countries_list[$array->id] = esc_html($array->name);
 }
 
 // Get terms list
 $tags_list[0] = __('-- Select a term --', 'phpleague');
-foreach (get_tags(array('hide_empty' => FALSE)) as $tag) {
+foreach (get_tags(array('hide_empty' => FALSE)) as $tag)
+{
     $tags_list[$tag->term_id] = esc_html($tag->name);
 }
 
@@ -127,7 +154,8 @@ $data[] = array(
 );
 
 // Attach the editor to the textarea
-if (function_exists('wp_tiny_mce')) {
+if (function_exists('wp_tiny_mce'))
+{
     add_filter('teeny_mce_before_init', create_function('$a', '
         $a["theme"] = "advanced";
         $a["skin"] = "wp_theme";
@@ -149,7 +177,8 @@ if (function_exists('wp_tiny_mce')) {
 }
 
 $output  = $fct->textarea('description', esc_html($player->description), array('id' => 'description'));
-$output .= '<div class="submit">'.$fct->input('id_player', $id_player, array('type' => 'hidden')).$fct->input('edit_player', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
+$output .= '<div class="submit">'.$fct->input('id_player', $id_player, array('type' => 'hidden')).
+        $fct->input('edit_player', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
 $output .= $fct->form_close();
 
 $data[] = array(
@@ -161,7 +190,8 @@ $data[] = array(
 
 // -- Add a new Team
 $teams_list[0] = __('-- Select a Team --', 'phpleague');
-foreach ($db->get_teams_from_leagues() as $team) {
+foreach ($db->get_teams_from_leagues() as $team)
+{
     $league = $team->league_name.' '.$team->league_year.'/'.($team->league_year + 1);
     $teams_list[$league][$team->team_id] = esc_html($team->club_name);
 }
@@ -198,10 +228,12 @@ $output .=
     $positions_list[0] = __('-- Select a position --', 'phpleague');
 
     // Only display if we get an history...
-    foreach ($history as $row) {
+    foreach ($history as $row)
+    {
         // TODO - This is only a test..
         // Get positions list...
-        foreach (PHPLeague_Sports_Football::$positions as $key => $value) {
+        foreach (PHPLeague_Sports_Football::$positions as $key => $value)
+        {
             $positions_list[$key] = $value; 
         }
 
@@ -209,12 +241,11 @@ $output .=
         $output .= '<td>'.esc_html($row->club).'</td>';
         $output .= '<td>'.$fct->input('history['.$row->id_team.'][number]', (int) $row->number, array('size' => 4)).'</td>';
         $output .= '<td>'.$fct->select('history['.$row->id_team.'][id_position]', $positions_list, (int) $row->position).'</td>';
-        $output .= '<td>'.$fct->input('delete_player_team', __('Delete', 'phpleague'), array('type' => 'button', 'class' => 'button delete_player_team')).'</td></tr>';
+        $output .= '<td>'.$fct->input('delete_player_team', __('Delete', 'phpleague'), array( 'type'  => 'button', 'class' => 'button delete_player_team')).'</td></tr>';
     }
 
-$output .= '</tbody></table>';
-$output .= '<div class="submit">'.$fct->input('player_history', __('Save Table', 'phpleague'), array('type' => 'submit')).'</div>';
-$output .= $fct->form_close();
+$output .= '</tbody></table><div class="submit">';
+$output .= $fct->input('player_history', __('Save Table', 'phpleague'), array('type' => 'submit')).'</div>'.$fct->form_close();
 $data[]  = array(
     'menu'  => __('Player Record', 'phpleague'),
     'title' => __('Player History', 'phpleague'),
@@ -222,5 +253,5 @@ $data[]  = array(
     'class' => 'full'
 );
 
-// Show everything...
+// Render the page
 echo $ctl->admin_container($menu, $data, $message);

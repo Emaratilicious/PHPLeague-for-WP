@@ -76,8 +76,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
         public function pagination($total_items, $items_p_page, $page_number, $query = 'p_nb')
         {
             $nb_pages   = ceil($total_items / $items_p_page);
-            $page_links = paginate_links(array
-            (
+            $page_links = paginate_links(array(
                 'base'      => add_query_arg($query, '%#%'),
                 'format'    => '',
                 'prev_text' => __('&laquo;', 'phpleague'),
@@ -117,22 +116,32 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public static function manage_directory($path = NULL, $action = '')
         {
-            if ($action === 'create') {
-                if ( ! is_dir($path)) { // Path does not exist
+            // Create directory
+            if ($action === 'create')
+            {
+                // Path does not exist
+                if ( ! is_dir($path))
+                {
                     // Create the directory
                     mkdir($path, 0755, TRUE);
     
                     // Set permissions (must be manually set to fix umask issues)
                     chmod($path, 0755);
                 }
-            } elseif ($action === 'delete') {
-                if (is_dir($path)) { // Path exists
+            }
+            elseif ($action === 'delete') // Delete directory
+            {
+                // Path exists
+                if (is_dir($path))
+                {
                     $dir_handle = opendir($path);
                     if ( ! $dir_handle)
                         return FALSE;
                     
-                    while ($file = readdir($dir_handle)) {
-                        if ($file != '.' && $file != '..') {
+                    while ($file = readdir($dir_handle))
+                    {
+                        if ($file != '.' && $file != '..')
+                        {
                             if ( ! is_dir($path.'/'.$file))
                                 unlink($path.'/'.$file);
                             else
@@ -144,7 +153,9 @@ if ( ! class_exists('PHPLeague_Tools')) {
                     rmdir($path);
                     return TRUE;
                 }
-            } else {
+            }
+            else // No action given
+            {
                 return;
             }
         }
@@ -166,7 +177,8 @@ if ( ! class_exists('PHPLeague_Tools')) {
             
             $path = opendir($path);
 
-            while ((FALSE !== $file = readdir($path))) {
+            while ((FALSE !== $file = readdir($path)))
+            {
                 if (in_array(substr($file, -3), $extension))
                     $files[] = trim($file);
             }
@@ -175,7 +187,8 @@ if ( ! class_exists('PHPLeague_Tools')) {
             sort($files);
             $c = count($files);
 
-            for ($i = 0; $i < $c; $i++) {
+            for ($i = 0; $i < $c; $i++)
+            {
                 $list[$files[$i]] = $files[$i];
             }
 
@@ -195,7 +208,8 @@ if ( ! class_exists('PHPLeague_Tools')) {
         {
             static $i;
 
-            if (func_num_args() === 0) {
+            if (func_num_args() === 0)
+            {
                 $i = 0;
                 return '';
             }
@@ -216,18 +230,19 @@ if ( ! class_exists('PHPLeague_Tools')) {
                 return '';
 
             $sorted = array();
-            foreach (PHPLeague_Tools::$attribute_order as $key) {
-                if (isset($attributes[$key])) {
+            foreach (PHPLeague_Tools::$attribute_order as $key)
+            {
+                if (isset($attributes[$key]))
                     // Add the attribute to the sorted list
                     $sorted[$key] = $attributes[$key];
-                }
             }
 
             // Combine the sorted attributes
             $attributes = $sorted + $attributes;
 
             $compiled = '';
-            foreach ($attributes as $key => $value) {
+            foreach ($attributes as $key => $value)
+            {
                 if ($value === NULL)
                     continue;
 
@@ -293,7 +308,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
         public function form_open($action = NULL, array $attributes = NULL)
         {
             if ($action === NULL)
-                return wp_die(__('An error occurred! I need to fix this later...', 'phpleague'));
+                return wp_die(__('Error! No action has been given.', 'phpleague'));
 
             // Add the form action to the attributes
             $attributes['action'] = $action;
@@ -317,6 +332,8 @@ if ( ! class_exists('PHPLeague_Tools')) {
         {
             // Little security against XSS attack
             $nonce = '';
+
+            // Only in the back-end
             if (is_admin())
                 $nonce = wp_nonce_field('phpleague');
             
@@ -340,27 +357,33 @@ if ( ! class_exists('PHPLeague_Tools')) {
             if (is_array($selected))
                 $attributes['multiple'] = 'multiple';
 
-            if ( ! is_array($selected)) {
+            if ( ! is_array($selected))
+            {
                 if ($selected === NULL)
                     $selected = array();
                 else
                     $selected = array((string) $selected);
             }
 
-            if (empty($options)) {
+            if (empty($options))
+            {
                 // There are no options
                 $options = '';
             }
-            else {
-                foreach ($options as $value => $name) {
-                    if (is_array($name)) {
+            else
+            {
+                foreach ($options as $value => $name)
+                {
+                    if (is_array($name))
+                    {
                         // Create a new optgroup
                         $group = array('label' => $value);
 
                         // Create a new list of options
                         $_options = array();
 
-                        foreach ($name as $_value => $_name) {
+                        foreach ($name as $_value => $_name)
+                        {
                             // Force value to be string
                             $_value = (string) $_value;
 
@@ -378,7 +401,9 @@ if ( ! class_exists('PHPLeague_Tools')) {
                         $_options = "\n".implode("\n", $_options)."\n";
 
                         $options[$value] = '<optgroup'.PHPLeague_Tools::attributes($group).'>'.$_options.'</optgroup>';
-                    } else {
+                    }
+                    else
+                    {
                         // Force value to be string
                         $value = (string) $value;
 

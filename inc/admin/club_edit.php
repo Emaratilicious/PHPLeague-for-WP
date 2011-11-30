@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-// Vars
+// Variables
 $id_club  = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : 0);
 $message  = array();
 $data     = array();
@@ -19,9 +19,10 @@ $menu     = array(__('Club Information', 'phpleague') => '#');
 if ($db->is_club_unique($id_club, 'id') === TRUE)
     wp_die(__('We did not find the club in the database.', 'phpleague'));
 
-// $_POST data processing...
-if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
-    // Security
+// Data processing...
+if (isset($_POST['edit_club']) && check_admin_referer('phpleague'))
+{
+    // Secure data
     $name     = (string) trim($_POST['name']);
     $venue    = (string) trim($_POST['venue']);
     $coach    = (string) trim($_POST['coach']);
@@ -32,42 +33,52 @@ if (isset($_POST['edit_club']) && check_admin_referer('phpleague')) {
     $country  = (int) $_POST['country'];
     
     // We filter the venue name
-    if ($fct->valid_text($venue, 5) === FALSE) {
+    if ($fct->valid_text($venue, 5) === FALSE)
+    {
         $venue = '';
         $message[] = __('The venue must be alphanumeric and 5 characters long at least (optional).', 'phpleague'); 
     }
     
     // We filter the coach name
-    if ($fct->valid_text($coach, 5) === FALSE) {
+    if ($fct->valid_text($coach, 5) === FALSE)
+    {
         $coach = '';
         $message[] = __('The coach must be alphanumeric and 5 characters long at least (optional).', 'phpleague');
     }
     
     // Date must follow a particular pattern
-    if ( ! preg_match('/^([0-9]{4})$/', $creation)) {
+    if ( ! preg_match('/^([0-9]{4})$/', $creation))
+    {
         $creation = '0000';
         $message[] = __('The creation date must be 4 digits (optional).', 'phpleague');
     }
     
     // We filter the website address
-    if ( ! filter_var($website, FILTER_VALIDATE_URL)) {
+    if ( ! filter_var($website, FILTER_VALIDATE_URL))
+    {
         $website = '';
         $message[] = __('The website is not valid (optional).', 'phpleague');
     }
 
     // We need to pass those tests to insert the data
-    if ($id_club === 0) {
+    if ($id_club === 0)
+    {
        $message[] = __('Busted! We got 2 different IDs which is not possible!', 'phpleague');
-    } elseif ($fct->valid_text($name, 3) === FALSE) {
+    }
+    elseif ($fct->valid_text($name, 3) === FALSE)
+    {
        $message[] = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
-    } else {
+    }
+    else
+    {
         $db->update_club_information($id_club, $name, $country, $coach, $venue, $creation, $website, $logo_b, $logo_m);
         $message[] = __('Club information edited with success!', 'phpleague');
     }
 }
 
 // Get countries list... 
-foreach ($db->get_every_country(0, 250, 'ASC') as $array) {
+foreach ($db->get_every_country(0, 250, 'ASC') as $array)
+{
     $countries_list[$array->id] = esc_html($array->name);
 }
 
@@ -107,8 +118,7 @@ $table       =
         '.$fct->input('edit_club', __('Save', 'phpleague'), array('type' => 'submit')).'
     </div>';
     
-$output .= $table;
-$output .= $fct->form_close();
+$output .= $table.$fct->form_close();
 
 $data[] = array(
     'menu'  => __('Club Information', 'phpleague'),
@@ -117,5 +127,5 @@ $data[] = array(
     'class' => 'full'
 );
 
-// Show everything...
+// Render the page
 echo $ctl->admin_container($menu, $data, $message);

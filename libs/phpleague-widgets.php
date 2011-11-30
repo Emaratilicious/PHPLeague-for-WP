@@ -49,7 +49,8 @@ if ( ! class_exists('PHPLeague_Widgets')) {
 require_once WP_PHPLEAGUE_PATH.'inc/widgets/ranking.php';
 
 // Register each widget
-function phpleague_register_widgets() {
+function phpleague_register_widgets()
+{
     register_widget('PHPLeague_Widgets_Ranking');
 }
 

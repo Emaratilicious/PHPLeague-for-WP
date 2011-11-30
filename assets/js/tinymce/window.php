@@ -30,23 +30,20 @@ $tools = new PHPLeague_Tools();
 global $wpdb;
 
 // Get leagues
-$leagues  = $wpdb->get_results(
-    $wpdb->prepare("SELECT id, name, year FROM $wpdb->league ORDER BY year DESC, name ASC")
-);
+$leagues  = $wpdb->get_results($wpdb->prepare("SELECT id, name, year FROM $wpdb->league ORDER BY year DESC, name ASC"));
 
 // Get clubs
-$clubs    = $wpdb->get_results(
-    $wpdb->prepare("SELECT id, name FROM $wpdb->club ORDER BY name ASC")
-);
+$clubs    = $wpdb->get_results($wpdb->prepare("SELECT id, name FROM $wpdb->club ORDER BY name ASC"));
 
 // Get fixtures
-$fixtures = $wpdb->get_results(
-    $wpdb->prepare("SELECT l.id as league_id, l.name, l.year, f.number, f.id as fixture_id FROM $wpdb->league l INNER JOIN $wpdb->fixture f ON f.id_league = l.id ORDER BY l.year DESC, l.name ASC")
-);
+$fixtures = $wpdb->get_results($wpdb->prepare(
+    "SELECT l.id as league_id, l.name, l.year, f.number, f.id as fixture_id FROM $wpdb->league l INNER JOIN $wpdb->fixture f ON f.id_league = l.id ORDER BY l.year DESC, l.name ASC"
+));
 
-// Fixtures listing into an array...
+// Fixtures list
 $fixtures_list = array();
-foreach ($fixtures as $item) {
+foreach ($fixtures as $item)
+{
     $year = (int) $item->year;
     $fixtures_list[$item->name.' '.$year.'/'.substr($year + 1, 2)][$item->fixture_id] = $item->number;
 }
@@ -83,8 +80,10 @@ $site_url = get_option('siteurl');
                     <td>
                         <select id="league_id" name="league_id" style="width: 200px">
                         <?php
-                        if ($leagues) {
-                            foreach($leagues as $league) {
+                        if ($leagues)
+                        {
+                            foreach($leagues as $league)
+                            {
                                 $year = (int) $league->year;
                                 echo '<option value="'.$league->id.'" >'.esc_html($league->name).' '.$year.'/'.substr($year + 1, 2).'</option>'."\n";
                             }
@@ -122,8 +121,10 @@ $site_url = get_option('siteurl');
                     <td>
                         <select id="league_id" name="league_id" style="width: 200px;">
                         <?php
-                        if ($leagues) {
-                            foreach($leagues as $league) {
+                        if ($leagues)
+                        {
+                            foreach($leagues as $league)
+                            {
                                 $year = (int) $league->year;
                                 echo '<option value="'.$league->id.'" >'.esc_html($league->name).' '.$year.'/'.substr($year + 1, 2).'</option>'."\n";
                             }
@@ -158,8 +159,10 @@ $site_url = get_option('siteurl');
                     <td>
                         <select id="club_id" name="club_id" style="width: 200px;">
                         <?php
-                        if ($clubs) {
-                            foreach($clubs as $club) {
+                        if ($clubs)
+                        {
+                            foreach($clubs as $club)
+                            {
                                 echo '<option value="'.$club->id.'" >'.esc_html($club->name).'</option>'."\n";
                             }
                         }
