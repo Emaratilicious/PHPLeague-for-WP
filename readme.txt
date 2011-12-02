@@ -4,7 +4,7 @@ Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 
 PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
@@ -19,6 +19,7 @@ Bonus: I'm always listening to your requests and most of these are added regular
 Requires WordPress 3.1+ and PHP 5.2+.
 
 **Current features**
+
 * Unlimited leagues
 * Unlimited clubs
 * Unlimited players
@@ -29,6 +30,7 @@ Requires WordPress 3.1+ and PHP 5.2+.
 * A clean and efficient (un)installer keeping your data safe.
 
 **Coming features**
+
 * A prediction module
 * More and more statistics
 * More and more sports
