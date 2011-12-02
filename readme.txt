@@ -4,13 +4,13 @@ Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 
 PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
 == Description ==
 PHPLeague for WordPress is a plugin that let you manage your own sports leagues instead of relying on a third-party website.
-This lets you have an integrated site without a lot of coding, and still letting you customize it exactly the way you’d like.
+This lets you have an integrated site without a lot of coding, and still letting you customize it exactly the way youâ€™d like.
 
 First, you activate and set up the plugin, which makes your site have all functionalities available. Then, you can get it started by inserting every data you want, one by one.
 
@@ -19,6 +19,7 @@ Bonus: I'm always listening to your requests and most of these are added regular
 Requires WordPress 3.1+ and PHP 5.2+.
 
 **Current features**
+
 * Unlimited leagues
 * Unlimited clubs
 * Unlimited players
@@ -29,6 +30,7 @@ Requires WordPress 3.1+ and PHP 5.2+.
 * A clean and efficient (un)installer keeping your data safe.
 
 **Coming features**
+
 * A prediction module
 * More and more statistics
 * More and more sports
@@ -97,6 +99,9 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 == Changelog ==
 
+= 1.4.1 =
+* FIX: Correct a little issue showing SQL errors
+
 = 1.4.0 =
 * NEW: Get the latest PHPLeague news directly on your dashboard
 * NEW: New date hint system when required
@@ -106,7 +111,7 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * NEW: Possibility to delete a club and all data associated
 * NEW: Possibility to delete a league and all data associated
 * NEW: Possibility to get the ranking table as widget
-* NEW: Plugin translated in German (thanks to Michael Fürst)
+* NEW: Plugin translated in German (thanks to Michael FÃ¼rst)
 * NEW: Possibility to show the 5 latest results in the table
 * NEW: Possibility to show a mini ranking table as widget
 * CHG: When we remove a team from a league, all data associated are now deleted
