@@ -169,5 +169,262 @@ if ( ! class_exists('PHPLeague_Admin')) {
             // Page Footer
             echo $this->admin_footer();
         }
+
+        /**
+         * Add's new global menu, if $href is false menu is added
+         * but registred as submenuable
+         *
+         * @return void
+         */
+        protected static function add_root_menu($name, $id, $href = FALSE)
+        {
+            global $wp_admin_bar;
+            if ( ! is_super_admin() || ! is_admin_bar_showing())
+              return;
+
+            $wp_admin_bar->add_menu(array(
+                'id'    => $id,
+                'title' => $name,
+                'href'  => $href
+            ));
+        }
+
+        /**
+         * Add's new submenu where additinal $meta specifies class,
+         * id, target or onclick parameters
+         *
+         * @return void
+         */
+        protected static function add_sub_menu($name, $link, $parent, $id, $meta = FALSE)
+        {
+            global $wp_admin_bar;
+            if ( ! is_super_admin() || ! is_admin_bar_showing())
+                return;
+            
+            $wp_admin_bar->add_menu(array(
+                'parent' => $parent,
+                'title'  => $name,
+                'href'   => $link,
+                'meta'   => $meta,
+                'id'     => $id
+            ));
+        }
+
+        /**
+         * Render the admin bar
+         *
+         * @return void
+         */
+        public static function render_adminbar_links()
+        {
+            // Root
+            PHPLeague_Admin::add_root_menu(
+                __('PHPLeague', 'phpleague'),
+                'phpleague',
+                admin_url('admin.php?page=phpleague_overview')
+            );
+
+            PHPLeague_Admin::add_sub_menu(
+                __('Dashboard', 'phpleague'),
+                admin_url('admin.php?page=phpleague_overview'),
+                'phpleague',
+                'phpleague-dashboard'
+            );
+
+            PHPLeague_Admin::add_sub_menu(
+                __('Clubs', 'phpleague'),
+                admin_url('admin.php?page=phpleague_club'),
+                'phpleague',
+                'phpleague-clubs'
+            );
+            
+            PHPLeague_Admin::add_sub_menu(
+                __('Players', 'phpleague'),
+                admin_url('admin.php?page=phpleague_player'),
+                'phpleague',
+                'phpleague-players'
+            );
+
+            PHPLeague_Admin::add_sub_menu(
+                __('About', 'phpleague'),
+                admin_url('admin.php?page=phpleague_about'),
+                'phpleague',
+                'phpleague-about'
+            );
+        }
+
+        /**
+         * Add the admin styles
+         *
+         * @param  none
+         * @return void
+         */
+        public static function print_admin_styles()
+        {
+            // Execute this only when we are on a PHPLeague page
+            if (isset($_GET['page']))
+            {
+                // We quit if the current page isn't one of PHPLeague
+                if ( ! in_array(trim($_GET['page']), PHPLeague::$pages))
+                    return;
+
+                wp_register_style('phpleague-backend', plugins_url('phpleague/assets/css/phpleague-admin.css'));
+                wp_enqueue_style('phpleague-backend');
+            }
+        }
+        
+        /**
+         * Add the admin scripts
+         *
+         * @param  none
+         * @return void
+         */
+        public static function print_admin_scripts()
+        {
+            // Execute this only when we are on a PHPLeague page
+            if (isset($_GET['page']))
+            {
+                // We quit if the current page isn't one of PHPLeague
+                if ( ! in_array(trim($_GET['page']), PHPLeague::$pages))
+                    return;
+                
+                // Make sure to use the latest version of jQuery...
+                wp_deregister_script('jquery');
+                wp_register_script('jquery', ('http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'), FALSE, NULL, TRUE);
+                wp_enqueue_script('jquery');
+
+                wp_register_script('phpleague', plugins_url('phpleague/assets/js/admin.js'), array('jquery'));
+                wp_register_script('phpleague-mask', plugins_url('phpleague/assets/js/jquery.maskedinput.js'), array('jquery'));
+                wp_enqueue_script('phpleague-mask');
+                wp_enqueue_script('phpleague');
+            }
+        }
+        
+        /**
+         * Admin menu generation
+         *
+         * @param  none
+         * @return void
+         */
+        public static function admin_menu()
+        {
+            $instance = new PHPLeague_Admin;
+            $parent   = 'phpleague_overview';
+            
+            if (function_exists('add_menu_page'))
+            {
+                add_menu_page(
+                    __('Dashboard (PHPLeague)', 'phpleague'),
+                    __('PHPLeague', 'phpleague'),
+                    PHPLeague::$access,
+                    $parent,
+                    array($instance, 'admin_page'),
+                    plugins_url('phpleague/assets/img/league.png')
+                );
+            }
+            
+            if (function_exists('add_submenu_page'))
+            {
+                add_submenu_page(
+                    $parent,
+                    __('Dashboard (PHPLeague)', 'phpleague'),
+                    __('Dashboard', 'phpleague'),
+                    PHPLeague::$access,
+                    $parent,
+                    array($instance, 'admin_page')
+                );
+
+                add_submenu_page(
+                    $parent,
+                    __('Clubs (PHPLeague)', 'phpleague'),
+                    __('Clubs', 'phpleague'),
+                    PHPLeague::$access,
+                    'phpleague_club',
+                    array($instance, 'admin_page')
+                );
+                
+                add_submenu_page(
+                    $parent,
+                    __('Players (PHPLeague)', 'phpleague'),
+                    __('Players', 'phpleague'),
+                    PHPLeague::$access,
+                    'phpleague_player',
+                    array($instance, 'admin_page')
+                );
+                
+                add_submenu_page(
+                    $parent,
+                    __('About (PHPLeague)', 'phpleague'),
+                    __('About', 'phpleague'),
+                    PHPLeague::$access,
+                    'phpleague_about',
+                    array($instance, 'admin_page')
+                );
+            }
+        }
+
+        /**
+         * Register admin widgets
+         *
+         * @param  none
+         * @return void
+         */
+        public static function register_admin_widgets()
+        {
+            wp_add_dashboard_widget(
+                'phpleague_dashboard',
+                __('PHPLeague Latest News', 'phpleague'),
+                array(
+                    'PHPLeague_Widgets',
+                    'latest_news'
+                )
+            );
+        }
+
+        /**
+         * Add TinyMCE Button
+         *
+         * @param  none
+         * @return void
+         */
+        public static function add_editor_button()
+        {
+            // Don't bother doing this stuff if the current user lacks permissions
+            if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages')) return;
+
+            // Check for PHPLeague capability
+            if ( ! current_user_can('phpleague')) return;
+
+            // Add only in Rich Editor mode
+            if (get_user_option('rich_editing') == 'true')
+            {
+                add_filter('mce_external_plugins', array(&$this, 'add_editor_plugin'));
+                add_filter('mce_buttons', array(&$this, 'register_editor_button'));
+            }
+        }
+        
+        /**
+         * Add TinyMCE plugin
+         *
+         * @param  array $plugin_array
+         * @return array
+         */
+        public function add_editor_plugin($plugin_array)
+        {
+            $plugin_array['PHPLeague'] = plugins_url('phpleague/assets/js/tinymce/editor_plugin.js');
+            return $plugin_array;
+        }
+        
+        /**
+         * Register TinyMCE button
+         *
+         * @param  array $buttons
+         * @return array
+         */
+        public function register_editor_button($buttons)
+        {
+            array_push($buttons, 'separator', 'PHPLeague');
+            return $buttons;
+        }
     }
 }

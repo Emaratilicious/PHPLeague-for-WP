@@ -98,11 +98,23 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public function valid_text($str, $length = 3, $valid = array())
         {
-            if (mb_strlen($str) < $length)
-                return FALSE;
+            if ( ! function_exists('mb_strlen'))
+            {
+                if (mb_strlen($str) < $length)
+                    return FALSE;
+            }
+            else
+            {
+                if (strlen($str) < $length)
+                    return FALSE;
+            }
 
             if (empty($valid))
-                $valid = array('-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à', 'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú', 'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ');
+                $valid = array(
+                    '-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à',
+                    'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú',
+                    'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ'
+                );
             
             return (bool) ctype_alnum(str_replace($valid, '', $str));
         }
@@ -330,14 +342,11 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public function form_close()
         {
-            // Little security against XSS attack
-            $nonce = '';
-
-            // Only in the back-end
+            // XSS protection
             if (is_admin())
-                $nonce = wp_nonce_field('phpleague');
-            
-            return $nonce.'</form>';
+                return wp_nonce_field('phpleague').'</form>';
+            else
+                return '</form>';
         }
         
         /**

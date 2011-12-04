@@ -10,7 +10,8 @@
  */
 
 // Get ID fixture
-$get_id_fixture = ($db->is_fixture_exists($_GET['id_fixture']) === TRUE) ? (int) $_GET['id_fixture'] : 1;
+$get_id_fixture = ( ! empty($_GET['id_fixture']) && $db->is_fixture_exists($_GET['id_fixture']) === TRUE)
+    ? (int) $_GET['id_fixture'] : 1;
 
 // Security
 if ($db->is_league_exists($id_league) === FALSE)

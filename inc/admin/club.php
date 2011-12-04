@@ -10,7 +10,7 @@
  */
 
 // Get ID club
-$id_club = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : NULL);
+$id_club = ( ! empty($_GET['id_club'])) ? (int) $_GET['id_club'] : NULL;
 
 // Club edition mode...
 if ($db->is_club_unique($id_club, 'id') === FALSE)
@@ -48,7 +48,7 @@ if (isset($_POST['club']) && check_admin_referer('phpleague'))
     {
         $message[] = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
     }
-    elseif ($db->is_club_unique($name, 'name') === FALSE)
+    elseif ($db->is_club_unique($name, 'name', $country) === FALSE)
     {
         $message[] = __('The club '.$name.' is already in your database.', 'phpleague');
     }

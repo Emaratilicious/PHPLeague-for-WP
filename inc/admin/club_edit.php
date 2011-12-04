@@ -10,7 +10,7 @@
  */
 
 // Variables
-$id_club  = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : 0);
+$id_club  = ( ! empty($_GET['id_club'])) ? (int) $_GET['id_club'] : 0;
 $message  = array();
 $data     = array();
 $menu     = array(__('Club Information', 'phpleague') => '#');
