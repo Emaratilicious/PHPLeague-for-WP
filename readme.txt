@@ -99,11 +99,13 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 == Changelog ==
 
-= 1.4.2.dev =
-* NEW: Add the plugin in the admin bar
+= 1.4.2 =
+* NEW: Pages available in the admin bar
 * NEW: Possibility to create 2 clubs with identic name
-* FIX: Menu's CSS updated because of WP 3.3+
-* FIX: The `wp_tiny_mce method` becomes `wp_editor` with WP 3.3+
+* CHG: French countries list has been updated
+* FIX: Admin CSS updated to work with WP 3.3+
+* FIX: The `wp_tiny_mce method` is deprecated from WP 3.3+
+* FIX: Deprecated variable in the widget ranking table
 
 = 1.4.1 =
 * FIX: Correct a little issue showing SQL errors

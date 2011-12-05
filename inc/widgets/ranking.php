@@ -32,7 +32,7 @@ if ( ! class_exists('PHPLeague_Widgets_Ranking')) {
             parent::WP_Widget(
                 'phpleague_widget_ranking',
                 'PHPLeague Ranking Table',
-                array('description' => 'Display a PHPLeague ranking table...')
+                array('description' => 'Display a PHPLeague Ranking Table...')
             );
         }
 

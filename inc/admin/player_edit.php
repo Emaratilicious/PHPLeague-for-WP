@@ -153,27 +153,32 @@ $data[] = array(
     'class' => 'full'
 );
 
-function show_editor($content, $id_name)
+// Attach the editor to the textarea
+// Not working with WP 3.3+
+if (function_exists('wp_tiny_mce') && ! function_exists('wp_editor'))
 {
-    $settings = array(
-        'wpautop'       => FALSE,
-        'media_buttons' => FALSE,
-        'textarea_rows' => '10',
-        'tabindex'      => '',
-        'editor_class'  => 'tumble',
-        'tinymce'       => TRUE,
-        'quicktags'     => TRUE
+    add_filter('teeny_mce_before_init', create_function('$a', '
+        $a["theme"] = "advanced";
+        $a["skin"] = "wp_theme";
+        $a["height"] = "300";
+        $a["width"] = "100%";
+        $a["onpageload"] = "";
+        $a["mode"] = "exact";
+        $a["elements"] = "description";
+        $a["editor_selector"] = "mceEditor";
+        $a["plugins"] = "safari,inlinepopups,spellchecker";
+        $a["forced_root_block"] = FALSE;
+        $a["force_br_newlines"] = FALSE;
+        $a["force_p_newlines"] = TRUE;
+        $a["convert_newlines_to_brs"] = TRUE;
+        return $a;')
     );
 
-    // Make sure that the new wp_editor() function is available.
-    if (function_exists('wp_editor'))
-        wp_editor(esc_html($content), $id_name, $settings);
-    else
-        return;
+    wp_tiny_mce(TRUE);
 }
 
-show_editor($player->description, 'description');
-$output  = '<div class="submit">'.$fct->input('id_player', $id_player, array('type' => 'hidden')).
+$output  = $fct->textarea('description', esc_html($player->description), array('id' => 'description'));
+$output .= '<div class="submit">'.$fct->input('id_player', $id_player, array('type' => 'hidden')).
         $fct->input('edit_player', __('Save', 'phpleague'), array('type' => 'submit')).'</div>';
 $output .= $fct->form_close();
 

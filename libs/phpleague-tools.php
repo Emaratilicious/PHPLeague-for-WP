@@ -98,7 +98,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public function valid_text($str, $length = 3, $valid = array())
         {
-            if ( ! function_exists('mb_strlen'))
+            if (MB_STRING_ENABLED === TRUE)
             {
                 if (mb_strlen($str) < $length)
                     return FALSE;

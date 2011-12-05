@@ -112,7 +112,7 @@ if ( ! class_exists('PHPLeague')) {
                 // Load the frontend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front.php';
                 
-                add_action('wp_print_styles', array(&$this, 'print_front_styles'));
+                add_action('wp_print_styles', array('PHPLeague_Front', 'print_front_styles'));
                 add_shortcode('phpleague', array(&$this, 'shortcodes_controller'));
             }
         }
@@ -130,6 +130,7 @@ if ( ! class_exists('PHPLeague')) {
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
+            define('MB_STRING_ENABLED', function_exists('mb_get_info'));
         }
         
         /**
@@ -800,18 +801,6 @@ if ( ! class_exists('PHPLeague')) {
             PHPLeague_Tools::manage_directory(WP_PHPLEAGUE_UPLOADS_PATH.'logo_mini/', 'delete');
             PHPLeague_Tools::manage_directory(WP_PHPLEAGUE_UPLOADS_PATH.'players/', 'delete');
         }
-
-        /**
-         * Add the front css
-         *
-         * @param  none
-         * @return void
-         */
-        public function print_front_styles()
-        {
-            wp_register_style('phpleague-front', plugins_url('phpleague/assets/css/phpleague-front.css'));
-            wp_enqueue_style('phpleague-front');
-        }
         
         /**
          * The shortcodes controller
@@ -836,7 +825,7 @@ if ( ! class_exists('PHPLeague')) {
             // TODO - In the future, make a specific Front_Controller for every sport.
 
             // Make sure the ID is an integer
-            $id    = (int) $id;
+            $id = (int) $id;
 
             // Get front-end methods
             $front = new PHPLeague_Front;

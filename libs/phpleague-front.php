@@ -30,6 +30,18 @@ if ( ! class_exists('PHPLeague_Front')) {
         public function __construct() {}
 
         /**
+         * Add the front css
+         *
+         * @param  none
+         * @return void
+         */
+        public static function print_front_styles()
+        {
+            wp_register_style('phpleague-front', plugins_url('phpleague/assets/css/phpleague-front.css'));
+            wp_enqueue_style('phpleague-front');
+        }
+
+        /**
          * Show the league ranking table.
          *
          * @param  integer $id_league
@@ -391,7 +403,7 @@ if ( ! class_exists('PHPLeague_Front')) {
 
             $place = 1;
 
-            foreach ($db->get_league_table_data($style, $id_league, $nb_teams) as $row)
+            foreach ($db->get_league_table_data('general', $id_league, $nb_teams) as $row)
             {                
                 if ($place <= $nb_teams)
                 {               
