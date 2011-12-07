@@ -398,8 +398,8 @@ if ( ! class_exists('PHPLeague_Admin')) {
             // Add only in Rich Editor mode
             if (get_user_option('rich_editing') == 'true')
             {
-                add_filter('mce_external_plugins', array(&$this, 'add_editor_plugin'));
-                add_filter('mce_buttons', array(&$this, 'register_editor_button'));
+                add_filter('mce_external_plugins', array('PHPLeague_Admin', 'add_editor_plugin'));
+                add_filter('mce_buttons', array('PHPLeague_Admin', 'register_editor_button'));
             }
         }
         

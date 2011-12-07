@@ -15,7 +15,7 @@
 
             // Register button
             ed.addButton('PHPLeague', {
-                title : 'PHPLeague.desc',
+                title : 'PHPLeague',
                 cmd : 'mcePHPLeague',
                 image : url + '/league.png'
             });
@@ -36,7 +36,7 @@
                     author    : 'Maxime Dizerens',
                     authorurl : 'http://www.mika-web.com/',
                     infourl   : 'http://wordpress.org/extend/plugins/phpleague/',
-                    version   : '1.2.0'
+                    version   : '1.2.1'
             };
         }
     });

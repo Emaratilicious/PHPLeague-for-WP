@@ -22,7 +22,7 @@
 Plugin Name: PHPLeague for WordPress
 Plugin URI: http://www.phpleague.com/
 Description: PHPLeague for WordPress is the best companion to manage your championships.
-Version: 1.4.2
+Version: 1.4.3
 Author: Maxime Dizerens
 Author URI: http://www.phpleague.com/
 */
@@ -125,7 +125,7 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function define_constants()
         {
-            define('WP_PHPLEAGUE_VERSION', '1.4.2');
+            define('WP_PHPLEAGUE_VERSION', '1.4.3');
             define('WP_PHPLEAGUE_DB_VERSION', '1.3.0');
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));

@@ -4,7 +4,7 @@ Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
 Requires at least: 3.1
 Tested up to: 3.3
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 
 PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
@@ -99,6 +99,10 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 == Changelog ==
 
+= 1.4.3 =
+* CHG: Change the editor button description
+* FIX: Correct an issue with the editor button
+
 = 1.4.2 =
 * NEW: Pages available in the admin bar
 * NEW: Possibility to create 2 clubs with identic name
@@ -108,7 +112,7 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * FIX: Deprecated variable in the widget ranking table
 
 = 1.4.1 =
-* FIX: Correct a little issue showing SQL errors
+* FIX: Correct an issue showing SQL errors
 
 = 1.4.0 =
 * NEW: Get the latest PHPLeague news directly on your dashboard
