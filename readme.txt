@@ -3,14 +3,14 @@ Contributors: Maxime Dizerens
 Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
 Requires at least: 3.1
-Tested up to: 3.2.1
-Stable tag: 1.4.1
+Tested up to: 3.3
+Stable tag: 1.4.4
 
 PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
 == Description ==
 PHPLeague for WordPress is a plugin that let you manage your own sports leagues instead of relying on a third-party website.
-This lets you have an integrated site without a lot of coding, and still letting you customize it exactly the way youâ€™d like.
+This lets you have an integrated site without a lot of coding, and still letting you customize it exactly the way you’d like.
 
 First, you activate and set up the plugin, which makes your site have all functionalities available. Then, you can get it started by inserting every data you want, one by one.
 
@@ -99,8 +99,29 @@ For more information, check out the PHPLeague project website: <http://www.phple
 
 == Changelog ==
 
+= 1.4.4 =
+* NEW: Add a new method to detect the file extension
+* CHG: Removed the "hide" feature for category
+* CHG: Can now use "jpg" images for logos
+* CHG: The notification messages are now grouped together
+* CHG: The valid_text method has been improved
+* CHG: Birthdate, height and weight are not mandatory anymore
+* FIX: Replace click() by focusin() in the readonly inputs
+
+= 1.4.3 =
+* CHG: Change the editor button description
+* FIX: Correct an issue with the editor button
+
+= 1.4.2 =
+* NEW: Pages available in the admin bar
+* NEW: Possibility to create 2 clubs with identic name
+* CHG: French countries list has been updated
+* FIX: Admin CSS updated to work with WP 3.3+
+* FIX: The `wp_tiny_mce method` is deprecated from WP 3.3+
+* FIX: Deprecated variable in the widget ranking table
+
 = 1.4.1 =
-* FIX: Correct a little issue showing SQL errors
+* FIX: Correct an issue showing SQL errors
 
 = 1.4.0 =
 * NEW: Get the latest PHPLeague news directly on your dashboard
@@ -111,7 +132,7 @@ For more information, check out the PHPLeague project website: <http://www.phple
 * NEW: Possibility to delete a club and all data associated
 * NEW: Possibility to delete a league and all data associated
 * NEW: Possibility to get the ranking table as widget
-* NEW: Plugin translated in German (thanks to Michael FÃ¼rst)
+* NEW: Plugin translated in German (thanks to Michael Fürst)
 * NEW: Possibility to show the 5 latest results in the table
 * NEW: Possibility to show a mini ranking table as widget
 * CHG: When we remove a team from a league, all data associated are now deleted

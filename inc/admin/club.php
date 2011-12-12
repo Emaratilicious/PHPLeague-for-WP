@@ -10,7 +10,7 @@
  */
 
 // Get ID club
-$id_club = ( ! empty($_GET['id_club']) ? (int) $_GET['id_club'] : NULL);
+$id_club = ( ! empty($_GET['id_club'])) ? (int) $_GET['id_club'] : NULL;
 
 // Club edition mode...
 if ($db->is_club_unique($id_club, 'id') === FALSE)
@@ -48,7 +48,7 @@ if (isset($_POST['club']) && check_admin_referer('phpleague'))
     {
         $message[] = __('The name must be alphanumeric and 3 characters long at least.', 'phpleague');
     }
-    elseif ($db->is_club_unique($name, 'name') === FALSE)
+    elseif ($db->is_club_unique($name, 'name', $country) === FALSE)
     {
         $message[] = __('The club '.$name.' is already in your database.', 'phpleague');
     }
@@ -98,13 +98,12 @@ $data[] = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('New Club', 'phpleague'),
     'text'  => $output,
-    'hide'  => TRUE,
     'class' => 'full'
 );
 
 $output  = $fct->form_open(admin_url($base_url));
-$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_club', __('Delete', 'phpleague'),
-        array('type' => 'submit', 'class' => 'button')).'</div>';
+$output .= '<div class="tablenav top"><div class="alignleft actions">'
+        .$fct->input('delete_club', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
 
 if ($pagination)
     $output .= '<div class="tablenav-pages">'.$pagination.'</div>';

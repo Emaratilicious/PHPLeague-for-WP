@@ -91,20 +91,38 @@ if ( ! class_exists('PHPLeague_Tools')) {
         /**
          * Valid text input.
          *
-         * @param   string  $str
+         * @param   string  $string
          * @param   integer $length (optional)
          * @param   array   $valid (optional)
          * @return  boolean
          */
-        public function valid_text($str, $length = 3, $valid = array())
+        public function valid_text($string, $length = 3, $valid = array())
         {
-            if (mb_strlen($str) < $length)
+            if (strlen(utf8_decode($string)) < $length)
                 return FALSE;
 
             if (empty($valid))
-                $valid = array('-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à', 'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú', 'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ');
+            {
+                $valid = array(
+                    '-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à',
+                    'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú',
+                    'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ'
+                );   
+            }
             
-            return (bool) ctype_alnum(str_replace($valid, '', $str));
+            return (bool) ctype_alnum(str_replace($valid, '', $string));
+        }
+
+        /**
+         * Return a file extension.
+         *
+         * @param   string  $filename
+         * @return  string
+         */
+        public static function file_extension($filename)
+        {
+            $path_info = pathinfo($filename);
+            return $path_info['extension'];
         }
         
         /**
@@ -167,7 +185,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
          * @param   array  extension authorized
          * @return  array
          */
-        public function return_dir_files($path = NULL, $extension = array('png'))
+        public function return_dir_files($path = NULL, $extension = array('png', 'jpg', 'jpeg'))
         {
             $files = array();
             $list  = array(0 => __('-- Select a file --', 'phpleague'));
@@ -179,7 +197,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
 
             while ((FALSE !== $file = readdir($path)))
             {
-                if (in_array(substr($file, -3), $extension))
+                if (in_array(PHPLeague_Tools::file_extension($file), $extension))
                     $files[] = trim($file);
             }
 
@@ -330,14 +348,11 @@ if ( ! class_exists('PHPLeague_Tools')) {
          */
         public function form_close()
         {
-            // Little security against XSS attack
-            $nonce = '';
-
-            // Only in the back-end
+            // XSS protection
             if (is_admin())
-                $nonce = wp_nonce_field('phpleague');
-            
-            return $nonce.'</form>';
+                return wp_nonce_field('phpleague').'</form>';
+            else
+                return '</form>';
         }
         
         /**

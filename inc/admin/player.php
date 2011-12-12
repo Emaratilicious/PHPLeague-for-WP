@@ -89,7 +89,6 @@ $data[] = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('New Player', 'phpleague'),
     'text'  => $output,
-    'hide'  => TRUE,
     'class' => 'full'
 );
 

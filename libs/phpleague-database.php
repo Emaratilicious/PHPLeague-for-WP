@@ -80,19 +80,31 @@ if ( ! class_exists('PHPLeague_Database')) {
         /**
          * Verify if a club is unique
          *
-         * @param  mixed  $var
-         * @param  string $check_by
+         * @param  mixed   $var
+         * @param  string  $control
+         * @param  integer $id_country (optional)
          * @return boolean
          */
-        public function is_club_unique($var, $check_by = 'name')
+        public function is_club_unique($var, $control = 'name', $id_country = NULL)
         {
             global $wpdb;
-            if ($check_by == 'name')
-                $exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->club WHERE name = %s", $var));  
-            elseif ($check_by == 'id')
+            if ($control == 'name')
+            {
+                $exist = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $wpdb->club WHERE name = %s AND id_country = %d",
+                    $var,
+                    $id_country
+                )); 
+            }  
+            elseif ($control == 'id')
+            {
                 $exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->club WHERE id = %d", $var));
+            }
             else
-                return;
+            {
+                // Get out!
+                return;   
+            }
             
             // We didn't find a row
             if ($exist == 0)
@@ -610,7 +622,13 @@ if ( ! class_exists('PHPLeague_Database')) {
         public function edit_game_datetime($played, $id_fixture)
         {
             global $wpdb;
-            return $wpdb->update($wpdb->match, array('played' => $played), array('id_fixture' => $id_fixture), array('%s'), array('%d'));
+            return $wpdb->update(
+                $wpdb->match,
+                array('played' => $played),
+                array('id_fixture' => $id_fixture),
+                array('%s'),
+                array('%d')
+            );
         }
         
         /**
@@ -663,7 +681,8 @@ if ( ! class_exists('PHPLeague_Database')) {
          * @param  string  $prediction_mod
          * @return object
          */
-        public function update_league_settings($name, $year, $id_league, $victory, $draw, $defeat, $promo, $qualif, $releg, $favorite, $nb_leg, $team_link, $default_time, $player_mod, $prediction_mod)
+        public function update_league_settings($name, $year, $id_league, $victory, $draw, $defeat, $promo,
+            $qualif, $releg, $favorite, $nb_leg, $team_link, $default_time, $player_mod, $prediction_mod)
         {
             global $wpdb;
             return
