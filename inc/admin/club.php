@@ -3,7 +3,7 @@
 /*
  * This file is part of the PHPLeague package.
  *
- * (c) Maxime Dizerens <mdizerens@gmail.com>
+ * (c) M. Dizerens <mikaweb@gunners.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -98,13 +98,12 @@ $data[] = array(
     'menu'  => __('Overview', 'phpleague'),
     'title' => __('New Club', 'phpleague'),
     'text'  => $output,
-    'hide'  => TRUE,
     'class' => 'full'
 );
 
 $output  = $fct->form_open(admin_url($base_url));
-$output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('delete_club', __('Delete', 'phpleague'),
-        array('type' => 'submit', 'class' => 'button')).'</div>';
+$output .= '<div class="tablenav top"><div class="alignleft actions">'
+        .$fct->input('delete_club', __('Delete', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div>';
 
 if ($pagination)
     $output .= '<div class="tablenav-pages">'.$pagination.'</div>';

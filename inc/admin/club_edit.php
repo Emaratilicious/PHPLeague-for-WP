@@ -3,7 +3,7 @@
 /*
  * This file is part of the PHPLeague package.
  *
- * (c) Maxime Dizerens <mdizerens@gmail.com>
+ * (c) M. Dizerens <mikaweb@gunners.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.

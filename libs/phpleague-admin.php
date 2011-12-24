@@ -3,7 +3,7 @@
 /*
  * This file is part of the PHPLeague package.
  *
- * (c) Maxime Dizerens <mdizerens@gmail.com>
+ * (c) M. Dizerens <mikaweb@gunners.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -40,7 +40,7 @@ if ( ! class_exists('PHPLeague_Admin')) {
             return '<div id="adminpanel"><div id="adminpanel-header"><div class="logo"><a href="'
                     .admin_url('admin.php?page=phpleague_overview').'"><img alt="" src="'
                     .plugins_url('phpleague/assets/img/logo.png').'" /></a></div><div class="theme-info">'
-                    .'<span class="plugin">'.__('PHPLeague for WordPress', 'phpleague').'</span>'
+                    .'<span class="plugin">'.WP_PHPLEAGUE_EDITION.'</span>'
                     .'<span class="release">'.__('Release: ', 'phpleague').WP_PHPLEAGUE_VERSION.'</span>'
                     .'</div></div><div id="support-links"><ul><li class="changelog">'
                     .'<a href="http://wordpress.org/extend/plugins/phpleague/changelog/">'
@@ -75,10 +75,12 @@ if ( ! class_exists('PHPLeague_Admin')) {
             // Show notifications...
             if ( ! empty($notification) && is_array($notification))
             {
+                $output .= '<div class="updated">';
                 foreach ($notification as $note)
                 {
-                    $output .= '<div class="updated"><p>'.esc_html($note).'</p></div>';
+                    $output .= '<p>'.esc_html($note).'</p>';
                 }
+                $output .= '</div>';
             }
             
             // Build the content...
@@ -89,11 +91,10 @@ if ( ! class_exists('PHPLeague_Admin')) {
 
                 foreach ($content as $value)
                 {
-                    $hidden = (isset($value['hide']) && $value['hide'] === TRUE) ? 'hidden' : '';
                     if ($key == $value['menu'])
                     {
                         $output .= '<div class="section"><h3 class="heading">'.$value['title'].'</h3>'
-                                .'<div class="option '.$hidden.'"><div class="'.$value['class'].'">'
+                                .'<div class="option"><div class="'.$value['class'].'">'
                                 .$value['text'].'</div><div class="clear"></div></div></div>';
                     }
                 }

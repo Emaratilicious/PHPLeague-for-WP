@@ -3,7 +3,7 @@
 /*
  * This file is part of the PHPLeague package.
  *
- * (c) Maxime Dizerens <mdizerens@gmail.com>
+ * (c) M. Dizerens <mikaweb@gunners.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -34,6 +34,24 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague'))
     $country   = (int) $_POST['country'];
     $term      = (int) $_POST['term'];
 
+    if ( ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate))
+    {
+       $birthdate = '0000-00-00';
+       $message[] = __('The birthdate must follow the pattern: "YYYY-MM-DD".', 'phpleague');
+    }
+    
+    if ($weight == 0 || $weight > 255)
+    {
+       $weight    = '0';
+       $message[] = __('The weight must be bigger than 0 and lower than 255.', 'phpleague');
+    }
+    
+    if ($height == 0 || $height > 255)
+    {
+       $height    = '0';
+       $message[] = __('The height must be bigger than 0 and lower than 255.', 'phpleague');
+    }
+
     // We need to pass those tests to insert the data
     if ($id_player === 0)
     {
@@ -47,22 +65,12 @@ if (isset($_POST['edit_player']) && check_admin_referer('phpleague'))
     {
        $message[] = __('The last name must be alphanumeric and 3 characters long at least.', 'phpleague');
     }
-    elseif ( ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate))
-    {
-       $message[] = __('The birthdate must follow the pattern: "YYYY-MM-DD".', 'phpleague');
-    }
-    elseif ($weight == 0 || $weight > 255)
-    {
-       $message[] = __('The weight must be bigger than 0 and lower than 255.', 'phpleague');
-    }
-    elseif ($height == 0 || $height > 255)
-    {
-       $message[] = __('The height must be bigger than 0 and lower than 255.', 'phpleague');
-    }
     else
     {
         $message[] = __('Player edited with success!', 'phpleague');
-        $db->update_player($id_player, $firstname, $lastname, $birthdate, $height, $weight, $desc, $picture, $country, $term);
+        $db->update_player(
+            $id_player, $firstname, $lastname, $birthdate, $height, $weight, $desc, $picture, $country, $term
+        );
     }
 }
 elseif (isset($_POST['player_history']) && check_admin_referer('phpleague')) // We update the player history
@@ -113,7 +121,7 @@ foreach (get_tags(array('hide_empty' => FALSE)) as $tag)
 }
 
 // -- Player information
-$pics_list = $fct->return_dir_files(WP_PHPLEAGUE_UPLOADS_PATH.'players/', array('png', 'jpg'));
+$pics_list = $fct->return_dir_files(WP_PHPLEAGUE_UPLOADS_PATH.'players/');
 $player    = $db->get_player($id_player);
 $output    = $fct->form_open($page_url);
 $table     =
@@ -125,14 +133,14 @@ $table     =
             <td>'.$fct->input('lastname', esc_html($player->lastname)).'</td>
         </tr>
         <tr>
-            <td class="required">'.__('Height:', 'phpleague').'</td> 
+            <td>'.__('Height:', 'phpleague').'</td> 
             <td>'.$fct->input('height', (int) $player->height).'</td>
-            <td class="required">'.__('Weight:', 'phpleague').'</td>
+            <td>'.__('Weight:', 'phpleague').'</td>
             <td>'.$fct->input('weight', (int) $player->weight).'</td>
         </tr>
         <tr>
-            <td class="required">'.__('Birthdate:', 'phpleague').'</td>
-            <td>'.$fct->input('birthdate', esc_html($player->birthdate)).'</td>
+            <td>'.__('Birthdate:', 'phpleague').'</td>
+            <td>'.$fct->input('birthdate', esc_html($player->birthdate), array('class' => 'masked-date')).'</td>
             <td class="required">'.__('Country:', 'phpleague').'</td>
             <td>'.$fct->select('country', $countries_list, (int) $player->id_country).'</td>
         </tr>

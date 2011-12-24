@@ -2,9 +2,9 @@
 Contributors: Maxime Dizerens
 Donate link: http://www.phpleague.com/
 Tags: phpleague, football, sport, league, championship, soccer, handball, volleyball, basketball, hockey, sports, leagues
-Requires at least: 3.1
+Requires at least: 3.2
 Tested up to: 3.3
-Stable tag: 1.4.3
+Stable tag: 1.4.5
 
 PHPLeague offers you the possibility to manage your leagues from A to Z without any hassles.
 
@@ -98,6 +98,20 @@ For more information, check out the PHPLeague project website: <http://www.phple
 3. PHPLeague Administration Dashboard
 
 == Changelog ==
+
+= 1.4.5 =
+* NEW: GIF and BMP files are now accepted
+* FIX: Modified the valid_text method to accept everything
+* FIX: Alter YEAR type because it ranges only from 1901 to 2055
+
+= 1.4.4 =
+* NEW: Add a new method to detect the file extension
+* CHG: Removed the "hide" feature for category
+* CHG: Can now use "jpg" images for logos
+* CHG: The notification messages are now grouped together
+* CHG: The valid_text method has been improved
+* CHG: Birthdate, height and weight are not mandatory anymore
+* FIX: Replace click() by focusin() in the readonly inputs
 
 = 1.4.3 =
 * CHG: Change the editor button description

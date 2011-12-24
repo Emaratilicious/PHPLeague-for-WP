@@ -3,7 +3,7 @@
 /*
  * This file is part of the PHPLeague package.
  *
- * (c) Maxime Dizerens <mdizerens@gmail.com>
+ * (c) M. Dizerens <mikaweb@gunners.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -91,32 +91,45 @@ if ( ! class_exists('PHPLeague_Tools')) {
         /**
          * Valid text input.
          *
-         * @param   string  $str
+         * @param   string  $string
          * @param   integer $length (optional)
-         * @param   array   $valid (optional)
          * @return  boolean
          */
-        public function valid_text($str, $length = 3, $valid = array())
+        public function valid_text($string, $length = 3)
         {
-            if (MB_STRING_ENABLED === TRUE)
+            if (function_exists('mb_check_encoding'))
             {
-                if (mb_strlen($str) < $length)
-                    return FALSE;
+                // Check if we are dealing with UTF-8
+                if (mb_check_encoding($string, 'UTF-8'))
+                {
+                    if (mb_strlen($string) < $length)
+                        return FALSE;
+                }
+                else
+                {
+                    if (strlen($string) < $length)
+                        return FALSE;
+                }
             }
-            else
+            else // Could be utf8 or not, we don't know...
             {
-                if (strlen($str) < $length)
+                if (strlen(utf8_decode($string)) < $length)
                     return FALSE;
             }
 
-            if (empty($valid))
-                $valid = array(
-                    '-', '_', ' ', '.', 'ç', 'é', 'ë', 'è', 'ê', 'à',
-                    'á', 'ä', 'â', 'ö', 'ò', 'ó', 'ô', 'ü', 'ú',
-                    'û', 'ï', 'í', 'î', 'ì', 'ñ', 'ý', 'ß', 'ÿ'
-                );
-            
-            return (bool) ctype_alnum(str_replace($valid, '', $str));
+            return TRUE;
+        }
+
+        /**
+         * Return a file extension.
+         *
+         * @param   string  $filename
+         * @return  string
+         */
+        public static function file_extension($filename)
+        {
+            $path_info = pathinfo($filename);
+            return $path_info['extension'];
         }
         
         /**
@@ -179,7 +192,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
          * @param   array  extension authorized
          * @return  array
          */
-        public function return_dir_files($path = NULL, $extension = array('png'))
+        public function return_dir_files($path = NULL, $extension = array('png', 'jpg', 'jpeg', 'gif', 'bmp'))
         {
             $files = array();
             $list  = array(0 => __('-- Select a file --', 'phpleague'));
@@ -191,7 +204,7 @@ if ( ! class_exists('PHPLeague_Tools')) {
 
             while ((FALSE !== $file = readdir($path)))
             {
-                if (in_array(substr($file, -3), $extension))
+                if (in_array(PHPLeague_Tools::file_extension($file), $extension))
                     $files[] = trim($file);
             }
 

@@ -1,7 +1,7 @@
 <?php
 
 /*  
-    Copyright 2011  Maxime Dizerens  (email : mdizerens@gmail.com)
+    Copyright 2011  M. Dizerens  (email : mikaweb@gunners.fr)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 Plugin Name: PHPLeague for WordPress
 Plugin URI: http://www.phpleague.com/
 Description: PHPLeague for WordPress is the best companion to manage your championships.
-Version: 1.4.3
-Author: Maxime Dizerens
+Version: 1.4.5
+Author: M. Dizerens
 Author URI: http://www.phpleague.com/
 */
 
@@ -43,7 +43,7 @@ if ( ! class_exists('PHPLeague')) {
         public $shortname     = 'PHPLeague for WP';
         public $homepage      = 'http://www.phpleague.com/';
         public $edition       = 'Ultimate Edition';
-        public static $access = '';
+        public static $access = 'administrator';
         public static $pages  = array(
             'phpleague_about',
             'phpleague_club',
@@ -86,9 +86,6 @@ if ( ! class_exists('PHPLeague')) {
                 register_activation_hook(__FILE__, array('PHPLeague', 'activate'));
                 register_uninstall_hook(__FILE__, array('PHPLeague', 'uninstall'));
                 
-                // We need to be administrator to manage PHPLeague backend
-                PHPLeague::$access = 'administrator';
-                
                 // Load the backend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-admin.php';
                 
@@ -107,8 +104,11 @@ if ( ! class_exists('PHPLeague')) {
                 // Ajax request to delete a team in player history
                 add_action('wp_ajax_delete_player_history_team', array('PHPLeague_AJAX', 'delete_player_history_team'));
             }
-            else // PHPLeague front-end
+            else // PHPLeague frontend
             {
+                // Don't need to be admin to use PHPLeague in the frontend
+                PHPLeague::$access = '';
+
                 // Load the frontend controller system
                 require_once WP_PHPLEAGUE_PATH.'libs/phpleague-front.php';
                 
@@ -125,12 +125,11 @@ if ( ! class_exists('PHPLeague')) {
          */
         public function define_constants()
         {
-            define('WP_PHPLEAGUE_VERSION', '1.4.3');
-            define('WP_PHPLEAGUE_DB_VERSION', '1.3.0');
+            define('WP_PHPLEAGUE_VERSION', '1.4.5');
+            define('WP_PHPLEAGUE_DB_VERSION', '1.3.1');
             define('WP_PHPLEAGUE_EDITION', $this->edition);
             define('WP_PHPLEAGUE_PATH', plugin_dir_path(__FILE__));
             define('WP_PHPLEAGUE_UPLOADS_PATH', ABSPATH.'wp-content/uploads/phpleague/');
-            define('MB_STRING_ENABLED', function_exists('mb_get_info'));
         }
         
         /**
@@ -146,7 +145,7 @@ if ( ! class_exists('PHPLeague')) {
             {
                 delete_option('phpleague_do_activation_redirect');
                 wp_redirect(get_option('siteurl').'/wp-admin/admin.php?page=phpleague_overview&activation=1');
-                exit();
+                die;
             }
 
             // Set capabilities
@@ -185,12 +184,12 @@ if ( ! class_exists('PHPLeague')) {
 
             // You're already using the latest version
             // so we're leaving!
-            if ($current_version == WP_PHPLEAGUE_VERSION && $current_db_version == WP_PHPLEAGUE_DB_VERSION)
+            if ($current_version == WP_PHPLEAGUE_VERSION AND $current_db_version == WP_PHPLEAGUE_DB_VERSION)
                 return;
 
             // Few people encounter issues because they can't handle
             // with a 'NOT DEFAULT' without any value
-            if ($current_db_version < '1.2')
+            if (version_compare($current_db_version, '1.2.0', '<'))
             {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->country MODIFY name VARCHAR(100) DEFAULT NULL;");
@@ -201,7 +200,7 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // We add the 4 UK members...
-            if ($current_db_version < '1.2.1')
+            if (version_compare($current_db_version, '1.2.1', '<'))
             {
                 $countries = array(
                     238 => 'England',
@@ -221,7 +220,7 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Drop constraints because too much pain in the ass with WP
-            if ($current_db_version < '1.2.2')
+            if (version_compare($current_db_version, '1.2.2', '<'))
             {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->fixture DROP FOREIGN KEY phpleague_fixture_ibfk_1;");
@@ -231,36 +230,29 @@ if ( ! class_exists('PHPLeague')) {
             }
             
             // Few modifications
-            if ($current_db_version < '1.2.3')
+            if (version_compare($current_db_version, '1.3.2', '<'))
             {
                 // ALTER tables
                 $wpdb->query("ALTER TABLE $wpdb->league MODIFY id_favorite smallint(4) unsigned NOT NULL DEFAULT '0';");
-                $wpdb->query("ALTER TABLE $wpdb->club ADD creation year(4) NOT NULL DEFAULT '0000' AFTER coach;");
-                $wpdb->query("ALTER TABLE $wpdb->club ADD website varchar(255) DEFAULT NULL AFTER creation;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD team_link enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
+                $wpdb->query("ALTER TABLE $wpdb->club ADD creation YEAR(4) NOT NULL DEFAULT '0000' AFTER coach;");
+                $wpdb->query("ALTER TABLE $wpdb->club ADD website VARCHAR(255) DEFAULT NULL AFTER creation;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD team_link ENUM('no','yes') NOT NULL DEFAULT 'no' AFTER nb_leg;");
                 $wpdb->query("ALTER TABLE $wpdb->league ADD default_time time NOT NULL DEFAULT '17:00:00' AFTER team_link;");
-                
-                // Set the edition name in the database...
-                add_option('phpleague_edition', WP_PHPLEAGUE_EDITION);
-            }
-            
-            // Few modifications to handle player/prediction modules
-            if ($current_db_version < '1.3.0')
-            {
-                // No more premium edition...
-                delete_option('phpleague_edition');
 
                 // ALTER league table
-                $wpdb->query("ALTER TABLE $wpdb->league ADD player_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_teams;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD sport_type varchar(50) NOT NULL DEFAULT 'football' AFTER player_mod;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_starter tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER sport_type;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_bench tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER nb_starter;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD prediction_mod enum('no','yes') NOT NULL DEFAULT 'no' AFTER nb_bench;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD point_right tinyint(1) unsigned NOT NULL DEFAULT '5' AFTER prediction_mod;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD point_wrong tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER point_right;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD point_part tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_wrong;");
-                $wpdb->query("ALTER TABLE $wpdb->league ADD deadline tinyint(1) unsigned NOT NULL DEFAULT '1' AFTER point_part;");
-            }
+                $wpdb->query("ALTER TABLE $wpdb->league ADD player_mod ENUM('no','yes') NOT NULL DEFAULT 'no' AFTER nb_teams;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD sport_type VARCHAR(50) NOT NULL DEFAULT 'football' AFTER player_mod;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_starter TINYINT(1) unsigned NOT NULL DEFAULT '0' AFTER sport_type;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD nb_bench TINYINT(1) unsigned NOT NULL DEFAULT '0' AFTER nb_starter;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD prediction_mod ENUM('no','yes') NOT NULL DEFAULT 'no' AFTER nb_bench;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_right TINYINT(1) unsigned NOT NULL DEFAULT '5' AFTER prediction_mod;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_wrong TINYINT(1) unsigned NOT NULL DEFAULT '0' AFTER point_right;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD point_part TINYINT(1) unsigned NOT NULL DEFAULT '1' AFTER point_wrong;");
+                $wpdb->query("ALTER TABLE $wpdb->league ADD deadline TINYINT(1) unsigned NOT NULL DEFAULT '1' AFTER point_part;");
+
+                // ALTER club table
+                $wpdb->query("ALTER TABLE $wpdb->club MODIFY creation VARCHAR(4) NOT NULL DEFAULT '0000';");
+            } 
 
             // Basic actions to do everytime we upgrade PHPLeague...
             if ($current_version < WP_PHPLEAGUE_VERSION)
