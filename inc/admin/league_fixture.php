@@ -122,7 +122,6 @@ else
     }
 
     $output .= '<div class="tablenav top"><div class="alignleft actions">'.$fct->input('fixtures', __('Save', 'phpleague'), array('type' => 'submit', 'class' => 'button')).'</div></div>';
-
     $output .=
     '<table class="widefat text-centered"><thead>
         <tr>

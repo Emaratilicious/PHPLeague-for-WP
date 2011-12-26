@@ -106,18 +106,6 @@ if ( ! class_exists('PHPLeague_Admin')) {
 
             return $output;
         }
-
-        /**
-         * Page wrapper
-         *
-         * @param  integer $width
-         * @param  string  $content
-         * @return string
-         */
-        public function admin_wrapper($width = 98, $content = NULL)
-        {
-            return '<div class="postbox-container" style="width: '.$width.'%">'.$content.'</div>';
-        }
     
         /**
          * Backend footer
